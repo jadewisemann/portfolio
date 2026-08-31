@@ -1,0 +1,56 @@
+{
+  "variant": "v1",
+  "viewport": {
+    "name": "1920",
+    "width": 1920,
+    "height": 1080
+  },
+  "atHero": {
+    "h1": {
+      "fontSize": "44px",
+      "rect": {
+        "x": 1000,
+        "y": 320.03125,
+        "width": 616,
+        "height": 370.34375
+      }
+    },
+    "largestTypeOnPage": {
+      "size": 208,
+      "el": "bo-strip-ratio-n"
+    },
+    "widestInkLinePx": 1532,
+    "inkSpanShareOfViewport": 0.7979166666666667,
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "documentHeightPx": 1992,
+    "documentHeightInViewportHeights": 1.8444444444444446,
+    "hasHorizontalOverflow": false
+  },
+  "atS1": {
+    "h1": {
+      "fontSize": "44px",
+      "rect": {
+        "x": 1000,
+        "y": -591.96875,
+        "width": 616,
+        "height": 370.34375
+      }
+    },
+    "largestTypeOnPage": {
+      "size": 208,
+      "el": "bo-strip-ratio-n"
+    },
+    "widestInkLinePx": 1532,
+    "inkSpanShareOfViewport": 0.7979166666666667,
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "documentHeightPx": 1992,
+    "documentHeightInViewportHeights": 1.8444444444444446,
+    "hasHorizontalOverflow": false
+  }
+}

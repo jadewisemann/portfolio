@@ -116,7 +116,15 @@ describe("모션 소유권", () => {
   test("Motion 애니메이션 props 가 허용 목록 밖에 없다", () => {
     // MOTION_LANGUAGE.md 12절 표에 따라 Motion 이 소유하는 것은 C1(히어로)과 S2(트리)뿐이다.
     // 파일이 생기면 여기에 추가하고, 추가할 때 12절 표도 함께 고친다.
-    const allowed = ["src/components/Hero", "src/components/DirTree"];
+    const allowed = [
+      "src/components/Hero",
+      "src/components/DirTree",
+      // Best-of-N 실험 (docs/portfolio/directions/B-seam.md 오프닝 재검토).
+      // v1 은 척추 재배치에, v2 는 비율 숫자의 layoutId 공유 요소 전이에 Motion 을 쓴다.
+      // MOTION_LANGUAGE.md 12절 표는 디렉터가 병행 개정 중이다.
+      "src/components/bestof/V1Spine",
+      "src/components/bestof/V2Ratio",
+    ];
     const offenders = hits(/<motion\.|\blayout\b\s*(=|\/?>)|initial=\{/).filter(
       (h) => !allowed.some((a) => h.startsWith(a)),
     );

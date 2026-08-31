@@ -216,3 +216,521 @@ button:focus-visible,
   left: 8px;
   top: 8px;
 }
+
+/* ==========================================================================
+   Best-of-N 실험 — 히어로 → S1 전이 세 안 (/v1 · /v2 · /v3)
+   docs/portfolio/directions/B-seam.md 의 재해석. 디렉터 판정(2026-08-31)으로
+   아래 세 가지가 이 실험에 한해 확장되었습니다 (MOTION_LANGUAGE.md 는 병행 개정 중):
+     1. §5.1 — IntersectionObserver 의 불리언이 이음선을 "참 값에서 참 값으로"
+        옮기는 것은 허용한다. 스크럽(연속 보간)은 여전히 금지다.
+     2. 지속시간 위계 — 320ms 단일 상한 대신, 즉시(120ms) · 절 내부(200~420ms) ·
+        절 사이(420~900ms) · 정지(200ms 이상)로 나눈다.
+     3. 활자 — 히어로가 실제 데스크톱 디스플레이 급수를 가질 수 있다. 단,
+        지면에서 가장 큰 글자는 항상 비율 숫자다(§4).
+   ========================================================================== */
+
+:root {
+  /*
+    이음선의 기본 토큰입니다. 이 워크트리의 globals.css 에는 아직
+    ART_DIRECTION.md 3.3~3.6 · DESIGN_SYSTEM.md 6절의 이음선 토큰이 없었으므로
+    (본 저장소의 최신 커밋에는 있으나 이 실험 워크트리는 그 이전 커밋에서
+    분기했습니다) Best-of-N 실험이 의존하는 만큼만 여기서 최소로 들여옵니다.
+  */
+  --seam-ink: var(--ink-3);
+  --seam-weight: 1px;
+  --seam-weight-hard: 2px;
+  --seam-block: 224px;
+
+  --ease-spine: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-immediate: 120ms;
+  --duration-intra: 320ms;
+  --duration-spine: 720ms;
+  --duration-hold: 220ms;
+
+  /* 데스크톱 히어로 디스플레이 계단. 320px 유래 26~36px 계단(Hero.tsx)과는 별개다. */
+  --text-bo-hero: 28px;
+  /* S1 비율 숫자. 어느 단계에서도 --text-bo-hero 보다 크다. */
+  --text-bo-ratio: 64px;
+  /* v2 히어로 전용 — 지면을 여는 유일한 내용이므로 더 크다. */
+  --text-bo-hero-ratio: 96px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --text-bo-hero: 44px;
+    --text-bo-ratio: 100px;
+    --text-bo-hero-ratio: 160px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --text-bo-hero: 64px;
+    --text-bo-ratio: 148px;
+    --text-bo-hero-ratio: 220px;
+  }
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --text-bo-hero: 84px;
+    --text-bo-ratio: 208px;
+    --text-bo-hero-ratio: 280px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   공유 — S1 본문 (SeamStrip). 세 안이 전부 이 서식을 씁니다.
+   가로 패딩을 section 이 아니라 자식에게 두는 이유: `.bo-strip-grid` 의 폭이
+   뷰포트 폭과 같아야 각 안의 이음선 장치가 계산한 퍼센트와 같은 픽셀에 떨어집니다.
+   -------------------------------------------------------------------------- */
+
+.bo-strip {
+  position: relative;
+  padding-block: 56px 84px;
+  border-top: 1px solid var(--rule);
+}
+@media (min-width: 768px) {
+  .bo-strip {
+    padding-block: 84px 112px;
+  }
+}
+
+.bo-strip-head {
+  padding-inline: 20px;
+}
+@media (min-width: 768px) {
+  .bo-strip-head {
+    padding-inline: 40px;
+  }
+}
+
+.bo-strip-mark {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mark);
+  color: var(--ink-3);
+}
+
+.bo-strip-title {
+  margin-top: 8px;
+  max-width: 44rem;
+  font-weight: 600;
+  font-size: var(--text-decision);
+  line-height: 1.5;
+}
+
+.bo-strip-lede {
+  margin-top: 20px;
+  max-width: var(--spacing-measure);
+}
+.bo-strip-lede p + p {
+  margin-top: 14px;
+}
+
+.bo-strip-ratio {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 28px;
+  font-family: var(--font-mono), monospace;
+}
+.bo-strip-ratio-n {
+  font-size: var(--text-bo-ratio);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.bo-strip-ratio-lab {
+  font-size: var(--text-note);
+  color: var(--ink-3);
+}
+.bo-strip-ratio-lab-only {
+  margin-top: 28px;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+  color: var(--ink-2);
+}
+.bo-strip-clamped {
+  margin-top: 12px;
+  max-width: var(--spacing-measure);
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  color: var(--ink-3);
+}
+
+.bo-strip-grid {
+  display: grid;
+  margin-top: 28px;
+  width: 100%;
+  grid-template-columns: 1fr;
+  row-gap: 28px;
+}
+@media (min-width: 768px) {
+  .bo-strip-grid {
+    grid-template-columns: var(--bo-pct) var(--seam-weight) 1fr;
+  }
+  @supports (width: round(down, 50%, 1px)) {
+    .bo-strip-grid {
+      grid-template-columns: round(down, var(--bo-pct), 1px) var(--seam-weight) 1fr;
+    }
+  }
+}
+
+.bo-strip-col {
+  padding-inline: 20px;
+}
+@media (min-width: 768px) {
+  .bo-strip-col:first-child {
+    padding: 0 28px 0 40px;
+  }
+  .bo-strip-col:last-child {
+    padding: 0 40px 0 28px;
+  }
+}
+.bo-strip-col h3 {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+  color: var(--ink-2);
+}
+.bo-strip-col ul {
+  margin-top: 8px;
+}
+.bo-strip-col li {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  line-height: 1.7;
+  color: var(--ink-3);
+}
+
+.bo-strip-gap {
+  background: transparent;
+  display: none;
+}
+@media (min-width: 768px) {
+  .bo-strip-gap {
+    display: block;
+  }
+  .bo-strip-grid[data-draw-line] .bo-strip-gap {
+    background: var(--seam-ink);
+  }
+  .bo-strip-grid[data-draw-line][data-line-mobile-only] .bo-strip-gap {
+    background: transparent;
+  }
+}
+@media (max-width: 767px) {
+  .bo-strip-grid[data-draw-line] .bo-strip-col:first-child {
+    border-bottom: var(--seam-weight) solid var(--seam-ink);
+    padding-bottom: 24px;
+    min-height: calc(var(--bo-an) * var(--seam-block));
+  }
+  .bo-strip-grid[data-draw-line] .bo-strip-col:last-child {
+    padding-top: 4px;
+    min-height: calc((1 - var(--bo-an)) * var(--seam-block));
+  }
+}
+
+.bo-strip-evidence {
+  margin-top: 40px;
+  padding-top: 16px;
+  padding-inline: 20px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: flex-end;
+}
+@media (min-width: 768px) {
+  .bo-strip-evidence {
+    padding-inline: 40px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   v1 — 척추. 전고 고정 수직선이 절이 바뀌면 참 값에서 참 값으로 자리를 옮깁니다.
+   768px 미만에서는 끕니다 — 뷰포트 기준 고정 위치가 스크롤 중인 절의 실제
+   블록과 어긋나기 때문입니다. 이 안의 가장 큰 약점으로 자기 채점에 남깁니다.
+   -------------------------------------------------------------------------- */
+
+.bo1-root {
+  position: relative;
+}
+
+.bo1-spine {
+  display: none;
+}
+@media (min-width: 768px) {
+  .bo1-spine {
+    display: block;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: var(--seam-weight);
+    background: var(--seam-ink);
+    z-index: 0;
+  }
+  @supports (width: round(down, 50%, 1px)) {
+    .bo1-spine {
+      left: round(down, 50%, 1px);
+    }
+  }
+  .bo1-root[data-scene="s1"] .bo1-spine {
+    left: var(--bo1-s1-pos);
+  }
+  @supports (width: round(down, 50%, 1px)) {
+    .bo1-root[data-scene="s1"] .bo1-spine {
+      left: round(down, var(--bo1-s1-pos), 1px);
+    }
+  }
+}
+
+.bo1-hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 96px 20px 56px;
+}
+.bo1-hero-rule {
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  right: 20px;
+  height: var(--seam-weight);
+  background: var(--seam-ink);
+}
+@media (min-width: 768px) {
+  .bo1-hero {
+    padding: 0 56px 0 calc(50% + 40px);
+    align-items: flex-start;
+  }
+  .bo1-hero-rule {
+    display: none;
+  }
+}
+
+.bo1-hero-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-weight: 600;
+  /*
+    공유 --text-bo-hero(최대 84px)를 그대로 쓰면 이 안의 절반 폭(약 43%) 칸에서
+    한 줄에 6~7자만 들어가 문장이 여덟 줄로 부서진다 — 이 실험이 고치려는 바로
+    그 "글자 벽" 결함을 데스크톱에서 재현하는 셈이다. 그래서 이 안만 좁은 칸에
+    맞춘 더 차분한 계단을 쓴다. 320px 계단(26~36px)보다는 크지만, 공유 디스플레이
+    계단만큼 크지는 않다 — 척추 옆의 좁은 칸이라는 이 안의 구조가 급수의 상한이다.
+  */
+  font-size: 26px;
+  line-height: 1.35;
+}
+@media (min-width: 768px) {
+  .bo1-hero-lines {
+    font-size: 32px;
+  }
+  .bo1-hero-line {
+    max-width: 14em;
+  }
+}
+@media (min-width: 1024px) {
+  .bo1-hero-lines {
+    font-size: 38px;
+  }
+}
+@media (min-width: 1440px) {
+  .bo1-hero-lines {
+    font-size: 44px;
+  }
+}
+
+.bo1-standfirst {
+  margin-top: 28px;
+  max-width: 30rem;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+
+/* --------------------------------------------------------------------------
+   v2 — 비율이 먼저. 거대한 숫자가 히어로를 열고, layoutId 공유 요소로
+   S1 라벨 자리까지 스스로 옮겨간다.
+   -------------------------------------------------------------------------- */
+
+.bo2-root {
+  position: relative;
+}
+
+.bo2-hero {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px 20px;
+}
+@media (min-width: 768px) {
+  .bo2-hero {
+    padding: 40px 56px;
+  }
+}
+
+.bo2-hero-numeral,
+.bo2-s1-numeral {
+  display: flex;
+  align-items: baseline;
+  gap: 0.15em;
+  font-family: var(--font-mono), monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.bo2-hero-numeral {
+  font-size: var(--text-bo-hero-ratio);
+  line-height: 0.95;
+}
+.bo2-sep {
+  color: var(--ink-3);
+}
+
+.bo2-hero-copy {
+  /*
+    280px 급 숫자 글리프는 줄상자 아래로 시각적 오버슛이 있어 40px 여백으로는
+    "1" 의 내려긋기가 본문 첫 줄과 맞닿아 보였다(6배 확대로 확인). 여백을 키운다.
+  */
+  margin-top: 72px;
+  max-width: 30rem;
+}
+.bo2-hero-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 19px;
+  line-height: 1.5;
+}
+@media (min-width: 768px) {
+  .bo2-hero-lines {
+    font-size: 21px;
+  }
+}
+.bo2-standfirst {
+  margin-top: 16px;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+
+.bo2-s1-numeral-row {
+  padding: 56px 20px 0;
+  min-height: 28px;
+}
+@media (min-width: 768px) {
+  .bo2-s1-numeral-row {
+    padding: 84px 40px 0;
+  }
+}
+.bo2-s1-numeral {
+  font-size: var(--text-bo-ratio);
+  line-height: 1;
+}
+
+/* --------------------------------------------------------------------------
+   v3 — 여백의 압력. 헤어라인 하나가 절대 움직이지 않는다. 히어로의 텍스트는
+   S1 과 같은 실측 비율(16.667%)만큼의 좁은 칸에 놓이고, 나머지는 비운다.
+   -------------------------------------------------------------------------- */
+
+.bo3-root {
+  position: relative;
+}
+
+.bo3-hairline {
+  position: fixed;
+  z-index: 0;
+  background: var(--seam-ink);
+}
+@media (min-width: 768px) {
+  .bo3-hairline {
+    top: 0;
+    bottom: 0;
+    left: var(--bo3-pos);
+    width: var(--seam-weight);
+  }
+  @supports (width: round(down, 50%, 1px)) {
+    .bo3-hairline {
+      left: round(down, var(--bo3-pos), 1px);
+    }
+  }
+}
+@media (max-width: 767px) {
+  .bo3-hairline {
+    left: 0;
+    right: 0;
+    top: var(--bo3-pos);
+    height: var(--seam-weight);
+  }
+  @supports (width: round(down, 50%, 1px)) {
+    .bo3-hairline {
+      top: round(down, var(--bo3-pos), 1px);
+    }
+  }
+}
+
+.bo3-hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px) {
+  .bo3-hero {
+    grid-template-columns: var(--bo3-pos) 1fr;
+  }
+  @supports (width: round(down, 50%, 1px)) {
+    .bo3-hero {
+      grid-template-columns: round(down, var(--bo3-pos), 1px) 1fr;
+    }
+  }
+}
+
+.bo3-hero-text {
+  min-height: calc(var(--seam-block) * 1.2);
+  padding: 96px 20px 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+@media (min-width: 768px) {
+  .bo3-hero-text {
+    padding: 0 28px 0 40px;
+  }
+}
+
+.bo3-hero-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.5;
+}
+@media (min-width: 768px) {
+  .bo3-hero-lines {
+    font-size: 24px;
+  }
+}
+@media (min-width: 1024px) {
+  .bo3-hero-lines {
+    font-size: 27px;
+  }
+}
+
+.bo3-standfirst {
+  margin-top: 24px;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  line-height: 1.6;
+  color: var(--ink-3);
+}
