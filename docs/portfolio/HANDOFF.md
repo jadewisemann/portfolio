@@ -127,13 +127,26 @@ node scripts/capture-states.mjs review/golden-slice
 
 빌더가 죽기 전에 히어로 Best-of-N 을 실제로 렌더했다. 그런데 **독립적인 두 시도**가 존재한다.
 
-| | 위치 | 컴포넌트 | 라우트 | 캡처 |
-|---|---|---|---|---|
-| A · spine | 메인 트리 | `src/components/spine/` (SpineV1/V2/V3 등 8개) | `/v1` `/v2` `/v3` | `review/hero-bestof/` 48장 |
-| B · bestof | 브랜치 `worktree-agent-ae5a2232a24dc642f` | `src/components/bestof/` (V1Spine · V2Ratio · V3Field · SeamStrip) | — | 같은 브랜치 내 48장 |
+**둘 다 `main` 에 병합돼 있다. 브랜치를 넘나들 필요 없이 한 트리에서 6안이 동시에 렌더된다.**
 
-겹치는 파일이 하나도 없다. **B 는 원래 커밋되지 않은 워크트리에 있어 소실 직전이었고,
-이 인수인계에서 브랜치로 보존했다.** 두 벌 다 심사 대상으로 놓고 비교하라.
+| | 컴포넌트 | 라우트 | 캡처 |
+|---|---|---|---|
+| A · spine | `src/components/spine/` (SpineV1/V2/V3 등 8개) | `/v1` `/v2` `/v3` | `review/hero-bestof/` 48장 |
+| B · bestof | `src/components/bestof/` (V1Spine · V2Ratio · V3Field · SeamStrip) | `/b1` `/b2` `/b3` | 같은 디렉터리, 파일명 체계가 다르다 (`geometry-v1-1440.json` vs A 의 `geometry-v1-1440x900.json`) |
+
+B 는 원래 커밋되지 않은 워크트리에 있어 소실 직전이었다. 병합 시 처리한 것:
+
+- 공유 파일(`golden.ts` · `motion-ownership.test.ts` · `globals.css` · `/v1~/v3`)은
+  **main 쪽을 채택**했다. B 의 `golden.ts` 는 main 의 부분집합이었고 `seam.ts` 는 동일했다
+- B 의 CSS 179줄(`bo-` 접두사 14개 클래스)을 `globals.css` 끝에 격리 블록으로 이어붙였다.
+  접두사 덕에 본편과 충돌이 없다
+- B 의 라우트를 `/v1~/v3` 에서 `/b1~/b3` 으로 옮겨 A 와 동시에 렌더되게 했다
+- `motion-ownership.test.ts` 허용 목록에 `src/components/bestof` 를 추가했다
+
+**판정이 끝나면 패자를 지울 때 세 곳을 함께 지워라**: 컴포넌트 디렉터리 ·
+`globals.css` 의 격리 블록 · 허용 목록 항목.
+
+브랜치 `worktree-agent-ae5a2232a24dc642f` 는 병합 이력으로만 남는다. 삭제해도 된다.
 
 ### A 의 증거에는 결함이 세 개 있다 — 이 상태로 모바일·모션을 판정할 수 없다
 

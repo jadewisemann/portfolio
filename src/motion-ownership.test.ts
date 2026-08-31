@@ -120,10 +120,14 @@ describe("모션 소유권", () => {
     // 모두 SP1 을 `transform: translateX`(v2 는 translateY 도) 로 구현하고 상태는
     // IntersectionObserver 불리언에서만 얻는다. 파일이 늘면 여기에 추가하고, 추가할
     // 때 12절 표도 함께 고친다.
+    // `bestof` 는 Best-of-N 시도 B(라우트 /b1 /b2 /b3)다. 시도 A(`spine`)와
+    // 겹치는 파일이 없는 독립 구현이고, 둘 다 아직 독립 비평가 판정을 받지
+    // 못했다. 판정이 끝나면 패자 디렉터리와 함께 이 항목도 지운다.
     const allowed = [
       "src/components/Hero",
       "src/components/DirTree",
       "src/components/spine",
+      "src/components/bestof",
     ];
     const offenders = hits(/<motion\.|\blayout\b\s*(=|\/?>)|initial=\{/).filter(
       (h) => !allowed.some((a) => h.startsWith(a)),

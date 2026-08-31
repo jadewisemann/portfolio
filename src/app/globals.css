@@ -1051,3 +1051,188 @@ button:focus-visible,
   right: 12px;
   flex-direction: row-reverse;
 }
+
+/* ── Best-of-N 시도 B (bestof) ─────────────────────────────
+   라우트 /b1 /b2 /b3 전용. bo- 접두사로 격리돼 있어 본편 CSS 와
+   충돌하지 않는다. 판정 후 패자는 이 블록과 함께 삭제한다.
+   출처: 브랜치 worktree-agent-ae5a2232a24dc642f
+   ───────────────────────────────────────────────────────── */
+/* --------------------------------------------------------------------------
+   공유 — S1 본문 (SeamStrip). 세 안이 전부 이 서식을 씁니다.
+   가로 패딩을 section 이 아니라 자식에게 두는 이유: `.bo-strip-grid` 의 폭이
+   뷰포트 폭과 같아야 각 안의 이음선 장치가 계산한 퍼센트와 같은 픽셀에 떨어집니다.
+   -------------------------------------------------------------------------- */
+
+.bo-strip {
+  position: relative;
+  padding-block: 56px 84px;
+  border-top: 1px solid var(--rule);
+}
+
+@media (min-width: 768px) {
+  .bo-strip {
+    padding-block: 84px 112px;
+  }
+}
+
+.bo-strip-head {
+  padding-inline: 20px;
+}
+
+@media (min-width: 768px) {
+  .bo-strip-head {
+    padding-inline: 40px;
+  }
+}
+
+.bo-strip-mark {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mark);
+  color: var(--ink-3);
+}
+
+.bo-strip-title {
+  margin-top: 8px;
+  max-width: 44rem;
+  font-weight: 600;
+  font-size: var(--text-decision);
+  line-height: 1.5;
+}
+
+.bo-strip-lede {
+  margin-top: 20px;
+  max-width: var(--spacing-measure);
+}
+
+.bo-strip-lede p + p {
+  margin-top: 14px;
+}
+
+.bo-strip-ratio {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 28px;
+  font-family: var(--font-mono), monospace;
+}
+
+.bo-strip-ratio-n {
+  font-size: var(--text-bo-ratio);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.bo-strip-ratio-lab {
+  font-size: var(--text-note);
+  color: var(--ink-3);
+}
+
+.bo-strip-ratio-lab-only {
+  margin-top: 28px;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+  color: var(--ink-2);
+}
+
+.bo-strip-clamped {
+  margin-top: 12px;
+  max-width: var(--spacing-measure);
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  color: var(--ink-3);
+}
+
+.bo-strip-grid {
+  display: grid;
+  margin-top: 28px;
+  width: 100%;
+  grid-template-columns: 1fr;
+  row-gap: 28px;
+}
+
+@media (min-width: 768px) {
+  .bo-strip-grid {
+    grid-template-columns: var(--bo-pct) var(--seam-weight) 1fr;
+  }
+  @supports (width: round(down, 50%, 1px)) {
+    .bo-strip-grid {
+      grid-template-columns: round(down, var(--bo-pct), 1px) var(--seam-weight) 1fr;
+    }
+  }
+}
+
+.bo-strip-col {
+  padding-inline: 20px;
+}
+
+@media (min-width: 768px) {
+  .bo-strip-col:first-child {
+    padding: 0 28px 0 40px;
+  }
+  .bo-strip-col:last-child {
+    padding: 0 40px 0 28px;
+  }
+}
+
+.bo-strip-col h3 {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+  color: var(--ink-2);
+}
+
+.bo-strip-col ul {
+  margin-top: 8px;
+}
+
+.bo-strip-col li {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  line-height: 1.7;
+  color: var(--ink-3);
+}
+
+.bo-strip-gap {
+  background: transparent;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .bo-strip-gap {
+    display: block;
+  }
+  .bo-strip-grid[data-draw-line] .bo-strip-gap {
+    background: var(--seam-ink);
+  }
+  .bo-strip-grid[data-draw-line][data-line-mobile-only] .bo-strip-gap {
+    background: transparent;
+  }
+}
+
+@media (max-width: 767px) {
+  .bo-strip-grid[data-draw-line] .bo-strip-col:first-child {
+    border-bottom: var(--seam-weight) solid var(--seam-ink);
+    padding-bottom: 24px;
+    min-height: calc(var(--bo-an) * var(--seam-block));
+  }
+  .bo-strip-grid[data-draw-line] .bo-strip-col:last-child {
+    padding-top: 4px;
+    min-height: calc((1 - var(--bo-an)) * var(--seam-block));
+  }
+}
+
+.bo-strip-evidence {
+  margin-top: 40px;
+  padding-top: 16px;
+  padding-inline: 20px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (min-width: 768px) {
+  .bo-strip-evidence {
+    padding-inline: 40px;
+  }
+}
