@@ -1,0 +1,236 @@
+/*
+  /c2 — 기계 (INSTRUMENT). 첫 뷰포트 전용, 정적("이후" 상태 한 프레임).
+  이산 브레이크포인트 세 단계: 기본(320) · 1440px 이상 · 1920px 이상.
+*/
+
+.stage {
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: var(--ground);
+}
+
+/* ── 평면: 테스트 48개, 한 개당 가로줄 하나 ──────────────────────────────── */
+
+.plane {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 8px;
+  bottom: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--rule) 0 1px,
+    transparent 1px 13px
+  );
+}
+
+@media (min-width: 1440px) {
+  .plane {
+    top: 462px;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--rule) 0 1px,
+      transparent 1px 9px
+    );
+  }
+}
+
+@media (min-width: 1920px) {
+  .plane {
+    top: 552px;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--rule) 0 1px,
+      transparent 1px 11px
+    );
+  }
+}
+
+/* 데스크톱의 임계값(gate) — 전폭 2px 선, y=540(1920)/450(1440). */
+.gate {
+  display: none;
+}
+
+@media (min-width: 1440px) {
+  .gate {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 450px;
+    height: 2px;
+    background: var(--ink);
+    z-index: 1;
+  }
+}
+
+@media (min-width: 1920px) {
+  .gate {
+    top: 540px;
+  }
+}
+
+/* 모바일의 임계값 — 선이 아니라 48행 중 44행에 붙는 3px 마커. */
+.gateMarker {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 567px; /* plane top(8) + 43 * pitch(13) */
+  height: 3px;
+  background: var(--ink);
+  z-index: 1;
+}
+
+@media (min-width: 1440px) {
+  .gateMarker {
+    display: none;
+  }
+}
+
+/* ── 헤드라인: 데스크톱 전용 (모바일은 화면 2로 이동) ─────────────────────── */
+
+.headline {
+  display: none;
+}
+
+@media (min-width: 1440px) {
+  .headline {
+    display: block;
+    position: absolute;
+    z-index: 2;
+    top: 64px;
+    left: 48px;
+    right: 48px;
+    max-width: 30ch;
+    margin: 0;
+    font-weight: 600;
+    font-size: 56px;
+    line-height: 1.15;
+  }
+}
+
+@media (min-width: 1920px) {
+  .headline {
+    left: 64px;
+    right: 64px;
+    max-width: 34ch;
+    font-size: 72px;
+  }
+}
+
+/* ── 수치: 91.43, 임계값 위에 걸친다 ───────────────────────────────────── */
+
+.numeral {
+  position: absolute;
+  z-index: 2;
+  top: 250px;
+  left: 16px;
+  margin: 0;
+  font-family: var(--font-mono), monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 88px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 1440px) {
+  .numeral {
+    left: 48px;
+    top: 340px; /* 220px 급수를 450px 게이트에 걸치도록 올린다 */
+    font-size: 220px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .numeral {
+    left: 64px;
+    top: 390px; /* 300px 급수를 540px 게이트에 걸치도록 올린다 */
+    font-size: 300px;
+  }
+}
+
+/* ── 판정: 통과 ───────────────────────────────────────────────────────── */
+
+.verdict {
+  position: absolute;
+  z-index: 2;
+  margin: 0;
+  font-weight: 600;
+  right: 16px;
+  top: 250px;
+  font-size: 32px;
+}
+
+@media (min-width: 1440px) {
+  .verdict {
+    right: 48px;
+    top: 96px;
+    font-size: 96px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .verdict {
+    right: 64px;
+    top: 120px;
+    font-size: 120px;
+  }
+}
+
+/* ── 계기판 읽기값 ────────────────────────────────────────────────────── */
+
+.readout {
+  position: absolute;
+  z-index: 2;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--font-mono), monospace;
+  font-size: 13px;
+  color: var(--ink-2);
+  background: var(--ground);
+}
+
+@media (min-width: 1440px) {
+  .readout {
+    left: 48px;
+    bottom: 24px;
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .readout {
+    left: 64px;
+    bottom: 32px;
+    font-size: 15px;
+  }
+}
+
+.label {
+  position: absolute;
+  z-index: 2;
+  left: 16px;
+  top: 16px;
+  margin: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+@media (min-width: 1440px) {
+  .label {
+    left: 48px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .label {
+    left: 64px;
+  }
+}

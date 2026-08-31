@@ -1,0 +1,504 @@
+{
+  "routes": [
+    "/c1",
+    "/c2",
+    "/c3"
+  ],
+  "hashes": {
+    "/c1": {
+      "320": "0c7c1d7e88e4267710f28262bcc6eb3c",
+      "1440": "b25ce199e032d15a40dd028f6cc91d8d",
+      "1920": "aa34f3c2a9232f0e0c067779d64cd234"
+    },
+    "/c2": {
+      "320": "3ee3ceb2ccbfddeb7f560ef9a0eea427",
+      "1440": "2fd4824a22f516196599a2a4a06cc5f4",
+      "1920": "be61927eec296af5cbdf29ea591d1177"
+    },
+    "/c3": {
+      "320": "d33c37e894121b7b734bd07334b30e7d",
+      "1440": "84aff43d7b2544a96f2c1bebe76eb247",
+      "1920": "058c3764ed0d26edfbe2f2d78c069d92"
+    }
+  },
+  "reducedHashes": {
+    "/c1": "b25ce199e032d15a40dd028f6cc91d8d",
+    "/c2": "2fd4824a22f516196599a2a4a06cc5f4",
+    "/c3": "84aff43d7b2544a96f2c1bebe76eb247"
+  },
+  "report": {
+    "/c1": {
+      "320": {
+        "viewport": {
+          "w": 320,
+          "h": 640
+        },
+        "screens": 1.32,
+        "inkSharePct": 53.6,
+        "zeroInkBandSharePct": 0,
+        "largestTypePx": 40,
+        "horizontalOverflowPx": 0,
+        "bands": [
+          {
+            "x0": 0,
+            "x1": 160,
+            "share": 53.88
+          },
+          {
+            "x0": 160,
+            "x1": 320,
+            "share": 53.33
+          }
+        ]
+      },
+      "1440": {
+        "viewport": {
+          "w": 1440,
+          "h": 900
+        },
+        "screens": 1,
+        "inkSharePct": 56.63,
+        "zeroInkBandSharePct": 0,
+        "largestTypePx": 128,
+        "horizontalOverflowPx": 0,
+        "bands": [
+          {
+            "x0": 0,
+            "x1": 160,
+            "share": 44.67
+          },
+          {
+            "x0": 160,
+            "x1": 320,
+            "share": 59.65
+          },
+          {
+            "x0": 320,
+            "x1": 480,
+            "share": 61.11
+          },
+          {
+            "x0": 480,
+            "x1": 640,
+            "share": 58.92
+          },
+          {
+            "x0": 640,
+            "x1": 800,
+            "share": 61.11
+          },
+          {
+            "x0": 800,
+            "x1": 960,
+            "share": 58.92
+          },
+          {
+            "x0": 960,
+            "x1": 1120,
+            "share": 61.11
+          },
+          {
+            "x0": 1120,
+            "x1": 1280,
+            "share": 59.65
+          },
+          {
+            "x0": 1280,
+            "x1": 1440,
+            "share": 44.52
+          }
+        ]
+      },
+      "1920": {
+        "viewport": {
+          "w": 1920,
+          "h": 1080
+        },
+        "screens": 1,
+        "inkSharePct": 59.3,
+        "zeroInkBandSharePct": 0,
+        "largestTypePx": 160,
+        "horizontalOverflowPx": 0,
+        "bands": [
+          {
+            "x0": 0,
+            "x1": 160,
+            "share": 43.36
+          },
+          {
+            "x0": 160,
+            "x1": 320,
+            "share": 60.63
+          },
+          {
+            "x0": 320,
+            "x1": 480,
+            "share": 63.76
+          },
+          {
+            "x0": 480,
+            "x1": 640,
+            "share": 63.76
+          },
+          {
+            "x0": 640,
+            "x1": 800,
+            "share": 60.63
+          },
+          {
+            "x0": 800,
+            "x1": 960,
+            "share": 63.76
+          },
+          {
+            "x0": 960,
+            "x1": 1120,
+            "share": 63.76
+          },
+          {
+            "x0": 1120,
+            "x1": 1280,
+            "share": 60.63
+          },
+          {
+            "x0": 1280,
+            "x1": 1440,
+            "share": 63.76
+          },
+          {
+            "x0": 1440,
+            "x1": 1600,
+            "share": 63.76
+          },
+          {
+            "x0": 1600,
+            "x1": 1760,
+            "share": 60.63
+          },
+          {
+            "x0": 1760,
+            "x1": 1920,
+            "share": 43.13
+          }
+        ]
+      }
+    },
+    "/c2": {
+      "320": {
+        "viewport": {
+          "w": 320,
+          "h": 640
+        },
+        "screens": 1,
+        "inkSharePct": 28.99,
+        "zeroInkBandSharePct": 0,
+        "largestTypePx": 88,
+        "horizontalOverflowPx": 0,
+        "bands": [
+          {
+            "x0": 0,
+            "x1": 160,
+            "share": 29.48
+          },
+          {
+            "x0": 160,
+            "x1": 320,
+            "share": 28.49
+          }
+        ]
+      },
+      "1440": {
+        "viewport": {
+          "w": 1440,
+          "h": 900
+        },
+        "screens": 1,
+        "inkSharePct": 23.48,
+        "zeroInkBandSharePct": 0,
+        "largestTypePx": 220,
+        "horizontalOverflowPx": 0,
+        "bands": [
+          {
+            "x0": 0,
+            "x1": 160,
+            "share": 25.63
+          },
+          {
+            "x0": 160,
+            "x1": 320,
+            "share": 35.02
+          },
+          {
+            "x0": 320,
+            "x1": 480,
+            "share": 35.02
+          },
+          {
+            "x0": 480,
+            "x1": 640,
+            "share": 35.02
+          },
+          {
+            "x0": 640,
+            "x1": 800,
+            "share": 17.61
+          },
+          {
+            "x0": 800,
+            "x1": 960,
+            "share": 10.58
+          },
+          {
+            "x0": 960,
+            "x1": 1120,
+            "share": 10.58
+          },
+          {
+            "x0": 1120,
+            "x1": 1280,
+            "share": 19.64
+          },
+          {
+            "x0": 1280,
+            "x1": 1440,
+            "share": 22.21
+          }
+        ]
+      },
+      "1920": {
+        "viewport": {
+          "w": 1920,
+          "h": 1080
+        },
+        "screens": 1,
+        "inkSharePct": 24.07,
+        "zeroInkBandSharePct": 0,
+        "largestTypePx": 300,
+        "horizontalOverflowPx": 0,
+        "bands": [
+          {
+            "x0": 0,
+            "x1": 160,
+            "share": 23.26
+          },
+          {
+            "x0": 160,
+            "x1": 320,
+            "share": 37.22
+          },
+          {
+            "x0": 320,
+            "x1": 480,
+            "share": 37.22
+          },
+          {
+            "x0": 480,
+            "x1": 640,
+            "share": 37.22
+          },
+          {
+            "x0": 640,
+            "x1": 800,
+            "share": 37.22
+          },
+          {
+            "x0": 800,
+            "x1": 960,
+            "share": 32.71
+          },
+          {
+            "x0": 960,
+            "x1": 1120,
+            "share": 9.44
+          },
+          {
+            "x0": 1120,
+            "x1": 1280,
+            "share": 9.44
+          },
+          {
+            "x0": 1280,
+            "x1": 1440,
+            "share": 9.44
+          },
+          {
+            "x0": 1440,
+            "x1": 1600,
+            "share": 9.44
+          },
+          {
+            "x0": 1600,
+            "x1": 1760,
+            "share": 26.44
+          },
+          {
+            "x0": 1760,
+            "x1": 1920,
+            "share": 19.83
+          }
+        ]
+      }
+    },
+    "/c3": {
+      "320": {
+        "viewport": {
+          "w": 320,
+          "h": 640
+        },
+        "screens": 1.29,
+        "inkSharePct": 9.54,
+        "zeroInkBandSharePct": 0,
+        "largestTypePx": 22,
+        "horizontalOverflowPx": 0,
+        "bands": [
+          {
+            "x0": 0,
+            "x1": 160,
+            "share": 11.73
+          },
+          {
+            "x0": 160,
+            "x1": 320,
+            "share": 7.34
+          }
+        ]
+      },
+      "1440": {
+        "viewport": {
+          "w": 1440,
+          "h": 900
+        },
+        "screens": 1.97,
+        "inkSharePct": 0,
+        "zeroInkBandSharePct": 100,
+        "largestTypePx": 0,
+        "horizontalOverflowPx": 0,
+        "bands": [
+          {
+            "x0": 0,
+            "x1": 160,
+            "share": 0
+          },
+          {
+            "x0": 160,
+            "x1": 320,
+            "share": 0
+          },
+          {
+            "x0": 320,
+            "x1": 480,
+            "share": 0
+          },
+          {
+            "x0": 480,
+            "x1": 640,
+            "share": 0
+          },
+          {
+            "x0": 640,
+            "x1": 800,
+            "share": 0
+          },
+          {
+            "x0": 800,
+            "x1": 960,
+            "share": 0
+          },
+          {
+            "x0": 960,
+            "x1": 1120,
+            "share": 0
+          },
+          {
+            "x0": 1120,
+            "x1": 1280,
+            "share": 0
+          },
+          {
+            "x0": 1280,
+            "x1": 1440,
+            "share": 0
+          }
+        ]
+      },
+      "1920": {
+        "viewport": {
+          "w": 1920,
+          "h": 1080
+        },
+        "screens": 1.56,
+        "inkSharePct": 0,
+        "zeroInkBandSharePct": 100,
+        "largestTypePx": 0,
+        "horizontalOverflowPx": 0,
+        "bands": [
+          {
+            "x0": 0,
+            "x1": 160,
+            "share": 0
+          },
+          {
+            "x0": 160,
+            "x1": 320,
+            "share": 0
+          },
+          {
+            "x0": 320,
+            "x1": 480,
+            "share": 0
+          },
+          {
+            "x0": 480,
+            "x1": 640,
+            "share": 0
+          },
+          {
+            "x0": 640,
+            "x1": 800,
+            "share": 0
+          },
+          {
+            "x0": 800,
+            "x1": 960,
+            "share": 0
+          },
+          {
+            "x0": 960,
+            "x1": 1120,
+            "share": 0
+          },
+          {
+            "x0": 1120,
+            "x1": 1280,
+            "share": 0
+          },
+          {
+            "x0": 1280,
+            "x1": 1440,
+            "share": 0
+          },
+          {
+            "x0": 1440,
+            "x1": 1600,
+            "share": 0
+          },
+          {
+            "x0": 1600,
+            "x1": 1760,
+            "share": 0
+          },
+          {
+            "x0": 1760,
+            "x1": 1920,
+            "share": 0
+          }
+        ]
+      }
+    }
+  },
+  "problems": [
+    "/c1: 축소 모션이 일반과 바이트 동일하다 — 설계된 대안이 아니라 「애니메이션이 로드에 실패한 화면」이다 (MOTION_LANGUAGE.md §13.1).",
+    "/c2: 축소 모션이 일반과 바이트 동일하다 — 설계된 대안이 아니라 「애니메이션이 로드에 실패한 화면」이다 (MOTION_LANGUAGE.md §13.1).",
+    "/c3: 축소 모션이 일반과 바이트 동일하다 — 설계된 대안이 아니라 「애니메이션이 로드에 실패한 화면」이다 (MOTION_LANGUAGE.md §13.1)."
+  ]
+}

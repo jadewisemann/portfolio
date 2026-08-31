@@ -1,0 +1,23 @@
+{
+  "viewport": {
+    "w": 320,
+    "h": 640
+  },
+  "screens": 1.32,
+  "inkSharePct": 53.6,
+  "zeroInkBandSharePct": 0,
+  "largestTypePx": 40,
+  "horizontalOverflowPx": 0,
+  "bands": [
+    {
+      "x0": 0,
+      "x1": 160,
+      "share": 53.88
+    },
+    {
+      "x0": 160,
+      "x1": 320,
+      "share": 53.33
+    }
+  ]
+}

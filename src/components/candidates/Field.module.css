@@ -1,0 +1,151 @@
+/*
+  /c1 — 필드 (FIELD). 첫 뷰포트 전용, 스크롤 없음.
+  이산 브레이크포인트 세 단계: 기본(320) · 1440px 이상 · 1920px 이상.
+  clamp() 를 쓰지 않는다 (DESIGN_SYSTEM.md 4절).
+*/
+
+.stage {
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: var(--ground);
+}
+
+/* ── 필드: 447개 마크가 만드는 텍스처 ────────────────────────────────────── */
+
+.field {
+  --cols: 21;
+  --pitch: 15.2px;
+  --mark: 8px;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--pitch));
+  grid-auto-rows: var(--pitch);
+  align-content: start;
+}
+
+@media (min-width: 1440px) {
+  .field {
+    --cols: 32;
+    --pitch: 45px;
+    --mark: 15px;
+    position: absolute;
+    inset: 0;
+  }
+}
+
+@media (min-width: 1920px) {
+  .field {
+    --pitch: 60px;
+    --mark: 20px;
+    /* 위아래를 절반 행만큼 밀어 상하가 크롭된 것처럼 보이게 한다. */
+    transform: translateY(-30px);
+  }
+}
+
+.mark {
+  width: var(--mark);
+  height: var(--mark);
+  line-height: var(--mark);
+  font-size: var(--mark);
+  align-self: center;
+  justify-self: center;
+  color: var(--ink-3);
+  overflow: hidden;
+}
+
+/* 236파일 재편(커밋 91b3363)에 해당하는 마크. 249+198=447 과는 별개의 집계다 —
+   포함 관계를 시각적으로 강조하되 캡션은 447 의 부분집합이라고 말하지 않는다. */
+.markRestructured {
+  color: var(--ink);
+}
+
+/* ── 타이포: 필드 위에 겹쳐 찍는다(데스크톱) / 필드 아래(모바일) ─────────── */
+
+.type {
+  position: relative;
+  z-index: 1;
+  padding: 24px 16px 40px;
+}
+
+@media (min-width: 1440px) {
+  .type {
+    position: absolute;
+    top: 300px;
+    left: 48px;
+    right: 48px;
+    padding: 0;
+  }
+}
+
+@media (min-width: 1920px) {
+  .type {
+    top: 380px;
+    left: 60px;
+    right: 60px;
+  }
+}
+
+.headline {
+  margin: 0;
+  max-width: 20ch;
+  font-weight: 600;
+  font-size: 40px;
+  line-height: 1.12;
+}
+
+@media (min-width: 1440px) {
+  .headline {
+    max-width: 34ch;
+    font-size: 88px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .headline {
+    max-width: 40ch;
+    font-size: 112px;
+  }
+}
+
+.numeral {
+  margin: 16px 0 0;
+  font-family: var(--font-mono), monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 1440px) {
+  .numeral {
+    font-size: 128px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .numeral {
+    font-size: 160px;
+  }
+}
+
+.captions {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-mono), monospace;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+@media (min-width: 1440px) {
+  .captions {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .captions {
+    font-size: 15px;
+  }
+}
