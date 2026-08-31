@@ -14,7 +14,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { chromium } from "@playwright/test";
+import { launchChromium } from "./lib/browser.mjs";
 
 const args = process.argv.slice(2);
 const outDir = args.find((a) => !a.startsWith("--")) ?? "review/golden-slice";
@@ -23,7 +23,7 @@ const url = `http://localhost:${port}/`;
 fs.mkdirSync(outDir, { recursive: true });
 
 const shot = (p) => path.join(outDir, p);
-const browser = await chromium.launch({ channel: "chrome" });
+const browser = await launchChromium();
 
 const viewports = [
   { name: "wide-1920", width: 1920, height: 1080 },
