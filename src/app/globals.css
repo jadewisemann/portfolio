@@ -68,12 +68,22 @@
 
   --leading-mono: 28px;
 
-  /* 이징 둘, 지속 시간 셋. MOTION_LANGUAGE.md 3·4절. */
+  /*
+    이징 셋, 지속 시간 다섯. MOTION_LANGUAGE.md 3·4절이 값의 정본이고
+    `src/motion-tokens.test.ts` 가 두 곳이 어긋나면 실패한다.
+
+    `--ease-spine` · `--duration-spine` · `--duration-hold` 는 2026-08-31
+    GOLDEN_FIX 1 에서 문서에 신설됐지만 CSS 에는 들어오지 않았다. 그 셋을 인용한 곳은
+    컴포넌트 주석 두 줄뿐이어서 시간적 위계 전체가 산문으로만 존재했다.
+  */
   --ease-settle: cubic-bezier(0.2, 0, 0, 1);
   --ease-travel: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spine: cubic-bezier(0.16, 1, 0.3, 1);
   --duration-contrast: 90ms;
   --duration-state: 120ms;
   --duration-sort: 320ms;
+  --duration-spine: 620ms;
+  --duration-hold: 200ms;
 }
 
 html {
