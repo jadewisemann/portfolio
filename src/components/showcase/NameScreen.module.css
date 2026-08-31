@@ -1,0 +1,34 @@
+/*
+  첫 뷰포트 — 이름 하나뿐이다 (owner 지시: 첫 화면에 이름과 그 외 아무것도 없어야
+  한다). firstScreenChars 는 정확히 12 여야 한다 ("jadewisemann"). 힌트 문구 ·
+  스크롤 화살표 · sr-only 안내문을 전부 뺀다 — 폭 0이 아닌 sr-only 텍스트도
+  스크립트의 measureForm 이 세기 때문이다.
+*/
+
+.stage {
+  display: flex;
+  min-height: 100dvh;
+  align-items: center;
+  justify-content: center;
+}
+
+.name {
+  margin: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: 32px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+@media (min-width: 768px) {
+  .name {
+    font-size: 48px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .name {
+    font-size: 64px;
+  }
+}

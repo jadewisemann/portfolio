@@ -1,0 +1,36 @@
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: var(--spacing-measure);
+}
+
+.name {
+  margin: 0;
+  font-size: var(--text-decision);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.blurb {
+  margin: 0;
+  font-size: 17px;
+  color: var(--ink-2);
+}
+
+.keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.keyword {
+  border: 1px solid var(--rule);
+  padding: 4px 10px;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+  color: var(--ink-2);
+}
