@@ -44,34 +44,54 @@ claims) remain binding.
 
 The target reaction, in order: **"What the fuck, this is beautiful"** first, then
 **"and this person clearly knows how to engineer interfaces."** The order is the
-whole brief. Beauty arrives first; competence is proven by *how the beauty was
-built*, never by explaining competence in prose.
+whole brief. Beauty arrives first.
 
 The owner rejected the 2026-08-31 output in one word: **"이력서냐"** (is this a
-résumé?). That is the sharpest signal in this repo's history. Learn the register
-it names:
+résumé?). Learn the register it names:
 
 | Résumé register (rejected) | Portfolio register (wanted) |
 |---|---|
-| One column of text | Designed scenes connected by motion |
+| One column of text | Designed scenes |
 | Facts with evidence grades as footnotes | Facts as part of a scene |
-| Says *what was done* | Shows *how it works* |
+| Explains the work in prose | Shows the work |
 | 36px heading, centered band | Typography that dominates the viewport |
 
-**Hard constraint that decides everything**: `CONTENT.md` §8 — project images
-and video are **zero**. There is no media to art-direct with.
+### A portfolio shows; it does not explain (owner, 2026-08-31)
 
-The 2026-08-31 run read that as "then use only text and thin rules," which
-guarantees a document. The unused option is the better one: **the engineering
-mechanisms are the visual material.** `CONTENT.md` §2.3 names the coverage
-ratchet as "이 사이트의 핵심 소재" — a ratchet only moves one way, which is
-motion, not a sentence. The E2E two-stage harness, the payment FSM, the
-two-tier cache, the infinite-render bug: these are things that *operate*, and
-what operates can be rendered. Having no screenshots does not mean having no
-screens.
+Three rounds of candidates were built and rejected before this was written down,
+so take it literally:
 
-So: don't describe the projects — **demonstrate them.** Typography dominates on
-top of that, three unforgettable moments, decoration last.
+> 포트폴리오는 내 프로젝트를 설명하는 게 아니야. 그냥 뭘 했는지 미적으로 보여주는
+> 거지. 뭘 했는지를 아름답게 설명할 필요가 전혀 없어. 키워드랑 프로젝트 설명이랑
+> 스크린샷 같은 것만 두고, 거기서 별도 페이지에서 아키텍처나 코드 리딩을 보고 하는
+> 구조야.
+
+**The structure**, and it is not negotiable without the owner:
+
+- **Landing** — keywords, a short project blurb, screenshots. Presented
+  aesthetically, in 3D. **The first viewport carries the name and nothing else**
+  (owner, same day: 첫 페이지에서는 글자가 거의 없어야 해).
+- **Per-project pages** — architecture and code reading live here, reached from
+  the landing page. This is where depth goes.
+
+So: **screenshots and keywords on the surface, depth one click away.**
+
+### Two failure modes this repo has actually produced
+
+1. **The document.** Sentences explaining the work, evidence grades as footnotes,
+   a centred column of prose. A README wearing a portfolio's clothes.
+2. **Rendering the mechanisms.** An earlier version of this file said the
+   engineering mechanisms were the visual material — the coverage ratchet, the
+   payment FSM, the two-tier cache, drawn as things that operate. It followed from
+   `CONTENT.md` §8 recording zero images, and it was a detour around a constraint
+   that no longer holds: **the owner supplies screenshots.** The owner's verdict
+   on that line of work was 과하게 어려운 일을 하려고 노력 중이었구나. Do not
+   restart it. A mechanism belongs on a project page, in prose and diagrams, where
+   someone who clicked through actually wants it.
+
+3D is presentation, not explanation — it is how the screenshots and keywords are
+shown, not a way to animate an architecture diagram. `MOTION_LANGUAGE.md` §1.4
+and §6 carry the conditions and the scene-versus-ornament test.
 
 ## Core rules
 
