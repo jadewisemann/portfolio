@@ -214,3 +214,40 @@ describe("방향 확정은 픽셀을 요구한다", () => {
     expect(unmet.length).toBeGreaterThan(0);
   });
 });
+
+/**
+ * 구조 재설계도 픽셀을 요구한다.
+ *
+ * `ART_DIRECTION_BRANCH` 는 `.md` 3장으로 통과했고, 그렇게 고른 방향이 시각 충격
+ * 2.8 / 9.0 을 받았다. 그 구멍은 `DIRECTION_RENDER` 를 끼워 막았다.
+ *
+ * `STRUCTURAL_BRANCH` 는 같은 구멍을 그대로 가지고 있었다 — 요건이 `DECISIONS.md` 에
+ * 「## Structural branch」라는 문자열 하나뿐이어서, 렌더된 화면 없이 산문만으로 개념을
+ * 확정할 수 있었다. 개념이 틀려서 오는 노드인데 개념을 다시 종이에서 고르게 되어 있었다.
+ *
+ * 게이트를 산문으로 되돌리면 여기서 깨진다.
+ */
+describe("구조 재설계도 픽셀을 요구한다", () => {
+  const node = () => realGraph.nodes.STRUCTURAL_BRANCH;
+
+  it("STRUCTURAL_BRANCH 가 렌더된 PNG 를 요구한다", () => {
+    const png = [node().evidence ?? []].flat().filter((r) => /png/.test(r.pattern ?? ""));
+    expect(png.length).toBeGreaterThan(0);
+    // 후보 3개 x 뷰포트 3개 = 최소 9장.
+    expect(png.some((r) => r.minFiles >= 9)).toBe(true);
+  });
+
+  it("구조 후보의 모바일 렌더가 강제된다", () => {
+    const mobile = [node().evidence ?? []].flat().filter((r) => /320/.test(r.pattern ?? ""));
+    expect(mobile.length).toBeGreaterThan(0);
+  });
+
+  it("확정 근거로 스크린샷 경로를 DECISIONS.md 에 남기게 한다", () => {
+    const produces = node().produces ?? [];
+    expect(
+      produces.some(
+        (p) => p.path.endsWith("DECISIONS.md") && /review\/structural/.test(p.mustMatch ?? ""),
+      ),
+    ).toBe(true);
+  });
+});
