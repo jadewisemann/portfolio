@@ -208,3 +208,111 @@ judgment in that DESIGN.md remains binding.
 6인 팀 (BE 3 · AI 1 · Infra 1 · FE 1) · `.java` 267 · FE+BE 동시 수정 6 · AI 트레일러 16 ·
 7개 폴더 → 1개. 「7개 폴더」의 근거 문장은 야추에 대한 것이고 표는 탁구로 증명하는데,
 그 치환은 화면에 밝혀져 있으므로 유지한다.
+
+## Structural branch (2026-08-31)
+
+`GOLDEN_FIX` was abandoned at iteration 1 and the graph advanced on `exhausted`.
+The reason is `CLAUDE.md`'s own rule: a visual-impact score below about 5 means the
+concept is wrong, not that the spacing is wrong. The measured score was **2.8 / 9.0**,
+and 1 of 11 categories passed. Patching failure categories cannot rescue that.
+
+The diagnosis, which the owner then confirmed in stronger terms: **이음선 (Seam) is an
+editorial page system** — rules, ratio labels, two columns, a symbol vocabulary. A
+document is what that concept *is*. No amount of tuning escapes it.
+
+### Four rounds were rendered and rejected
+
+Each round is on disk. The pixels, not the prose, are why each died.
+
+| Round | Routes | Evidence | Why it died |
+|---|---|---|---|
+| 1 · text-forward | `/c1` `/c2` `/c3` | `review/structural/` | Sentences, readouts, a headline at 149px. Still a document, in bigger type |
+| 2 · wordless | `/d1` `/d2` `/d3` | `review/wordless/` | Owner: 셋 다 약하다. Flat, quiet, ink on paper |
+| 3 · mechanisms in 3D | never built | — | Halted mid-build by the owner's correction below |
+| 4 · screenshot showcase | `/f1` `/f2` `/f3` | `review/showcase/` | `/f1` has one good frame at 35% scroll and a blank one at 55%; `/f2` is an ordinary three-column card list; `/f3` puts everything in a narrow centre column with empty sides |
+
+### What the owner settled, and it is binding
+
+> 포트폴리오는 내 프로젝트를 설명하는 게 아니야. 그냥 뭘 했는지 미적으로 보여주는 거지.
+> 키워드랑 프로젝트 설명이랑 스크린샷 같은 것만 두고, 거기서 별도 페이지에서 아키텍처나
+> 코드 리딩을 보고 하는 구조야.
+
+- **Landing** — keywords, a short project blurb, screenshots, presented aesthetically in
+  3D. The first viewport carries the name and nothing else
+  (첫 페이지에서는 글자가 거의 없어야 해).
+- **Per-project pages** — architecture and code reading. Depth lives one click away.
+- **3D is presentation, not explanation.** It is how the screenshots and keywords are
+  shown, never a way to animate an architecture diagram.
+- **Finished, now.** 스크린샷은 그냥 진짜 끼워넣는거고 있던 없던 핑계가 안 되. 완성이 되어
+  있는 느낌이어야 함. An image slot is a **frame**, not a placeholder waiting to be
+  filled: it must read as finished while holding a plain field. "The screenshots aren't
+  in yet" is not a defence and must not shape the work.
+
+### The detour, named so it is not restarted
+
+An earlier `CLAUDE.md` said the engineering mechanisms were the visual material — the
+coverage ratchet, the payment FSM, the two-tier cache, drawn as things that operate. It
+followed from `CONTENT.md` §8 recording zero images, and it was a way around a constraint
+that no longer holds, since the owner supplies screenshots. The owner's verdict:
+**과하게 어려운 일을 하려고 노력 중이었구나.** A mechanism belongs on a project page, in
+prose and diagrams, for someone who clicked through. `CLAUDE.md` now records both failure
+modes — the document, and the mechanism rendering — with the shape of each.
+
+### What dies with the seam
+
+- `ART_DIRECTION.md` §3.3 · §3.4 · §3.5 · §3.6 · §4 · §4.1 · §5 — spine, ratio label, the
+  two cells, the fixed section format, the scene→ratio table, the slice range, the mobile
+  axis swap. All exist only to serve 이음선.
+- `DESIGN_SYSTEM.md` §6's four `--seam-*` tokens; `--text-ratio` and the rule
+  「지면에서 가장 큰 글자는 항상 비율이다」; §2's `--ground-sub` clause for the seam's right
+  cell, which also resolves §3's recorded contradiction about `.seam-col-b`.
+- `MOTION_LANGUAGE.md` §12's SP1 and SP2. G1 was already dead — the gutter rail was deleted
+  in `ART_DIRECTION.md` §3.7 for carrying 0.0089% real ink — and is removed from the table.
+- `SCENE_GRAPH.md`'s ratio annotations. The scene list survives; its ratio column does not.
+
+Not everything goes. `ART_DIRECTION.md` §3.13 (four colour roles), §3.14 (no syntax
+highlighting), §3.15, §3.16 and §6 were not the cause of the failure and are kept.
+
+### Two engine changes made in the same branch
+
+1. **`STRUCTURAL_BRANCH` now requires pixels.** It gated on the string `## Structural
+   branch` in this file and nothing else — the node you reach *because the concept was
+   wrong* let you pick the replacement concept on paper, which is exactly how
+   `ART_DIRECTION_BRANCH` produced a 2.8. It now requires nine PNGs in `review/structural/`,
+   three of them at 320px, and this entry citing `review/structural/`. Three tests in
+   `scripts/graph.test.mjs` fail if anyone loosens it.
+2. **3D is permitted, with conditions.** `CLAUDE.md`'s motion ownership table already
+   allowed Three.js for explicit 3D scenes while `MOTION_LANGUAGE.md` §1.4 forbade it
+   outright, and nothing decided which won. §1.4, §6 and §8 are revised: the flat default
+   holds for page layout, geometry may carry depth inside a declared scene, and the test
+   for which is which is whether the depth encodes a fact or decorates a surface. Four
+   conditions attach — dynamic import off the first-paint path, designed static
+   alternatives for no-WebGL/no-JS/reduced-motion, a keyboard path beside every pointer
+   drag, and if a scene drops the performance gate the scene goes rather than the
+   threshold.
+
+### Measurement, corrected before it was used to judge
+
+The ink metric summed element bounding boxes and counted every `svg` and `canvas` whole, so
+a full-bleed `svg` painting nothing scored ~100%. It reported 59.3% for a sparse dot field.
+Ink is now counted from the screenshot itself and split by contrast, because a single
+threshold still called the rejected slice 6.67% painted with zero empty bands — its 28px
+substrate paints across the full width at 1.18:1, invisible to a reader and solid to a pixel
+counter. The split reproduces the independent critic's hand measurements of that slice:
+strong ink 2.42% against their 2.48%, empty bands 58.3% against their 58.3%.
+
+Two capture defects were fixed alongside it: the pipeline could not run without a Chrome
+desktop install, and `capture.mjs` killed its server with the Windows-only `taskkill`, so on
+POSIX a stale server kept port 3101 and the next run photographed a page that no longer
+existed in the source — `HANDOFF.md`'s stale-screenshot trap, mechanised.
+
+### Still open
+
+- **Screenshots do not exist yet.** The ledger has none, this container's egress blocks both
+  live demos, and the project repositories carry only badges and favicons.
+  `scripts/capture-shots.mjs` and `docs/portfolio/CAPTURE_SHOTS.md` exist so a local agent
+  with network access can capture them. YORR has no deployed URL at all
+  (`CONTENT.md` §8), so it needs the mirror run locally or an honest "not captured".
+- **The direction is not locked.** Nothing built so far survives the owner's own question,
+  지금 아름답나 — answered no, on all of it. This entry records the structure and what was
+  eliminated; it does not lock a composition.

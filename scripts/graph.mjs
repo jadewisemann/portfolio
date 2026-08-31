@@ -245,7 +245,22 @@ export function unmetRequirements(node) {
   for (const rule of [node.evidence ?? []].flat()) {
     const { dir, minFiles, pattern, why, fresherThan } = rule;
     const re = new RegExp(pattern ?? ".");
-    const files = fs.existsSync(abs(dir)) ? fs.readdirSync(abs(dir)).filter((f) => re.test(f)) : [];
+    // 하위 폴더까지 센다. 예전에는 한 단계만 읽어서, 증거를 `rejected-01-text/` 처럼
+    // 정리해 넣으면 42장이 0장으로 집계됐다. 정리하면 깨지는 게이트는 정리를 막거나
+    // 우회를 부른다 — 둘 다 증거를 나쁘게 만든다. 경로는 dir 기준 상대로 매칭하므로
+    // `320.*\.png$` 같은 패턴이 폴더를 건너도 그대로 걸린다.
+    const files = fs.existsSync(abs(dir))
+      ? fs
+          .readdirSync(abs(dir), { recursive: true, withFileTypes: true })
+          .filter((e) => e.isFile())
+          .map((e) =>
+            path
+              .relative(abs(dir), path.join(e.parentPath ?? e.path, e.name))
+              .split(path.sep)
+              .join("/"),
+          )
+          .filter((f) => re.test(f))
+      : [];
     if (files.length < minFiles) {
       unmet.push(
         `${dir}: 증거 파일 ${minFiles}개 필요, 현재 ${files.length}개 (/${pattern}/)` +
@@ -258,7 +273,7 @@ export function unmetRequirements(node) {
     // 된다 — 2026-08-31 런이 실제로 그 직전까지 갔다.
     if (fresherThan) {
       const source = newestMtime(abs(fresherThan));
-      const stale = files.filter((f) => fs.statSync(path.join(abs(dir), f)).mtimeMs < source);
+      const stale = files.filter((f) => fs.statSync(path.join(abs(dir), ...f.split("/"))).mtimeMs < source);
       if (stale.length) {
         unmet.push(
           `${dir}: ${fresherThan}/ 보다 오래된 증거 ${stale.length}개 ` +
