@@ -65,18 +65,52 @@
       ],
       "skill": "art-direction",
       "parallel": true,
-      "evidence": {
-        "dir": "docs/portfolio/directions",
-        "minFiles": 3,
-        "pattern": "\\.md$"
-      },
+      "evidence": [
+        {
+          "dir": "docs/portfolio/directions",
+          "minFiles": 3,
+          "pattern": "\\.md$",
+          "why": "산문 스펙은 여기까지만 유효하다. 확정은 DIRECTION_RENDER 의 픽셀로 한다"
+        }
+      ],
+      "edges": {
+        "pass": "DIRECTION_RENDER"
+      }
+    },
+    "DIRECTION_RENDER": {
+      "title": "방향 후보를 실제로 렌더",
+      "agents": [
+        "frontend-builder"
+      ],
+      "evidence": [
+        {
+          "dir": "review/directions",
+          "minFiles": 9,
+          "pattern": "\\.png$",
+          "why": "3개 방향 x 3개 뷰포트. 렌더 안 된 방향은 심사 대상이 아니다"
+        },
+        {
+          "dir": "review/directions",
+          "minFiles": 3,
+          "pattern": "320.*\\.png$",
+          "why": "모바일을 강제한다. 데스크톱만 렌더하면 모바일이 3안에서 동일해진다 (2026-08-31 런의 실제 결함)"
+        }
+      ],
       "edges": {
         "pass": "DIRECTION_JUDGE"
       }
     },
     "DIRECTION_JUDGE": {
-      "title": "디렉션 심사·확정",
+      "title": "디렉션 심사·확정 (렌더된 화면으로만)",
       "owner": "main",
+      "evidence": [
+        {
+          "dir": "review/directions",
+          "minFiles": 9,
+          "pattern": "\\.png$",
+          "why": "판정 근거가 화면에 실제로 존재해야 한다. 스펙을 읽고 고르는 것은 금지"
+        }
+      ],
       "produces": [
         {
           "path": "docs/portfolio/ART_DIRECTION.md",
@@ -85,6 +119,10 @@
         {
           "path": "docs/portfolio/DECISIONS.md",
           "mustMatch": "## Direction lock"
+        },
+        {
+          "path": "docs/portfolio/DECISIONS.md",
+          "mustMatch": "review/directions/"
         }
       ],
       "edges": {

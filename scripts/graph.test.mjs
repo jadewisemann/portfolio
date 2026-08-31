@@ -3,7 +3,14 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
-import { applyAdvance, checkDocRule, evaluateGate, pickOutcome, validateGraph } from "./graph.mjs";
+import {
+  applyAdvance,
+  checkDocRule,
+  evaluateGate,
+  pickOutcome,
+  unmetRequirements,
+  validateGraph,
+} from "./graph.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const realGraph = JSON.parse(fs.readFileSync(path.join(ROOT, "docs/portfolio/graph.json"), "utf8"));
@@ -142,5 +149,68 @@ describe("applyAdvance", () => {
     expect(next.currentNode).toBe("COMPLETE");
     expect(next.active).toBe(false);
     expect(next.status).toBe("COMPLETE");
+  });
+});
+
+/**
+ * 2026-08-31 런의 근본 결함에 대한 회귀 가드.
+ *
+ * 그 런은 아트 디렉션을 마크다운 3장만 보고 확정했다. 게이트가 `.md` 파일 개수만
+ * 셌기 때문이다. 그래서 종이에서만 성립하는 방향이 통과했고, 골든 슬라이스는
+ * 시각 충격 2.8 / 9.0 을 받았다 — 비평가 표현으로 "리더 모드의 한국어 기술
+ * 블로그와 구별되지 않는" 문서였다.
+ *
+ * 이 테스트는 그 구멍이 다시 열리는 것을 막는다. 게이트를 산문만으로 되돌리면
+ * 여기서 깨진다.
+ */
+describe("방향 확정은 픽셀을 요구한다", () => {
+  const rules = (name) => [realGraph.nodes[name]?.evidence ?? []].flat();
+
+  it("DIRECTION_JUDGE 가 렌더된 PNG 를 요구한다", () => {
+    const png = rules("DIRECTION_JUDGE").filter((r) => /png/.test(r.pattern ?? ""));
+    // 없으면 스펙만 읽고 방향을 고를 수 있게 된다.
+    expect(png.length).toBeGreaterThan(0);
+    // 방향 3개 x 뷰포트 3개 = 최소 9장.
+    expect(png.some((r) => r.minFiles >= 9)).toBe(true);
+  });
+
+  it("모바일 렌더가 강제된다", () => {
+    // 데스크톱만 렌더하면 3안의 모바일이 바이트 동일해진다 (그 런의 실제 결함).
+    const mobile = rules("DIRECTION_RENDER").filter((r) => /320/.test(r.pattern ?? ""));
+    expect(mobile.length).toBeGreaterThan(0);
+  });
+
+  it("ART_DIRECTION_BRANCH 가 판정 노드로 직결되지 않는다", () => {
+    // 브랜치에서 판정으로 바로 가면 렌더 단계를 건너뛴다.
+    expect(realGraph.nodes.ART_DIRECTION_BRANCH.edges.pass).toBe("DIRECTION_RENDER");
+  });
+
+  it("확정 근거로 스크린샷 경로를 DECISIONS.md 에 남기게 한다", () => {
+    const produces = realGraph.nodes.DIRECTION_JUDGE.produces ?? [];
+    expect(
+      produces.some(
+        (p) => p.path.endsWith("DECISIONS.md") && /review\/directions/.test(p.mustMatch ?? ""),
+      ),
+    ).toBe(true);
+  });
+
+  it("evidence 규칙 배열이 엔진에서 실제로 집행된다", () => {
+    // 엔진이 배열을 못 읽으면 두 번째 규칙(모바일 강제)이 조용히 무시된다.
+    // 규칙 두 개를 주고 둘 다 미충족으로 보고되는지 확인한다.
+    const unmet = unmetRequirements({
+      evidence: [
+        { dir: "does/not/exist", minFiles: 9, pattern: "\\.png$" },
+        { dir: "does/not/exist", minFiles: 3, pattern: "320.*\\.png$", why: "모바일 강제" },
+      ],
+    });
+    expect(unmet).toHaveLength(2);
+    expect(unmet[1]).toContain("모바일 강제");
+  });
+
+  it("실제 DIRECTION_JUDGE 노드가 지금 미충족이다", () => {
+    // review/directions/ 가 아직 없으므로 이 게이트는 실제로 닫혀 있어야 한다.
+    // 열려 있다면 규칙이 집행되지 않는다는 뜻이다.
+    const unmet = unmetRequirements({ evidence: realGraph.nodes.DIRECTION_JUDGE.evidence });
+    expect(unmet.length).toBeGreaterThan(0);
   });
 });

@@ -184,18 +184,24 @@ function journal(entry) {
 }
 
 /** 노드의 미충족 요건 목록(파일시스템 실측). */
-function unmetRequirements(node) {
+export function unmetRequirements(node) {
   const unmet = [];
   for (const rule of node.produces ?? []) {
     const problem = checkDocRule(readDocOrNull(rule.path), rule);
     if (problem) unmet.push(problem);
   }
-  if (node.evidence) {
-    const { dir, minFiles, pattern } = node.evidence;
+  // `evidence` 는 하나의 규칙이거나 규칙 배열이다. 배열을 받는 이유: 방향을 확정하는
+  // 노드는 산문 스펙과 **렌더된 픽셀**을 동시에 요구해야 한다. 규칙이 하나뿐이면
+  // 마크다운만으로 게이트가 열리고, 그러면 종이에서만 성립하는 방향이 통과한다.
+  for (const rule of [node.evidence ?? []].flat()) {
+    const { dir, minFiles, pattern, why } = rule;
     const re = new RegExp(pattern ?? ".");
     const files = fs.existsSync(abs(dir)) ? fs.readdirSync(abs(dir)).filter((f) => re.test(f)) : [];
     if (files.length < minFiles) {
-      unmet.push(`${dir}: 증거 파일 ${minFiles}개 필요, 현재 ${files.length}개 (/${pattern}/)`);
+      unmet.push(
+        `${dir}: 증거 파일 ${minFiles}개 필요, 현재 ${files.length}개 (/${pattern}/)` +
+          (why ? ` — ${why}` : ""),
+      );
     }
   }
   return unmet;
