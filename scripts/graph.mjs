@@ -97,6 +97,55 @@ export function checkDocRule(content, rule) {
 }
 
 /** 스코어카드를 임계값과 비교. { pass, failed:[], missing:[] } */
+/**
+ * `state.failedCategories` 가 지금의 스코어카드 x 임계값과 일치하는지 본다.
+ * 어긋나면 사람이 읽을 수 있는 문제 문자열, 일치하면 null.
+ *
+ * 어떤 게이트 노드를 기준으로 볼지는 상태가 정하지 않으므로, 실패 스냅샷을 남긴
+ * 게이트 노드(= `fail` 엣지를 가진 노드) 중 스코어카드가 읽히는 것을 쓴다.
+ */
+export function checkFailedCategoriesSnapshot(graph, state) {
+  const snapshot = state?.failedCategories;
+  if (!snapshot || Object.keys(snapshot).length === 0) return null;
+
+  const gateNode = Object.values(graph.nodes).find((n) => n.gate?.thresholds);
+  if (!gateNode) return null;
+
+  let scorecard;
+  try {
+    scorecard = readJson(gateNode.gate.scorecard);
+  } catch {
+    return null; // 스코어카드 부재는 위에서 따로 보고된다.
+  }
+
+  const live = evaluateGate(gateNode.gate, scorecard);
+  const liveFailed = new Map(live.failed.map((f) => [f.category, f]));
+  const differences = [];
+
+  for (const [category, snap] of Object.entries(snapshot)) {
+    const now = liveFailed.get(category);
+    if (!now) {
+      differences.push(`${category} 는 지금 실패가 아니다 (스냅샷: ${snap.value}/${snap.threshold})`);
+    } else if (now.value !== snap.value || now.threshold !== snap.threshold) {
+      differences.push(
+        `${category} 스냅샷 ${snap.value}/${snap.threshold} 대 실측 ${now.value}/${now.threshold}`,
+      );
+    }
+  }
+  for (const [category, now] of liveFailed) {
+    if (!(category in snapshot)) {
+      differences.push(`${category} ${now.value}/${now.threshold} 가 스냅샷에 없다`);
+    }
+  }
+
+  if (differences.length === 0) return null;
+  return (
+    `state.json 의 failedCategories 가 스코어카드와 어긋납니다 (${differences.length}건). ` +
+    `작업 목록으로 쓰지 마세요 — 스코어카드 실측값 x graph.json 현재 임계값으로 다시 계산하세요:\n` +
+    differences.map((d) => `      · ${d}`).join("\n")
+  );
+}
+
 export function evaluateGate(gate, scorecard) {
   const failed = [];
   const missing = [];
@@ -298,6 +347,21 @@ function runDoctor(graph) {
       }
     }
   }
+
+  /*
+    스테일 스냅샷 점검.
+
+    `state.json` 의 `failedCategories` 는 advance 시점에 굳는다. 그 뒤에 스코어카드가
+    실측값으로 다시 쓰이거나 임계값이 바뀌면 스냅샷은 아무도 모르게 거짓이 된다.
+    2026-08-31 런에서 실제로 그렇게 됐다 — 스냅샷은 실패 7개를 말했고 실제로는
+    10개였으며, 남아 있던 값은 디렉터가 스스로 관대하다고 판정해 폐기한 자체 추정치였다
+    (visualImpact 4.5 대 실측 2.8). 그 목록으로 작업하면 세 항목을 통째로 놓친다.
+
+    `HANDOFF.md` §3 은 이것을 「미해결 하네스 결함」으로 적어 두고 사람에게 재계산을
+    부탁했다. 부탁 대신 검사로 바꾼다.
+  */
+  const snapshotProblem = checkFailedCategoriesSnapshot(graph, readJson(PATHS.state));
+  if (snapshotProblem) problems.push(snapshotProblem);
 
   // 훅 배선 점검: settings.json 이 참조하는 로컬 훅 스크립트 존재 여부
   const settingsRaw = readDocOrNull(PATHS.settings);

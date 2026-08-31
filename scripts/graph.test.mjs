@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   applyAdvance,
   checkDocRule,
+  checkFailedCategoriesSnapshot,
   evaluateGate,
   pickOutcome,
   unmetRequirements,
@@ -337,4 +338,68 @@ describe("픽셀 게이트는 재캡처를 요구한다", () => {
       expect(rules.every((r) => r.fresherThan === "src")).toBe(true);
     },
   );
+});
+
+/**
+ * 스테일 스냅샷.
+ *
+ * `state.json` 의 `failedCategories` 는 advance 시점에 굳는다. 2026-08-31 런에서는
+ * advance 가 14:55:43 에 발사됐고 스코어카드가 15:10:00 에 실측값으로 다시 쓰였으며
+ * 임계값 상향은 그보다 더 뒤였다. 스냅샷은 실패 7개를 말했지만 실제로는 10개였고,
+ * 남아 있던 값은 디렉터가 스스로 폐기한 자체 추정치였다 (visualImpact 4.5 대 실측 2.8).
+ *
+ * `HANDOFF.md` §3 은 이걸 미해결 결함으로 적고 사람에게 재계산을 부탁했다.
+ * 아래 테스트가 그 부탁을 검사로 바꾼 것을 지킨다.
+ */
+describe("스테일 실패 스냅샷", () => {
+  const gateNode = Object.entries(realGraph.nodes).find(([, n]) => n.gate?.thresholds);
+  const thresholds = gateNode[1].gate.thresholds;
+  const scorecard = JSON.parse(
+    fs.readFileSync(path.join(ROOT, gateNode[1].gate.scorecard), "utf8"),
+  );
+
+  /** 실측값 x 현재 임계값으로 계산한 진짜 실패 목록. */
+  const realFailures = Object.fromEntries(
+    Object.entries(thresholds)
+      .filter(([k, th]) => scorecard.scores[k]?.value < th)
+      .map(([k, th]) => [k, { value: scorecard.scores[k].value, threshold: th }]),
+  );
+
+  it("스냅샷이 비어 있으면 아무 문제도 보고하지 않는다", () => {
+    expect(checkFailedCategoriesSnapshot(realGraph, { failedCategories: {} })).toBeNull();
+  });
+
+  it("스코어카드와 일치하는 스냅샷은 통과한다", () => {
+    expect(
+      checkFailedCategoriesSnapshot(realGraph, { failedCategories: realFailures }),
+    ).toBeNull();
+  });
+
+  it("2026-08-31 런의 실제 스테일 스냅샷을 잡는다", () => {
+    // 그때 state.json 에 굳어 있던 값 그대로. 디렉터 자체 추정치 + 상향 전 임계값.
+    const stale = {
+      visualImpact: { value: 4.5, threshold: 9 },
+      artDirection: { value: 5.5, threshold: 9 },
+      motionCoherence: { value: 5.8, threshold: 9 },
+      typography: { value: 6, threshold: 8.5 },
+      originality: { value: 6.5, threshold: 8.5 },
+      narrativeClarity: { value: 7.5, threshold: 8 },
+      mobile: { value: 4, threshold: 8 },
+    };
+    const problem = checkFailedCategoriesSnapshot(realGraph, { failedCategories: stale });
+    expect(problem).not.toBeNull();
+    // 값이 부풀려진 항목과, 스냅샷에서 통째로 빠진 항목을 둘 다 짚어야 한다.
+    expect(problem).toContain("visualImpact");
+    expect(problem).toContain("composition");
+    expect(problem).toContain("작업 목록으로 쓰지 마세요");
+  });
+
+  it("실패가 하나 사라진 스냅샷도 잡는다", () => {
+    const [dropped, ...rest] = Object.keys(realFailures);
+    if (!rest.length) return; // 실패가 하나뿐이면 이 경우가 없다
+    const partial = Object.fromEntries(rest.map((k) => [k, realFailures[k]]));
+    expect(checkFailedCategoriesSnapshot(realGraph, { failedCategories: partial })).toContain(
+      dropped,
+    );
+  });
 });
