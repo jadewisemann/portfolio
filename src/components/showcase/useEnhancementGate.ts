@@ -46,7 +46,12 @@ export function useEnhancementGate<T extends HTMLElement>() {
           io.disconnect();
         }
       },
-      { rootMargin: "200px" },
+      // 히어로가 정확히 100dvh 라서 감시 지점이 뷰포트 경계에 딱 붙는다 —
+      // 스크롤바 유무 · dvh 반올림에 따라 로드 시점에 이미 "닿아 있다"고
+      // 판정될 수 있다(실측: rootMargin 0 에서도 스크롤 전에 청크가 왔다).
+      // 아래쪽을 -50% 만큼 좁혀서, 뷰포트 절반 이상 들어와야 비로소
+      // "다가왔다"고 본다. 로드 직후의 경계 오차를 확실히 벗어난다.
+      { rootMargin: "0px 0px -50% 0px" },
     );
     io.observe(el);
     return () => io.disconnect();

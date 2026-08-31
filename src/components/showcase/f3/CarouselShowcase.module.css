@@ -80,6 +80,13 @@
   padding: 0;
   background: none;
   cursor: pointer;
+  /* translateZ 만으로는 어느 카드가 클릭을 받을지 브라우저마다 갈린다(f2 에서
+     실측됨). 지금 정면을 향한 카드에 z-index 를 명시로 준다. */
+  z-index: 0;
+}
+
+.ringCard[data-active="true"] {
+  z-index: 10;
 }
 
 .ringCard[data-index="0"] {

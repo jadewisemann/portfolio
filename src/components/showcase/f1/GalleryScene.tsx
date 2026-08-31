@@ -1,12 +1,15 @@
 "use client";
 
-import { Canvas, useThree } from "@react-three/fiber";
+import { Canvas, useStore } from "@react-three/fiber";
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import { PROJECTS } from "../shots";
 import { ProjectMeta } from "../ProjectMeta";
 import styles from "./GalleryScene.module.css";
 import {
+  buildCameraPath,
   CAMERA_START_Z,
+  cameraOffsetForZ,
+  indexForZ,
   layoutProjects,
   progressForZ,
   projectTargetZ,
@@ -16,6 +19,7 @@ import { ShotPlane } from "./ShotPlane";
 
 const DEPTH = totalDepth(PROJECTS);
 const PLACED = layoutProjects(PROJECTS);
+const CAMERA_PATH = buildCameraPath(PLACED);
 
 /**
  * 카메라 조종. 스크롤 · 포인터 값을 읽지만 rAF 루프를 돌지 않는다 —
@@ -26,19 +30,46 @@ const PLACED = layoutProjects(PROJECTS);
  * "DOM 에서 scale·rotate 를 애니메이션하지 않는다"(MOTION_LANGUAGE.md 8절)의
  * 적용을 받지 않는다(같은 절이 명시하는 3D 씬 예외).
  */
+/** 시차 최대 폭(world 단위). 스크롤이 만든 x·y 위에 더해지는 작은 흔들림이다. */
+const PARALLAX_RANGE = 0.35;
+
 function Rig({
   wrapperRef,
-  onProgress,
+  onCameraZ,
 }: {
   wrapperRef: RefObject<HTMLDivElement | null>;
-  onProgress: (progress: number) => void;
+  onCameraZ: (z: number) => void;
 }) {
-  const { camera, invalidate, gl } = useThree();
+  // R3F 의 `camera` 는 살아있는 three.js 객체이고, 카메라를 움직이는 것 자체가
+  // 이 씬의 정의다 — 매 프레임 재생성되는 리액트 상태가 아니라 하나의 정체성을
+  // 유지한 채 자리만 바뀐다. `useThree()` 훅이 매 렌더 돌려주는 값을 직접
+  // 변경하는 대신(react-hooks 불변성 규칙과 충돌한다) `useStore().getState()` 로
+  // 매번 최신 스냅숏을 꺼내 쓴다 — 이 접근은 R3F 공식 문서가 명시한 "transient
+  // update" 패턴이다.
+  const store = useStore();
+
+  // 스크롤이 만든 자리(카메라 경로)와 포인터가 만든 자리(시차)를 따로 들고
+  // 매번 더해서 적용한다 — 두 이펙트가 각자 camera.position 을 덮어쓰면
+  // 나중에 실행된 쪽이 먼저 것을 지운다.
+  const baseXY = useRef({ x: 0, y: 0 });
+  const parallaxXY = useRef({ x: 0, y: 0 });
+
+  const applyCamera = useCallback(
+    (z: number) => {
+      const { camera, invalidate } = store.getState();
+      camera.position.set(
+        baseXY.current.x + parallaxXY.current.x,
+        baseXY.current.y + parallaxXY.current.y,
+        z,
+      );
+      invalidate();
+    },
+    [store],
+  );
 
   useEffect(() => {
-    camera.position.set(0, 0, CAMERA_START_Z);
-    invalidate();
-  }, [camera, invalidate]);
+    applyCamera(CAMERA_START_Z);
+  }, [applyCamera]);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -49,9 +80,11 @@ function Rig({
       const scrollable = rect.height - window.innerHeight;
       const progress =
         scrollable > 0 ? Math.min(1, Math.max(0, -rect.top / scrollable)) : 0;
-      camera.position.z = CAMERA_START_Z - progress * DEPTH;
-      onProgress(progress);
-      invalidate();
+      const z = CAMERA_START_Z - progress * DEPTH;
+      const offset = cameraOffsetForZ(z, CAMERA_PATH);
+      baseXY.current = offset;
+      onCameraZ(z);
+      applyCamera(z);
     };
 
     applyScroll();
@@ -61,7 +94,7 @@ function Rig({
       window.removeEventListener("scroll", applyScroll);
       window.removeEventListener("resize", applyScroll);
     };
-  }, [camera, invalidate, onProgress, wrapperRef]);
+  }, [applyCamera, onCameraZ, wrapperRef]);
 
   useEffect(() => {
     // 손가락 시차는 만들지 않는다 — 정밀 포인터가 있는 기기에서만 켠다
@@ -69,17 +102,16 @@ function Rig({
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
       return;
     }
-    const el = gl.domElement;
+    const el = store.getState().gl.domElement;
     const onMove = (event: PointerEvent) => {
       const nx = (event.clientX / window.innerWidth) * 2 - 1;
       const ny = (event.clientY / window.innerHeight) * 2 - 1;
-      camera.position.x = nx * 0.6;
-      camera.position.y = ny * -0.35;
-      invalidate();
+      parallaxXY.current = { x: nx * PARALLAX_RANGE, y: ny * -PARALLAX_RANGE };
+      applyCamera(store.getState().camera.position.z);
     };
     el.addEventListener("pointermove", onMove, { passive: true });
     return () => el.removeEventListener("pointermove", onMove);
-  }, [camera, gl, invalidate]);
+  }, [applyCamera, store]);
 
   return null;
 }
@@ -124,11 +156,8 @@ export function GalleryScene() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const handleProgress = useCallback((progress: number) => {
-    const index = Math.min(
-      PROJECTS.length - 1,
-      Math.floor(progress * PROJECTS.length),
-    );
+  const handleCameraZ = useCallback((z: number) => {
+    const index = indexForZ(z, PROJECTS.length);
     setActiveIndex((current) => (current === index ? current : index));
   }, []);
 
@@ -138,12 +167,12 @@ export function GalleryScene() {
     <div className={styles.wrapper} ref={wrapperRef}>
       <div className={styles.sticky}>
         <Canvas
-          camera={{ position: [0, 0, CAMERA_START_Z], fov: 50 }}
+          camera={{ position: [0, 0, CAMERA_START_Z], fov: 62 }}
           className={styles.canvas}
           dpr={[1, 2]}
           frameloop="demand"
         >
-          <Rig onProgress={handleProgress} wrapperRef={wrapperRef} />
+          <Rig onCameraZ={handleCameraZ} wrapperRef={wrapperRef} />
           <Field />
         </Canvas>
 

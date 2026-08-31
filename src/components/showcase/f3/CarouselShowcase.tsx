@@ -28,6 +28,7 @@ function Carousel({ project }: { project: ShowcaseProject }) {
             <button
               aria-label={`${project.name} 스크린샷 ${i + 1} / ${count}`}
               className={styles.ringCard}
+              data-active={i === active ? "true" : undefined}
               data-index={i}
               key={shot.alt}
               onClick={() => setActive(i)}
