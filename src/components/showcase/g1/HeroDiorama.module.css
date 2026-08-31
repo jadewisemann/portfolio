@@ -38,19 +38,29 @@
   z-index: 2;
   margin: 0;
   max-width: calc(100vw - 24px);
-  white-space: nowrap;
   font-family: var(--font-mono), monospace;
   font-weight: 400;
   letter-spacing: -0.01em;
   color: var(--ink);
   background: var(--ground);
   padding: 0 0.15em;
-  font-size: 32px;
+  font-size: 56px;
+  line-height: 1.04;
+}
+
+/* 좁은 화면에서만 두 줄. 640px 부터는 다시 한 줄이다. */
+.namePart {
+  display: block;
+  white-space: nowrap;
 }
 
 @media (min-width: 640px) {
   .name {
     font-size: 72px;
+  }
+
+  .namePart {
+    display: inline;
   }
 }
 

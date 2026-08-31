@@ -56,9 +56,14 @@ function PlaceholderPlane({
   rotation?: readonly [number, number, number];
 }) {
   const texture = useMemo(() => {
-    const ground = readColorToken("--ground-sub");
-    const rule = readColorToken("--rule");
-    return getPlaceholderTexture(shot.width, shot.height, ground, rule);
+    return getPlaceholderTexture(
+      shot.width,
+      shot.height,
+      readColorToken("--ground-sub"),
+      readColorToken("--rule"),
+      readColorToken("--ground"),
+      readColorToken("--ink-3"),
+    );
   }, [shot.width, shot.height]);
 
   return (

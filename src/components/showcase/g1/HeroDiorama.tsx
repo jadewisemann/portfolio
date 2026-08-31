@@ -37,7 +37,15 @@ export function HeroDiorama() {
           <DynamicHeroScene />
         </div>
       ) : null}
-      <h1 className={styles.name}>jadewisemann</h1>
+      <h1 className={styles.name}>
+        {/*
+          좁은 화면에서는 두 조각이 각각 한 줄이 되고, 640px 이상에서는 다시 한 줄로
+          붙는다. 320 에서 한 줄을 고집하면 모노 12자가 40px 을 넘을 수 없고 — 실측 —
+          데스크톱 160px 옆에서 그 급수는 이름이 아니라 각주로 보인다.
+        */}
+        <span className={styles.namePart}>jade</span>
+        <span className={styles.namePart}>wisemann</span>
+      </h1>
     </div>
   );
 }

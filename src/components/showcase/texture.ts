@@ -16,8 +16,10 @@ export function getPlaceholderTexture(
   height: number,
   groundSub: string,
   rule: string,
+  ground: string,
+  ink3: string,
 ): THREE.CanvasTexture {
-  const key = `${width}x${height}:${groundSub}:${rule}`;
+  const key = `${width}x${height}:${groundSub}:${rule}:${ground}:${ink3}`;
   const cached = cache.get(key);
   if (cached) return cached;
 
@@ -27,16 +29,31 @@ export function getPlaceholderTexture(
   canvas.height = height * scale;
   const ctx = canvas.getContext("2d");
   if (ctx) {
-    ctx.fillStyle = groundSub;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // 바깥 테두리 + 마운트 + 안쪽 면. PlaceholderFrame.module.css 와 같은 순서다.
     const lineWidth = scale;
-    ctx.strokeStyle = rule;
+    const mat = 6 * scale;
+
+    ctx.fillStyle = ground;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.strokeStyle = ink3;
     ctx.lineWidth = lineWidth;
     ctx.strokeRect(
       lineWidth / 2,
       lineWidth / 2,
       canvas.width - lineWidth,
       canvas.height - lineWidth,
+    );
+
+    ctx.fillStyle = groundSub;
+    ctx.fillRect(mat, mat, canvas.width - mat * 2, canvas.height - mat * 2);
+
+    ctx.strokeStyle = rule;
+    ctx.strokeRect(
+      mat + lineWidth / 2,
+      mat + lineWidth / 2,
+      canvas.width - mat * 2 - lineWidth,
+      canvas.height - mat * 2 - lineWidth,
     );
   }
 

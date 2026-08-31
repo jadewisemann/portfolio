@@ -1,18 +1,41 @@
 /*
-  자리표시자 면. ART_DIRECTION.md 3.13 의 팔레트만 쓴다 — 평평한 --ground-sub 면에
-  --rule 두께 1px 테두리. 가짜 UI 크롬 · 로렘 · 지어낸 제품 화면을 그리지 않는다.
+  이미지 자리. **자리표시자가 아니라 액자다** — 채워지지 않아도 완성된 물건이어야 하고,
+  비어 있을 때 「빠진 것」이 아니라 「지금 평면을 담고 있는 액자」로 읽혀야 한다.
+  가짜 UI 크롬 · 로렘 · 지어낸 제품 화면은 그리지 않는다. 마감은 테두리와 여백에서 온다.
+
+  테두리를 --rule 에서 --ink-3 으로 올린 사유 (2026-08-31): --ground-sub 는 --ground
+  대비 1.043:1, --rule 은 1.18:1 이다. 둘 다 DESIGN_SYSTEM.md §3 이 **스스로 정한
+  하한 1.6:1** 을 못 넘는다. 그 결과 액자가 배경과 거의 안 갈렸고 화면 전체가
+  「흰 바탕에 흰 판」으로 보였다. --ink-3 은 5.05:1 이라 선이 실제로 그어진 것으로 읽힌다.
+  이건 시스템을 어기는 게 아니라 시스템이 이미 적어 둔 하한을 지키는 것이다.
+
+  안쪽 여백(--mat)은 판화의 마운트와 같은 역할이다. 안쪽 면과 테두리 사이에 지면색이
+  한 겹 있으면 빈 액자도 의도된 것으로 보인다.
 */
 
 .frame {
+  --mat: 6px;
+
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
+  background: var(--ground);
+  border: 1px solid var(--ink-3);
+  padding: var(--mat);
+}
+
+/* 안쪽 면. 이미지가 들어오면 이 자리를 그대로 차지한다. */
+.frame::before {
+  content: "";
+  position: absolute;
+  inset: var(--mat);
   background: var(--ground-sub);
   border: 1px solid var(--rule);
-  box-sizing: border-box;
 }
 
 .frame img {
   display: block;
+  position: relative;
   width: 100%;
   height: 100%;
   object-fit: cover;
