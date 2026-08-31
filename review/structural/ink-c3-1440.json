@@ -4,11 +4,11 @@
     "h": 900
   },
   "screens": 1.31,
-  "inkSharePct": 77.49,
-  "zeroInkBandSharePct": 0,
+  "enclosedFormSharePct": 77.49,
   "largestTypePx": 132,
+  "firstScreenChars": 67,
   "horizontalOverflowPx": 0,
-  "bands": [
+  "formBands": [
     {
       "x0": 0,
       "x1": 160,
@@ -53,6 +53,56 @@
       "x0": 1280,
       "x1": 1440,
       "share": 58.12
+    }
+  ],
+  "paintedSharePct": 16.47,
+  "emptyBandSharePct": 0,
+  "nearEmptyBandSharePct": 0,
+  "paintedBands": [
+    {
+      "x0": 0,
+      "x1": 160,
+      "paintedPct": 21.656
+    },
+    {
+      "x0": 160,
+      "x1": 320,
+      "paintedPct": 20.006
+    },
+    {
+      "x0": 320,
+      "x1": 480,
+      "paintedPct": 27.129
+    },
+    {
+      "x0": 480,
+      "x1": 640,
+      "paintedPct": 17.908
+    },
+    {
+      "x0": 640,
+      "x1": 800,
+      "paintedPct": 18.728
+    },
+    {
+      "x0": 800,
+      "x1": 960,
+      "paintedPct": 20.717
+    },
+    {
+      "x0": 960,
+      "x1": 1120,
+      "paintedPct": 12.534
+    },
+    {
+      "x0": 1120,
+      "x1": 1280,
+      "paintedPct": 4.497
+    },
+    {
+      "x0": 1280,
+      "x1": 1440,
+      "paintedPct": 5.098
     }
   ]
 }

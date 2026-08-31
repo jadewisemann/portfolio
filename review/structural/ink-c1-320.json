@@ -4,11 +4,11 @@
     "h": 640
   },
   "screens": 1.32,
-  "inkSharePct": 53.6,
-  "zeroInkBandSharePct": 0,
+  "enclosedFormSharePct": 53.6,
   "largestTypePx": 40,
+  "firstScreenChars": 480,
   "horizontalOverflowPx": 0,
-  "bands": [
+  "formBands": [
     {
       "x0": 0,
       "x1": 160,
@@ -18,6 +18,21 @@
       "x0": 160,
       "x1": 320,
       "share": 53.33
+    }
+  ],
+  "paintedSharePct": 22.68,
+  "emptyBandSharePct": 0,
+  "nearEmptyBandSharePct": 0,
+  "paintedBands": [
+    {
+      "x0": 0,
+      "x1": 160,
+      "paintedPct": 27.754
+    },
+    {
+      "x0": 160,
+      "x1": 320,
+      "paintedPct": 17.611
     }
   ]
 }
