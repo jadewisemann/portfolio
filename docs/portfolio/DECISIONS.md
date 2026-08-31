@@ -52,3 +52,13 @@ Portfolio content facts always come from the sibling repository
 entry point `ref/README.md`), positioning judgment from its `DESIGN.md`.
 Every fact recorded in BRIEF.md/CONTENT.md must carry its source path.
 This resolves the CONTENT_INVENTORY blocker "portfolio facts not supplied".
+
+## Override: DESIGN.md §3 (2026-08-31)
+
+`../_jadewisemann/DESIGN.md` §3 records the judgment "포트폴리오 사이트를
+만들지 않는다" (strengths are invisible on screen; the visual track has low
+odds). The owner explicitly overrides it for this repo: the site gets built.
+The judgment's rationale is kept as an art-direction constraint — the site
+must make the invisible visible (quality infrastructure, gates, verified
+claims) rather than compete as a generic visual showpiece. Every other
+judgment in that DESIGN.md remains binding.

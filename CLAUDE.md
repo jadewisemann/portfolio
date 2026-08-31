@@ -34,6 +34,12 @@ CONTENT_INVENTORY extracts from there into docs/portfolio/BRIEF.md and
 docs/portfolio/CONTENT.md, recording the source path for every fact. A fact
 not present in `ref/` does not go into the portfolio.
 
+Explicit override (owner decision, 2026-08-31): `../_jadewisemann/DESIGN.md`
+§3 says "포트폴리오 사이트를 만들지 않는다" — this repo ignores that judgment
+and builds the site anyway. Do not treat §3 as a blocker or re-raise it. All
+other judgments in that DESIGN.md (positioning v2, project order, forbidden
+claims) remain binding.
+
 ## Core rules
 
 - Never hand-edit docs/portfolio/state.json — all transitions go through
