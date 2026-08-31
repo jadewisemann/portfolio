@@ -1,0 +1,115 @@
+/*
+  /f2 — 스택. CSS 3D 선택(R3F 아님): 근접 · 살짝 회전된 스택이 부채꼴로 펼쳐지는
+  동작은 `transform-style: preserve-3d` + `translateZ` + 개별 카드 전이만으로
+  충분하다. 렌더 루프가 필요한 지점이 없다(카메라도, 연속 이동도 없다) — WebGL을
+  쓰면 상호작용 하나에 씬 하나를 띄우는 비용만 지고 얻는 것이 없다. /f1 은 카메라가
+  깊이를 관통하는 연속 공간이 필요해 R3F 를 쓰고, 여기는 상태 두 개(포갬 · 펼침)
+  사이의 전이만 필요해 CSS 로 충분하다 — 비용을 아끼는 것 자체가 이 프로토타입의
+  주장이다(브리프: "genuinely affordable").
+
+  깊이가 장식이 아니라 사실을 인코딩한다(MOTION_LANGUAGE.md 6절의 씬 판정 기준):
+  스택 순서 자체가 그 프로젝트의 화면 수와 종류를 인코딩한다. 그래서 이 preserve-3d
+  구성은 "명시적으로 선언된 3D 씬"이고, rotate·translateZ 를 전이하는 것이
+  8절의 DOM 제한 예외에 해당한다.
+*/
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+  padding: 48px 20px 96px;
+}
+
+@media (min-width: 768px) {
+  .stage {
+    padding: 64px 40px 120px;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.project {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .project {
+    flex: 1 1 280px;
+  }
+}
+
+.label {
+  margin: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+  color: var(--ink-2);
+}
+
+/* ── 스택 ────────────────────────────────────────────────────────────── */
+
+.stackWrap {
+  perspective: 1400px;
+}
+
+.stack {
+  position: relative;
+  transform-style: preserve-3d;
+  /* 스택의 "대표 화면" 크기가 컨테이너 크기를 정한다 — 카드는 그 위에 절대
+     배치된다. */
+  width: 100%;
+  aspect-ratio: 9 / 19.5;
+  max-width: 220px;
+}
+
+/* 데스크톱 프로젝트(FestiFriends)는 대표 화면이 가로형이다. */
+.stackWrap[data-orientation="desktop"] .stack {
+  aspect-ratio: 16 / 10;
+  max-width: 320px;
+}
+
+.card {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  transform: translateZ(calc(var(--i) * -10px)) rotate(calc(var(--i) * -3deg + 4deg));
+  transition: transform var(--duration-sort) var(--ease-travel);
+}
+
+.frame {
+  width: 100%;
+  height: 100%;
+}
+
+/* 펼침 — hover 나 스택 안의 카드가 포커스를 받으면(:focus-within) 전부 펼쳐진다.
+   포인터와 나란한 키보드 경로: Tab 으로 카드에 들어오면 같은 상태가 된다. */
+.stackWrap:hover .card,
+.stackWrap:focus-within .card {
+  transform: translateX(calc(var(--i) * 34px)) translateZ(calc(var(--i) * 30px))
+    rotateY(-10deg) rotate(0deg);
+}
+
+/* 모바일은 데스크톱을 줄인 것이 아니라 축을 바꾼다 — 세로로 펼쳐진다. */
+@media (max-width: 767px) {
+  .stackWrap:hover .card,
+  .stackWrap:focus-within .card {
+    transform: translateY(calc(var(--i) * 26px)) translateZ(calc(var(--i) * 30px))
+      rotateX(8deg) rotate(0deg);
+  }
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+}

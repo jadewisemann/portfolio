@@ -1,0 +1,173 @@
+/*
+  /f3 — CSS 3D 전용 대조군. WebGL 이 없다. `perspective` · `transform-style:
+  preserve-3d` · `translateZ` 만으로 같은 일(프로젝트별 스크린샷을 깊이 있게
+  보여주기)을 한다. 모든 프로젝트가 스크린샷 4장이므로(`shots.ts`) 링 조각 각도가
+  90deg 로 고정된다 — `calc(var(--i) * ...)` 커스텀 프로퍼티 산술 대신 `data-index`
+  값 0~3 에 대한 고정 규칙 네 개로 적는다. 이 파일이 실제 심사 대상이다: WebGL
+  버전만큼 좋아 보이면 그 자체가 발견이다(런타임 비용이 사실상 0이므로).
+*/
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
+  padding: 48px 20px 96px;
+}
+
+.project {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.label {
+  margin: 0;
+  align-self: flex-start;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+  color: var(--ink-2);
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+}
+
+.controlButton {
+  border: 1px solid var(--rule);
+  background: var(--ground);
+  color: var(--ink-2);
+  padding: 8px 16px;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+  cursor: pointer;
+  transition: color var(--duration-contrast) var(--ease-settle);
+}
+
+.controlButton:hover,
+.controlButton:focus-visible {
+  color: var(--ink);
+}
+
+/* ── 데스크톱: 회전 링 ──────────────────────────────────────────────────── */
+
+.ringStage {
+  display: none;
+  perspective: 1600px;
+  width: 220px;
+  height: 300px;
+}
+
+@media (min-width: 768px) {
+  .ringStage {
+    display: block;
+  }
+}
+
+.ring {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform var(--duration-sort) var(--ease-travel);
+}
+
+.ringCard {
+  position: absolute;
+  inset: 0;
+  border: none;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.ringCard[data-index="0"] {
+  transform: rotateY(0deg) translateZ(190px);
+}
+.ringCard[data-index="1"] {
+  transform: rotateY(90deg) translateZ(190px);
+}
+.ringCard[data-index="2"] {
+  transform: rotateY(180deg) translateZ(190px);
+}
+.ringCard[data-index="3"] {
+  transform: rotateY(270deg) translateZ(190px);
+}
+
+.ringCard:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.frame {
+  width: 100%;
+  height: 100%;
+}
+
+/* ── 모바일: 앞뒤로 겹친 플립 스택 (링 기하가 좁은 폭에서 성립하지 않는다) ── */
+
+.flipStage {
+  perspective: 1000px;
+  width: 100%;
+  max-width: 240px;
+  height: 320px;
+}
+
+@media (min-width: 768px) {
+  .flipStage {
+    display: none;
+  }
+}
+
+.flip {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.flipCard {
+  position: absolute;
+  inset: 0;
+  border: none;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  transition:
+    transform var(--duration-sort) var(--ease-travel),
+    opacity var(--duration-sort) var(--ease-travel);
+}
+
+.flipCard[data-offset="0"] {
+  transform: translateZ(0) translateY(0);
+  opacity: 1;
+  z-index: 4;
+}
+.flipCard[data-offset="1"] {
+  transform: translateZ(-28px) translateY(14px);
+  opacity: 0.6;
+  z-index: 3;
+}
+.flipCard[data-offset="2"] {
+  transform: translateZ(-56px) translateY(26px);
+  opacity: 0.35;
+  z-index: 2;
+}
+.flipCard[data-offset="3"] {
+  transform: translateZ(-84px) translateY(36px);
+  opacity: 0.15;
+  z-index: 1;
+}
+
+.flipCard:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring,
+  .flipCard {
+    transition: none;
+  }
+}
