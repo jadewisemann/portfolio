@@ -1,7 +1,8 @@
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import {
   applyAdvance,
@@ -250,4 +251,90 @@ describe("구조 재설계도 픽셀을 요구한다", () => {
       ),
     ).toBe(true);
   });
+});
+
+/**
+ * 증거의 신선도.
+ *
+ * `HANDOFF.md` §3 의 함정 셋 중 하나가 「스테일 스크린샷으로 판정하지 마라」인데,
+ * 그건 사람에게 거는 부탁이었고 게이트는 파일 **개수**만 셌다. 이전 런의 캡처가
+ * 디렉터리에 남아 있으면 소스가 완전히 바뀐 뒤에도 게이트가 그대로 열린다.
+ * 2026-08-31 런은 실제로 존재하지 않는 페이지를 심사하기 직전까지 갔다.
+ *
+ * `fresherThan` 은 그 부탁을 검사로 바꾼다.
+ */
+describe("증거는 소스보다 새것이어야 한다", () => {
+  const tmp = path.join(os.tmpdir(), `graph-fresh-${process.pid}`);
+  const evidence = path.join(tmp, "review");
+  const source = path.join(tmp, "src");
+
+  beforeEach(() => {
+    fs.rmSync(tmp, { recursive: true, force: true });
+    fs.mkdirSync(evidence, { recursive: true });
+    fs.mkdirSync(source, { recursive: true });
+  });
+  afterEach(() => fs.rmSync(tmp, { recursive: true, force: true }));
+
+  const rule = (extra = {}) => ({
+    evidence: [
+      { dir: path.relative(ROOT, evidence), minFiles: 1, pattern: "\\.png$", ...extra },
+    ],
+  });
+
+  it("소스보다 오래된 캡처를 미충족으로 잡는다", () => {
+    fs.writeFileSync(path.join(evidence, "shot.png"), "x");
+    const past = Date.now() - 60_000;
+    fs.utimesSync(path.join(evidence, "shot.png"), past / 1000, past / 1000);
+    fs.writeFileSync(path.join(source, "page.tsx"), "x");
+
+    const unmet = unmetRequirements(rule({ fresherThan: path.relative(ROOT, source) }));
+    expect(unmet).toHaveLength(1);
+    expect(unmet[0]).toContain("재캡처");
+  });
+
+  it("소스보다 새 캡처는 통과한다", () => {
+    fs.writeFileSync(path.join(source, "page.tsx"), "x");
+    const past = Date.now() - 60_000;
+    fs.utimesSync(path.join(source, "page.tsx"), past / 1000, past / 1000);
+    fs.writeFileSync(path.join(evidence, "shot.png"), "x");
+
+    expect(unmetRequirements(rule({ fresherThan: path.relative(ROOT, source) }))).toEqual([]);
+  });
+
+  it("fresherThan 이 없으면 신선도를 보지 않는다", () => {
+    fs.writeFileSync(path.join(evidence, "shot.png"), "x");
+    const past = Date.now() - 60_000;
+    fs.utimesSync(path.join(evidence, "shot.png"), past / 1000, past / 1000);
+    fs.writeFileSync(path.join(source, "page.tsx"), "x");
+
+    expect(unmetRequirements(rule())).toEqual([]);
+  });
+
+  it("개수가 모자라면 신선도 대신 개수를 보고한다", () => {
+    // 두 메시지가 겹쳐 나오면 원인이 흐려진다.
+    const unmet = unmetRequirements({
+      evidence: [
+        {
+          dir: path.relative(ROOT, evidence),
+          minFiles: 3,
+          pattern: "\\.png$",
+          fresherThan: path.relative(ROOT, source),
+        },
+      ],
+    });
+    expect(unmet).toHaveLength(1);
+    expect(unmet[0]).toContain("증거 파일 3개 필요");
+  });
+});
+
+describe("픽셀 게이트는 재캡처를 요구한다", () => {
+  it.each(["STRUCTURAL_BRANCH", "DIRECTION_RENDER", "DIRECTION_JUDGE"])(
+    "%s 의 모든 증거 규칙에 fresherThan 이 걸려 있다",
+    (name) => {
+      const rules = [realGraph.nodes[name].evidence ?? []].flat();
+      expect(rules.length).toBeGreaterThan(0);
+      // 하나라도 빠지면 그 규칙만으로 스테일 증거가 게이트를 연다.
+      expect(rules.every((r) => r.fresherThan === "src")).toBe(true);
+    },
+  );
 });

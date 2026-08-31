@@ -194,7 +194,7 @@ export function unmetRequirements(node) {
   // 노드는 산문 스펙과 **렌더된 픽셀**을 동시에 요구해야 한다. 규칙이 하나뿐이면
   // 마크다운만으로 게이트가 열리고, 그러면 종이에서만 성립하는 방향이 통과한다.
   for (const rule of [node.evidence ?? []].flat()) {
-    const { dir, minFiles, pattern, why } = rule;
+    const { dir, minFiles, pattern, why, fresherThan } = rule;
     const re = new RegExp(pattern ?? ".");
     const files = fs.existsSync(abs(dir)) ? fs.readdirSync(abs(dir)).filter((f) => re.test(f)) : [];
     if (files.length < minFiles) {
@@ -202,9 +202,35 @@ export function unmetRequirements(node) {
         `${dir}: 증거 파일 ${minFiles}개 필요, 현재 ${files.length}개 (/${pattern}/)` +
           (why ? ` — ${why}` : ""),
       );
+      continue;
+    }
+    // `fresherThan` 은 「판정 직전에 재캡처한다」를 기계로 강제한다. 파일 개수만 세면
+    // 이전 런의 스크린샷으로 게이트가 열리고, 그러면 소스에 더는 없는 화면을 심사하게
+    // 된다 — 2026-08-31 런이 실제로 그 직전까지 갔다.
+    if (fresherThan) {
+      const source = newestMtime(abs(fresherThan));
+      const stale = files.filter((f) => fs.statSync(path.join(abs(dir), f)).mtimeMs < source);
+      if (stale.length) {
+        unmet.push(
+          `${dir}: ${fresherThan}/ 보다 오래된 증거 ${stale.length}개 ` +
+            `(예: ${stale.slice(0, 3).join(", ")}) — 판정 직전에 재캡처하세요`,
+        );
+      }
     }
   }
   return unmet;
+}
+
+/** 디렉터리 안에서 가장 최근 수정 시각(ms). 없으면 0. */
+function newestMtime(dir) {
+  if (!fs.existsSync(dir)) return 0;
+  let newest = 0;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) newest = Math.max(newest, newestMtime(full));
+    else newest = Math.max(newest, fs.statSync(full).mtimeMs);
+  }
+  return newest;
 }
 
 /** runtime.json 의 검증 티어를 실행. 성공 시 true. */
