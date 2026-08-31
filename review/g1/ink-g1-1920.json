@@ -1,0 +1,151 @@
+{
+  "viewport": {
+    "w": 1920,
+    "h": 1080
+  },
+  "screens": 4.82,
+  "enclosedFormSharePct": 115.49,
+  "largestTypePx": 160,
+  "firstScreenChars": 12,
+  "horizontalOverflowPx": 0,
+  "formBands": [
+    {
+      "x0": 0,
+      "x1": 160,
+      "share": 100
+    },
+    {
+      "x0": 160,
+      "x1": 320,
+      "share": 100
+    },
+    {
+      "x0": 320,
+      "x1": 480,
+      "share": 117.38
+    },
+    {
+      "x0": 480,
+      "x1": 640,
+      "share": 125.19
+    },
+    {
+      "x0": 640,
+      "x1": 800,
+      "share": 125.19
+    },
+    {
+      "x0": 800,
+      "x1": 960,
+      "share": 125.19
+    },
+    {
+      "x0": 960,
+      "x1": 1120,
+      "share": 125.19
+    },
+    {
+      "x0": 1120,
+      "x1": 1280,
+      "share": 125.19
+    },
+    {
+      "x0": 1280,
+      "x1": 1440,
+      "share": 125.19
+    },
+    {
+      "x0": 1440,
+      "x1": 1600,
+      "share": 117.38
+    },
+    {
+      "x0": 1600,
+      "x1": 1760,
+      "share": 100
+    },
+    {
+      "x0": 1760,
+      "x1": 1920,
+      "share": 100
+    }
+  ],
+  "paintedSharePct": 45.64,
+  "strongInkSharePct": 1.67,
+  "emptyBandSharePct": 33.3,
+  "blankBandSharePct": 0,
+  "paintedBands": [
+    {
+      "x0": 0,
+      "x1": 160,
+      "faintPct": 10.803,
+      "strongPct": 0
+    },
+    {
+      "x0": 160,
+      "x1": 320,
+      "faintPct": 45.55,
+      "strongPct": 0
+    },
+    {
+      "x0": 320,
+      "x1": 480,
+      "faintPct": 64.38,
+      "strongPct": 1.543
+    },
+    {
+      "x0": 480,
+      "x1": 640,
+      "faintPct": 72.061,
+      "strongPct": 2.697
+    },
+    {
+      "x0": 640,
+      "x1": 800,
+      "faintPct": 71.553,
+      "strongPct": 3.253
+    },
+    {
+      "x0": 800,
+      "x1": 960,
+      "faintPct": 45.777,
+      "strongPct": 2.76
+    },
+    {
+      "x0": 960,
+      "x1": 1120,
+      "faintPct": 61.461,
+      "strongPct": 2.772
+    },
+    {
+      "x0": 1120,
+      "x1": 1280,
+      "faintPct": 36.454,
+      "strongPct": 3.02
+    },
+    {
+      "x0": 1280,
+      "x1": 1440,
+      "faintPct": 35.89,
+      "strongPct": 2.578
+    },
+    {
+      "x0": 1440,
+      "x1": 1600,
+      "faintPct": 29.344,
+      "strongPct": 1.459
+    },
+    {
+      "x0": 1600,
+      "x1": 1760,
+      "faintPct": 38.083,
+      "strongPct": 0
+    },
+    {
+      "x0": 1760,
+      "x1": 1920,
+      "faintPct": 36.298,
+      "strongPct": 0
+    }
+  ]
+}

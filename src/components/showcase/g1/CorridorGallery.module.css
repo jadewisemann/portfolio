@@ -1,0 +1,78 @@
+/*
+  복도 갤러리 — sticky 캔버스 하나, 브라우저 기본 스크롤 위에 얹는다
+  (`/f1/GalleryScene.module.css` 와 같은 기법). 스크롤 이송을 가로채지 않는다.
+*/
+
+.wrapper {
+  position: relative;
+  height: calc(270vh + 100dvh);
+}
+
+.sticky {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.nav {
+  position: absolute;
+  bottom: 28px;
+  left: 20px;
+  z-index: 1;
+  display: flex;
+  gap: 8px;
+}
+
+@media (min-width: 1024px) {
+  .nav {
+    left: 40px;
+    bottom: 40px;
+  }
+}
+
+.navButton {
+  border: 1px solid var(--rule);
+  background: var(--ground);
+  color: var(--ink-2);
+  padding: 8px 14px;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+  cursor: pointer;
+  transition-property: color, border-color;
+  transition-duration: var(--duration-contrast);
+  transition-timing-function: var(--ease-settle);
+}
+
+.navButton:hover,
+.navButton:focus-visible {
+  color: var(--ink);
+}
+
+.navButton[aria-current="true"] {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.caption {
+  position: absolute;
+  top: 28px;
+  left: 20px;
+  z-index: 1;
+  max-width: calc(100vw - 40px);
+  background: var(--ground);
+  padding: 4px 12px 12px 0;
+}
+
+@media (min-width: 1024px) {
+  .caption {
+    top: 40px;
+    left: 40px;
+  }
+}

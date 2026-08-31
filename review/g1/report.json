@@ -1,0 +1,22 @@
+{
+  "320": {
+    "firstScreenChars": 12,
+    "horizontalOverflowPx": 0,
+    "docHeight": 3406
+  },
+  "1440": {
+    "firstScreenChars": 12,
+    "horizontalOverflowPx": 0,
+    "docHeight": 4247
+  },
+  "1920": {
+    "firstScreenChars": 12,
+    "horizontalOverflowPx": 0,
+    "docHeight": 5207
+  },
+  "heroPosterSceneDiff": {
+    "diff": 201,
+    "total": 1296000
+  },
+  "idleRafCallsIn2s": 0
+}
