@@ -1,0 +1,218 @@
+@import "tailwindcss";
+
+/* DESIGN_SYSTEM.md 가 값의 정본입니다. 대비는 WCAG 상대 휘도로 계산한 값입니다. */
+
+:root {
+  /* 라이트가 정본입니다. */
+  --ground: #faf9f6;
+  --ground-sub: #f1efea; /* 하위 면. 제거된 것 */
+  --ink: #171614; /* 대비 17.18 */
+  --ink-2: #4a4843; /* 대비 8.68 */
+  --ink-3: #6e6b64; /* 대비 5.05 */
+  --rule: #dddad3;
+  --signal-built: #0f4c55; /* 대비 9.13 */
+  --signal-reverted: #8a4b00; /* 대비 6.46 */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* 라이트의 반전이 아니라 두 번째 문서 상태입니다. */
+    --ground: #121312;
+    --ground-sub: #1c1d1b; /* 다크에서는 밝게 파입니다 */
+    --ink: #eae8e3; /* 대비 15.21 */
+    --ink-2: #a9a6a0; /* 대비 7.67 */
+    --ink-3: #8a8781; /* 대비 5.20 */
+    --rule: #2e302d;
+    --signal-built: #7fbcc6; /* 대비 8.79 */
+    --signal-reverted: #dfa55c; /* 대비 8.58 */
+  }
+}
+
+@theme inline {
+  --color-ground: var(--ground);
+  --color-ground-sub: var(--ground-sub);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-rule: var(--rule);
+  --color-signal-built: var(--signal-built);
+  --color-signal-reverted: var(--signal-reverted);
+
+  --font-sans: var(--font-plex-sans);
+  /*
+    등폭 스택에 Sans KR 을 이어 붙입니다. 없으면 등폭으로 조판된 모든 한글이 OS 대체
+    글꼴로 떨어집니다 — 시각 비평이 CDP getPlatformFontsForNode 로 확인했습니다
+    (Windows 에서 Malgun Gothic, 다른 OS 에서는 또 다른 것). 주석 트랙과 분모와 캡션과
+    코드가 전부 등폭이므로 지면 절반이 영향을 받고, 서체를 IBM Plex 한 가족으로 고른
+    근거가 화면에서 무너집니다.
+    대가: 한글은 등폭이 아니므로 그 줄의 격자 정렬이 깨집니다. 등폭을 라틴·숫자·경로·
+    기호로 좁히는 것이 더 정직한 대안이고, GOLDEN_FIX 에서 판단합니다.
+  */
+  --font-mono: var(--font-plex-mono), var(--font-plex-sans), ui-monospace,
+    monospace;
+
+  --spacing-gutter: 4.5rem;
+  --spacing-measure: 34rem;
+
+  /*
+    레일 활자. 14px 에 묶지 않습니다 — 시각 비평의 지적대로, 열이 유일한 시각 담당자라면
+    열의 활자 크기는 열의 몫으로 따로 정해야 합니다.
+  */
+  --text-rail: 22px;
+  --leading-rail: 28px;
+
+  --text-mark: 14px;
+  --text-mono: 14px;
+  --text-note: 13px;
+  --text-decision: 28px;
+
+  --leading-mono: 28px;
+
+  /* 이징 둘, 지속 시간 셋. MOTION_LANGUAGE.md 3·4절. */
+  --ease-settle: cubic-bezier(0.2, 0, 0, 1);
+  --ease-travel: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-contrast: 90ms;
+  --duration-state: 120ms;
+  --duration-sort: 320ms;
+}
+
+html {
+  background: var(--ground);
+  color: var(--ink);
+}
+
+body {
+  font-family: var(--font-plex-sans), "Apple SD Gothic Neo", "Malgun Gothic",
+    system-ui, sans-serif;
+  font-size: 17px;
+  /* 한글이 어절 중간에서 끊기는 것을 막습니다. 한국어 웹 조판의 가장 흔한 결함입니다. */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+/* 한글은 어센더·디센더 변동이 없어 정방형으로 쌓이므로 행간을 더 줍니다. */
+:lang(ko) body {
+  line-height: 1.7;
+}
+:lang(en) body {
+  line-height: 1.6;
+}
+
+/* 측정값과 분수의 숫자가 열로 정렬되게 합니다. */
+.font-mono,
+code,
+pre {
+  font-feature-settings: "tnum";
+}
+
+/*
+  배경 괘선 기판. 28px 간격이고 position: fixed 이므로 스크롤 중 리페인트가 없습니다.
+  장식이 아니라 수직 리듬이 실재한다는 증거입니다 (ART_DIRECTION.md 3.11).
+  will-change 를 쓰지 않고 정수 픽셀 피치를 유지합니다.
+*/
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--rule) var(--rule-strength), transparent) 0 1px,
+    transparent 1px 28px
+  );
+}
+
+/*
+  괘선 세기는 테마마다 다릅니다. ART_DIRECTION.md 3.10 의 요구입니다 —
+  어두운 바탕 위의 밝은 1px 선은 번져 보이므로 다크에서 낮춰야 합니다.
+  처음에는 양쪽에 같은 값을 써서 다크에서 가로 띠가 라이트보다 훨씬 강했습니다.
+*/
+:root {
+  --rule-strength: 55%;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --rule-strength: 24%;
+  }
+}
+
+body > * {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+  히어로 초기 은닉을 [data-js] 아래에서만 적용합니다 (MOTION_LANGUAGE.md 9.1 다).
+  JS 가 없으면 은닉이 적용되지 않아 포지셔닝 두 문장이 완전히 보입니다.
+*/
+[data-js] [data-enter] {
+  opacity: 0;
+}
+
+/*
+  링크는 평상시 밑줄이 있고 hover·focus 에서 굵어집니다. 대비만 올립니다.
+
+  **@layer base 안에 두어야 합니다.** 레이어 밖에 두었을 때 Tailwind 의
+  `@layer utilities` 안에 있는 `.no-underline` 을 이겨서, 판단 인덱스의 기호 칸까지
+  밑줄이 칠해졌습니다. 그 결과 `−`(막았다)가 2획이 되어 어휘상 다른 기호인
+  `=`(확인했다)로 읽혔습니다. 시각 비평이 6배 확대로 찾은 결함입니다.
+*/
+@layer base {
+  a {
+    color: var(--ink);
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    transition-property: color, text-decoration-thickness;
+    transition-duration: 90ms;
+    transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    a:hover {
+      text-decoration-thickness: 2px;
+    }
+  }
+}
+
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* 넓은 산출물은 자기 컨테이너 안에서만 가로 스크롤합니다. */
+.scroll-x {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+/* 앵커 착지가 28px 리듬에 앉게 합니다. scroll-behavior 는 쓰지 않습니다. */
+[id] {
+  scroll-margin-top: 56px;
+}
+
+/*
+  스킵 링크. 포커스를 받을 때만 보입니다.
+  DESIGN_SYSTEM.md 7절의 요구사항이고, 접근성 감사에서 부재가 지적되었습니다.
+*/
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 2;
+  padding: 8px 16px;
+  background: var(--ground);
+  border: 1px solid var(--ink);
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 13px;
+  text-decoration-line: none;
+}
+
+.skip-link:focus-visible {
+  left: 8px;
+  top: 8px;
+}
