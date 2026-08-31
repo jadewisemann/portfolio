@@ -1,11 +1,11 @@
 {
   "active": true,
-  "status": "RUNNING",
+  "status": "BLOCKED",
   "currentNode": "CONTENT_INVENTORY",
   "iteration": 0,
   "currentScene": null,
   "lockedScenes": [],
   "failedCategories": {},
   "nextAction": "[CONTENT_INVENTORY] 검증된 포트폴리오 사실 수집 — 필요: docs/portfolio/BRIEF.md: 아직 플레이스홀더입니다 (/Status: not supplied/ 발견) | docs/portfolio/CONTENT.md: 아직 플레이스홀더입니다 (/Status: not supplied/ 발견)",
-  "blocker": null
+  "blocker": "User paused execution: CONTENT_INVENTORY and all subsequent nodes are to be executed by a /portfolio-build run, not ad-hoc. Content source is designated (../_jadewisemann, see CLAUDE.md)."
 }

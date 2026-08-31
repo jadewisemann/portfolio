@@ -3,3 +3,4 @@
 {"ts":"2026-08-31T13:34:06.558Z","event":"advance","from":"REPOSITORY_AUDIT","to":"CONTENT_INVENTORY","outcome":"pass","iteration":0}
 {"ts":"2026-08-31T13:34:06.636Z","event":"block","node":"CONTENT_INVENTORY","reason":"Portfolio facts not supplied: BRIEF.md and CONTENT.md require owner-verified content (audience, goals, projects, links). Ask the user; do not invent."}
 {"ts":"2026-08-31T13:37:39.104Z","event":"unblock","node":"CONTENT_INVENTORY"}
+{"ts":"2026-08-31T13:40:06.693Z","event":"block","node":"CONTENT_INVENTORY","reason":"User paused execution: CONTENT_INVENTORY and all subsequent nodes are to be executed by a /portfolio-build run, not ad-hoc. Content source is designated (../_jadewisemann, see CLAUDE.md)."}
