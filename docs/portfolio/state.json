@@ -1,11 +1,11 @@
 {
-  "active": false,
-  "status": "IDLE",
-  "currentNode": "BOOTSTRAP",
+  "active": true,
+  "status": "RUNNING",
+  "currentNode": "CONTENT_INVENTORY",
   "iteration": 0,
   "currentScene": null,
   "lockedScenes": [],
   "failedCategories": {},
-  "nextAction": null,
+  "nextAction": "[CONTENT_INVENTORY] 검증된 포트폴리오 사실 수집 — 필요: docs/portfolio/BRIEF.md: 아직 플레이스홀더입니다 (/Status: not supplied/ 발견) | docs/portfolio/CONTENT.md: 아직 플레이스홀더입니다 (/Status: not supplied/ 발견)",
   "blocker": null
 }

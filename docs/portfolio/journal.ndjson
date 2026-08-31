@@ -1,0 +1,5 @@
+{"ts":"2026-08-31T13:34:06.438Z","event":"start","node":"BOOTSTRAP"}
+{"ts":"2026-08-31T13:34:06.507Z","event":"advance","from":"BOOTSTRAP","to":"REPOSITORY_AUDIT","outcome":"pass","iteration":0}
+{"ts":"2026-08-31T13:34:06.558Z","event":"advance","from":"REPOSITORY_AUDIT","to":"CONTENT_INVENTORY","outcome":"pass","iteration":0}
+{"ts":"2026-08-31T13:34:06.636Z","event":"block","node":"CONTENT_INVENTORY","reason":"Portfolio facts not supplied: BRIEF.md and CONTENT.md require owner-verified content (audience, goals, projects, links). Ask the user; do not invent."}
+{"ts":"2026-08-31T13:37:39.104Z","event":"unblock","node":"CONTENT_INVENTORY"}
