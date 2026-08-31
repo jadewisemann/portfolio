@@ -14,6 +14,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import { launchChromium } from "./lib/browser.mjs";
 
 const args = process.argv.slice(2);
@@ -23,6 +24,22 @@ const url = `http://localhost:${port}/`;
 fs.mkdirSync(outDir, { recursive: true });
 
 const shot = (p) => path.join(outDir, p);
+const md5 = (buf) => crypto.createHash("md5").update(buf).digest("hex");
+
+/*
+  전이 중간 프레임을 여러 오프셋에서 찍는 이유 (2026-08-31, STRUCTURAL_BRANCH):
+
+  이전에는 클릭 후 160ms 한 번만 찍고 그것을 「320ms 전이의 중간」이라고 적었다.
+  실측해 보면 `review/golden-slice/tree-midtransition-mobile-320.png` 는
+  `tree-after-mobile-320.png` 와 **md5 가 같다**(0942fd3d…) — 320px 에서는 그 프레임이
+  전이를 하나도 잡지 못했고, 시그니처 인터랙션의 모바일 증거가 사실상 없었다.
+  같은 결함이 히어로 Best-of-N 3안 중 2안에서도 나왔다.
+
+  한 오프셋으로 모든 대역(즉각 120ms · 장면 내 200~420ms · 장면 간 420~900ms)을
+  맞출 수 없으므로 세 지점을 찍고, 전부 「이후」와 같으면 실패로 보고한다.
+*/
+const MID_OFFSETS_MS = [60, 140, 260];
+const midFrameProblems = [];
 const browser = await launchChromium();
 
 const viewports = [
@@ -101,10 +118,38 @@ try {
       const domainBtn = page.getByRole("button", { name: "도메인 우선" });
       if (await domainBtn.count()) {
         await domainBtn.first().click();
-        await page.waitForTimeout(160); // 320ms 전이의 중간
-        await page.screenshot({ path: shot(`tree-midtransition-${vp.name}.png`) });
-        await page.waitForTimeout(500);
-        await page.screenshot({ path: shot(`tree-after-${vp.name}.png`) });
+
+        const mid = {};
+        let elapsed = 0;
+        for (const offset of MID_OFFSETS_MS) {
+          await page.waitForTimeout(offset - elapsed);
+          elapsed = offset;
+          mid[offset] = md5(
+            await page.screenshot({
+              path: shot(`tree-mid${offset}ms-${vp.name}.png`),
+            }),
+          );
+        }
+        // 이전 이름을 쓰던 리뷰 문서가 있으므로 대표 프레임 하나는 같은 이름으로 남긴다.
+        fs.copyFileSync(
+          shot(`tree-mid${MID_OFFSETS_MS[1]}ms-${vp.name}.png`),
+          shot(`tree-midtransition-${vp.name}.png`),
+        );
+
+        await page.waitForTimeout(600);
+        const after = md5(
+          await page.screenshot({ path: shot(`tree-after-${vp.name}.png`) }),
+        );
+
+        const caught = MID_OFFSETS_MS.filter((o) => mid[o] !== after);
+        if (caught.length === 0) {
+          midFrameProblems.push(
+            `${vp.name}: 중간 프레임 ${MID_OFFSETS_MS.join("/")}ms 가 전부 「이후」와 ` +
+              `바이트 동일하다 — 이 뷰포트에는 관측 가능한 전이가 없다.`,
+          );
+        } else {
+          console.log(`전이 포착: ${vp.name} — ${caught.join("/")}ms 에서 「이후」와 다름`);
+        }
       }
     }
 
@@ -127,5 +172,12 @@ try {
   await page.close();
 } finally {
   await browser.close();
+}
+
+if (midFrameProblems.length) {
+  console.error(`\n증거 결함 ${midFrameProblems.length}건:`);
+  for (const p of midFrameProblems) console.error(`  - ${p}`);
+  console.error("전이를 잡지 못한 증거로 모션을 판정하지 마라.");
+  process.exitCode = 1;
 }
 console.log(`완료 — ${outDir}/`);
