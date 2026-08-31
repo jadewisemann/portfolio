@@ -4,20 +4,20 @@
     "h": 640
   },
   "screens": 1.29,
-  "inkSharePct": 9.54,
+  "inkSharePct": 70,
   "zeroInkBandSharePct": 0,
-  "largestTypePx": 22,
+  "largestTypePx": 48,
   "horizontalOverflowPx": 0,
   "bands": [
     {
       "x0": 0,
       "x1": 160,
-      "share": 11.73
+      "share": 72.2
     },
     {
       "x0": 160,
       "x1": 320,
-      "share": 7.34
+      "share": 67.8
     }
   ]
 }

@@ -123,15 +123,11 @@ describe("모션 소유권", () => {
     // `bestof` 는 Best-of-N 시도 B(라우트 /b1 /b2 /b3)다. 시도 A(`spine`)와
     // 겹치는 파일이 없는 독립 구현이고, 둘 다 아직 독립 비평가 판정을 받지
     // 못했다. 판정이 끝나면 패자 디렉터리와 함께 이 항목도 지운다.
-    // `candidates` 는 STRUCTURAL_BRANCH 의 구조 재선택용 후보(라우트 /c1 /c2 /c3)다.
-    // `Enter.tsx` 하나가 §2 히어로 진입과 같은 모양(로드 1회 · 축소 모션에서 최종
-    // 상태 즉시 렌더)을 세 후보가 공유해서 쓴다 — 그 자체가 후보 판정 대상은 아니다.
     const allowed = [
       "src/components/Hero",
       "src/components/DirTree",
       "src/components/spine",
       "src/components/bestof",
-      "src/components/candidates",
     ];
     const offenders = hits(/<motion\.|\blayout\b\s*(=|\/?>)|initial=\{/).filter(
       (h) => !allowed.some((a) => h.startsWith(a)),

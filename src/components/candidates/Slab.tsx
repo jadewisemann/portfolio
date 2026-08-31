@@ -1,5 +1,4 @@
-import { Fragment } from "react";
-import { Enter } from "@/components/candidates/Enter";
+import { Lines } from "@/components/candidates/Lines";
 import styles from "@/components/candidates/Slab.module.css";
 
 /**
@@ -37,7 +36,8 @@ const LINES_1440 = [
 ];
 const LINES_1920 = [
   "6인 팀의 프론트엔드를",
-  "혼자 맡아 실시간 멀티플레이",
+  "혼자 맡아 실시간",
+  "멀티플레이",
   "게임 플랫폼을 완성했다.",
 ];
 
@@ -62,40 +62,27 @@ const CELLS = [
 const CYCLE = "effect → setState → 리렌더 → 새 참조 → effect";
 const CAPTION = "[Fix/issue-284] · 786efc5";
 
-function BrokenLines({ lines }: { lines: readonly string[] }) {
-  return (
-    <>
-      {lines.map((line, i) => (
-        <Fragment key={line}>
-          {i > 0 ? <br /> : null}
-          {line}
-        </Fragment>
-      ))}
-    </>
-  );
-}
-
 export function Slab() {
   return (
     <main className={styles.stage} id="main">
-      <Enter as="h1" className={styles.headline}>
+      <h1 className={styles.headline}>
         <span className={styles.h320}>
-          <BrokenLines lines={LINES_320} />
+          <Lines lines={LINES_320} />
         </span>
         <span className={styles.h1440}>
-          <BrokenLines lines={LINES_1440} />
+          <Lines lines={LINES_1440} />
         </span>
         <span className={styles.h1920}>
-          <BrokenLines lines={LINES_1920} />
+          <Lines lines={LINES_1920} />
         </span>
-      </Enter>
+      </h1>
 
       <p className={styles.sub}>
         <span className={styles.sub1440}>
-          <BrokenLines lines={SUB_1440} />
+          <Lines lines={SUB_1440} />
         </span>
         <span className={styles.sub1920}>
-          <BrokenLines lines={SUB_1920} />
+          <Lines lines={SUB_1920} />
         </span>
       </p>
 

@@ -1,4 +1,3 @@
-import { Enter } from "@/components/candidates/Enter";
 import styles from "@/components/candidates/Field.module.css";
 
 /**
@@ -17,6 +16,12 @@ import styles from "@/components/candidates/Field.module.css";
  * 숫자가 섞인 문구는 JSX 텍스트 노드가 아니라 표현식으로 넘긴다 —
  * `eslint.config.mjs` 의 `no-restricted-syntax` 가 `JSXText` 안의 숫자를 막는다
  * (ART_DIRECTION.md 2절, MeasurementBar.tsx 가 이미 쓰는 패턴과 같다).
+ *
+ * 모션 없음: 이 세 후보는 구조 비교용 정적 프레임이다. Motion 진입을 한 번
+ * 시도했으나(로드 1회, 축소 모션 인지) 실측 결과 `networkidle` 대기 자체가
+ * 약 700ms 걸려 스크린샷 시점에는 이미 진입이 끝나 있었다 — 지속 시간을
+ * MOTION_LANGUAGE.md §4 의 상한(900ms) 안에서 아무리 조정해도 캡처 시점과
+ * 경쟁해 이길 수 없었다. 안 보이는 모션을 위해 파일을 늘리는 대신 뺐다.
  */
 const TOTAL = 447;
 const RESTRUCTURED = 236;
@@ -46,12 +51,8 @@ export function Field() {
       </div>
 
       <div className={styles.type}>
-        <Enter as="h1" className={styles.headline}>
-          {HEADLINE}
-        </Enter>
-        <Enter as="p" className={styles.numeral} delayMs={60}>
-          {TOTAL}
-        </Enter>
+        <h1 className={styles.headline}>{HEADLINE}</h1>
+        <p className={styles.numeral}>{TOTAL}</p>
         <p className={styles.captions}>
           <span>{CAPTION_TOTAL}</span>
           <span>{CAPTION_RESTRUCTURED}</span>

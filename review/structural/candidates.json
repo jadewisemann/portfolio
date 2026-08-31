@@ -11,20 +11,20 @@
       "1920": "aa34f3c2a9232f0e0c067779d64cd234"
     },
     "/c2": {
-      "320": "3ee3ceb2ccbfddeb7f560ef9a0eea427",
+      "320": "1fa3cbc8ef7b5390df674f3b2dde8d57",
       "1440": "2fd4824a22f516196599a2a4a06cc5f4",
       "1920": "be61927eec296af5cbdf29ea591d1177"
     },
     "/c3": {
       "320": "d33c37e894121b7b734bd07334b30e7d",
-      "1440": "84aff43d7b2544a96f2c1bebe76eb247",
-      "1920": "058c3764ed0d26edfbe2f2d78c069d92"
+      "1440": "dd26d9cd87ca35b082d5ccfc835a8dcf",
+      "1920": "95efc785ca97b11a6c505ad8b2ba9074"
     }
   },
   "reducedHashes": {
     "/c1": "b25ce199e032d15a40dd028f6cc91d8d",
     "/c2": "2fd4824a22f516196599a2a4a06cc5f4",
-    "/c3": "84aff43d7b2544a96f2c1bebe76eb247"
+    "/c3": "dd26d9cd87ca35b082d5ccfc835a8dcf"
   },
   "report": {
     "/c1": {
@@ -198,12 +198,12 @@
           {
             "x0": 0,
             "x1": 160,
-            "share": 29.48
+            "share": 32.88
           },
           {
             "x0": 160,
             "x1": 320,
-            "share": 28.49
+            "share": 25.09
           }
         ]
       },
@@ -213,7 +213,7 @@
           "h": 900
         },
         "screens": 1,
-        "inkSharePct": 23.48,
+        "inkSharePct": 39.53,
         "zeroInkBandSharePct": 0,
         "largestTypePx": 220,
         "horizontalOverflowPx": 0,
@@ -221,42 +221,42 @@
           {
             "x0": 0,
             "x1": 160,
-            "share": 25.63
+            "share": 40.66
           },
           {
             "x0": 160,
             "x1": 320,
-            "share": 35.02
+            "share": 56.48
           },
           {
             "x0": 320,
             "x1": 480,
-            "share": 35.02
+            "share": 56.48
           },
           {
             "x0": 480,
             "x1": 640,
-            "share": 35.02
+            "share": 56.48
           },
           {
             "x0": 640,
             "x1": 800,
-            "share": 17.61
+            "share": 39.07
           },
           {
             "x0": 800,
             "x1": 960,
-            "share": 10.58
+            "share": 32.04
           },
           {
             "x0": 960,
             "x1": 1120,
-            "share": 10.58
+            "share": 32.04
           },
           {
             "x0": 1120,
             "x1": 1280,
-            "share": 19.64
+            "share": 20.31
           },
           {
             "x0": 1280,
@@ -271,7 +271,7 @@
           "h": 1080
         },
         "screens": 1,
-        "inkSharePct": 24.07,
+        "inkSharePct": 41.28,
         "zeroInkBandSharePct": 0,
         "largestTypePx": 300,
         "horizontalOverflowPx": 0,
@@ -279,52 +279,52 @@
           {
             "x0": 0,
             "x1": 160,
-            "share": 23.26
+            "share": 37.06
           },
           {
             "x0": 160,
             "x1": 320,
-            "share": 37.22
+            "share": 60.22
           },
           {
             "x0": 320,
             "x1": 480,
-            "share": 37.22
+            "share": 60.22
           },
           {
             "x0": 480,
             "x1": 640,
-            "share": 37.22
+            "share": 60.22
           },
           {
             "x0": 640,
             "x1": 800,
-            "share": 37.22
+            "share": 60.22
           },
           {
             "x0": 800,
             "x1": 960,
-            "share": 32.71
+            "share": 55.71
           },
           {
             "x0": 960,
             "x1": 1120,
-            "share": 9.44
+            "share": 32.44
           },
           {
             "x0": 1120,
             "x1": 1280,
-            "share": 9.44
+            "share": 32.44
           },
           {
             "x0": 1280,
             "x1": 1440,
-            "share": 9.44
+            "share": 32.44
           },
           {
             "x0": 1440,
             "x1": 1600,
-            "share": 9.44
+            "share": 18.07
           },
           {
             "x0": 1600,
@@ -346,20 +346,20 @@
           "h": 640
         },
         "screens": 1.29,
-        "inkSharePct": 9.54,
+        "inkSharePct": 70,
         "zeroInkBandSharePct": 0,
-        "largestTypePx": 22,
+        "largestTypePx": 48,
         "horizontalOverflowPx": 0,
         "bands": [
           {
             "x0": 0,
             "x1": 160,
-            "share": 11.73
+            "share": 72.2
           },
           {
             "x0": 160,
             "x1": 320,
-            "share": 7.34
+            "share": 67.8
           }
         ]
       },
@@ -368,56 +368,56 @@
           "w": 1440,
           "h": 900
         },
-        "screens": 1.97,
-        "inkSharePct": 0,
-        "zeroInkBandSharePct": 100,
-        "largestTypePx": 0,
+        "screens": 1.31,
+        "inkSharePct": 77.49,
+        "zeroInkBandSharePct": 0,
+        "largestTypePx": 132,
         "horizontalOverflowPx": 0,
         "bands": [
           {
             "x0": 0,
             "x1": 160,
-            "share": 0
+            "share": 58.12
           },
           {
             "x0": 160,
             "x1": 320,
-            "share": 0
+            "share": 83.03
           },
           {
             "x0": 320,
             "x1": 480,
-            "share": 0
+            "share": 83.03
           },
           {
             "x0": 480,
             "x1": 640,
-            "share": 0
+            "share": 83.03
           },
           {
             "x0": 640,
             "x1": 800,
-            "share": 0
+            "share": 83.03
           },
           {
             "x0": 800,
             "x1": 960,
-            "share": 0
+            "share": 83.03
           },
           {
             "x0": 960,
             "x1": 1120,
-            "share": 0
+            "share": 83.03
           },
           {
             "x0": 1120,
             "x1": 1280,
-            "share": 0
+            "share": 83.03
           },
           {
             "x0": 1280,
             "x1": 1440,
-            "share": 0
+            "share": 58.12
           }
         ]
       },
@@ -426,71 +426,71 @@
           "w": 1920,
           "h": 1080
         },
-        "screens": 1.56,
-        "inkSharePct": 0,
-        "zeroInkBandSharePct": 100,
-        "largestTypePx": 0,
+        "screens": 1.19,
+        "inkSharePct": 71.21,
+        "zeroInkBandSharePct": 0,
+        "largestTypePx": 149,
         "horizontalOverflowPx": 0,
         "bands": [
           {
             "x0": 0,
             "x1": 160,
-            "share": 0
+            "share": 45.78
           },
           {
             "x0": 160,
             "x1": 320,
-            "share": 0
+            "share": 76.3
           },
           {
             "x0": 320,
             "x1": 480,
-            "share": 0
+            "share": 76.3
           },
           {
             "x0": 480,
             "x1": 640,
-            "share": 0
+            "share": 76.3
           },
           {
             "x0": 640,
             "x1": 800,
-            "share": 0
+            "share": 76.3
           },
           {
             "x0": 800,
             "x1": 960,
-            "share": 0
+            "share": 76.3
           },
           {
             "x0": 960,
             "x1": 1120,
-            "share": 0
+            "share": 76.3
           },
           {
             "x0": 1120,
             "x1": 1280,
-            "share": 0
+            "share": 76.3
           },
           {
             "x0": 1280,
             "x1": 1440,
-            "share": 0
+            "share": 76.3
           },
           {
             "x0": 1440,
             "x1": 1600,
-            "share": 0
+            "share": 76.3
           },
           {
             "x0": 1600,
             "x1": 1760,
-            "share": 0
+            "share": 76.3
           },
           {
             "x0": 1760,
             "x1": 1920,
-            "share": 0
+            "share": 45.78
           }
         ]
       }

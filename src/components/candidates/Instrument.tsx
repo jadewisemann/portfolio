@@ -1,5 +1,4 @@
-import { Fragment } from "react";
-import { Enter } from "@/components/candidates/Enter";
+import { Lines } from "@/components/candidates/Lines";
 import styles from "@/components/candidates/Instrument.module.css";
 
 /**
@@ -10,9 +9,11 @@ import styles from "@/components/candidates/Instrument.module.css";
  * 이 게이트는 로컬이다 — "CI 가 강제한다"는 쓰지 않는다
  * (CONTENT.md §9 항목 12, `src/forbidden-claims.test.ts` 가 기계로 막는다).
  *
- * 이 프로토타입은 정적인 "이후" 상태 한 프레임이다. 91.43 이 지금 값이고
- * 90.48 은 계기판 읽기값 안에 이전 값으로만 등장한다 — 애니메이션으로 두 값을
- * 오가지 않는다.
+ * 이 프로토타입은 정적인 "이후" 상태 한 프레임이다. 스펙이 명시적으로 "이
+ * 프로토타입에서는 애니메이션하지 않는다"를 요구하므로 이 컴포넌트는 Motion 을
+ * 전혀 쓰지 않는다(/c1 · /c3 의 `Enter` 진입과 다르다) — 91.43 이 지금 값이고
+ * 90.48 은 계기판 읽기값 안에 이전 값으로만 등장하며, 둘 사이를 오가는 전이는
+ * 없다.
  *
  * 숫자가 섞인 문구는 JSX 텍스트가 아니라 표현식으로 넘긴다(`eslint.config.mjs`
  * 의 `no-restricted-syntax`, Field.tsx 상단 설명 참고).
@@ -38,22 +39,14 @@ export function Instrument() {
       <div aria-hidden="true" className={styles.gate} />
       <div aria-hidden="true" className={styles.gateMarker} />
 
-      <Enter as="h1" className={styles.headline}>
-        {HEADLINE_LINES.map((line, i) => (
-          <Fragment key={line}>
-            {i > 0 ? <br /> : null}
-            {line}
-          </Fragment>
-        ))}
-      </Enter>
+      <h1 className={styles.headline}>
+        <Lines lines={HEADLINE_LINES} />
+      </h1>
 
-      <Enter as="p" className={styles.numeral}>
-        {NUMERAL}
-      </Enter>
-
-      <Enter as="p" className={styles.verdict} delayMs={60}>
-        통과
-      </Enter>
+      <div className={styles.numeralRow}>
+        <p className={styles.numeral}>{NUMERAL}</p>
+        <p className={styles.verdict}>통과</p>
+      </div>
 
       <p className={styles.readout}>
         {READOUT_LINES.map((line) => (

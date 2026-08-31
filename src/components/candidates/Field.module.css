@@ -87,7 +87,12 @@
 
 .headline {
   margin: 0;
-  max-width: 20ch;
+  /*
+    ch 상한을 두지 않는다 — 실측 결과(review/structural) 320px 에서 임의의
+    20ch 캡이 실제 컨테이너 폭(288px)보다 좁게 줄바꿈을 강제해 7줄까지
+    늘어났고, 그 아래의 447 · 캡션이 첫 뷰포트 밖으로 밀려났다. 컨테이너
+    폭 그대로 감싸는 것이 스펙이 준 x=16 flush 요구와도 더 맞는다.
+  */
   font-weight: 600;
   font-size: 40px;
   line-height: 1.12;
