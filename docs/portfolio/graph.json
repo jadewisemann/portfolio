@@ -1,0 +1,67 @@
+{
+  "nodes": {
+    "BOOTSTRAP": {
+      "next": ["REPOSITORY_AUDIT"]
+    },
+    "REPOSITORY_AUDIT": {
+      "next": ["CONTENT_INVENTORY"]
+    },
+    "CONTENT_INVENTORY": {
+      "next": ["COMPONENT_RESEARCH"]
+    },
+    "COMPONENT_RESEARCH": {
+      "next": ["ART_DIRECTION_BRANCH"]
+    },
+    "ART_DIRECTION_BRANCH": {
+      "next": ["DIRECTION_JUDGE"]
+    },
+    "DIRECTION_JUDGE": {
+      "next": ["DESIGN_SYSTEM"]
+    },
+    "DESIGN_SYSTEM": {
+      "next": ["MOTION_SYSTEM"]
+    },
+    "MOTION_SYSTEM": {
+      "next": ["SCENE_GRAPH"]
+    },
+    "SCENE_GRAPH": {
+      "next": ["GOLDEN_SLICE"]
+    },
+    "GOLDEN_SLICE": {
+      "next": ["GOLDEN_REVIEW"]
+    },
+    "GOLDEN_REVIEW": {
+      "next": [
+        "GOLDEN_FIX",
+        "EXPAND_SCENES"
+      ]
+    },
+    "GOLDEN_FIX": {
+      "next": [
+        "GOLDEN_REVIEW",
+        "STRUCTURAL_BRANCH"
+      ]
+    },
+    "STRUCTURAL_BRANCH": {
+      "next": ["GOLDEN_SLICE"]
+    },
+    "EXPAND_SCENES": {
+      "next": ["WHOLE_EXPERIENCE_AUDIT"]
+    },
+    "WHOLE_EXPERIENCE_AUDIT": {
+      "next": ["MOBILE_AUDIT"]
+    },
+    "MOBILE_AUDIT": {
+      "next": ["PERFORMANCE_AUDIT"]
+    },
+    "PERFORMANCE_AUDIT": {
+      "next": ["ACCESSIBILITY_AUDIT"]
+    },
+    "ACCESSIBILITY_AUDIT": {
+      "next": ["REGRESSION"]
+    },
+    "REGRESSION": {
+      "next": ["COMPLETE"]
+    }
+  }
+}

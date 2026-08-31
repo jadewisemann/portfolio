@@ -1,0 +1,11 @@
+{
+  "active": false,
+  "status": "IDLE",
+  "currentNode": "BOOTSTRAP",
+  "iteration": 0,
+  "currentScene": null,
+  "lockedScenes": [],
+  "failedCategories": {},
+  "nextAction": null,
+  "blocker": null
+}
