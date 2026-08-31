@@ -10,7 +10,7 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
-    include: ["src/**/*.{test,spec}.{ts,tsx}"],
+    include: ["src/**/*.{test,spec}.{ts,tsx}", "scripts/**/*.test.mjs"],
     coverage: {
       provider: "v8",
       // 분모를 전체 src 로 잡는다. 테스트가 import 한 파일만 세면

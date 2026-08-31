@@ -13,7 +13,9 @@
     "test:coverage": "vitest run --coverage",
     "fonts": "node scripts/subset-fonts.mjs",
     "fonts:fetch": "sh scripts/fetch-fonts.sh",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "graph": "node scripts/graph.mjs",
+    "capture": "node scripts/capture.mjs"
   },
   "dependencies": {
     "motion": "^13.1.1",

@@ -9,112 +9,71 @@ allowed-tools: Read Write Edit Grep Glob Bash Agent
 
 This skill controls the complete portfolio development lifecycle.
 
-Read first:
+The single source of truth for the graph is `docs/portfolio/graph.json`:
+node order, executor bindings (agents/skill), required outputs, evidence
+directories, gate thresholds, iteration limits, and edges all live there.
+Do not maintain a second copy of the graph anywhere, including here.
 
-- CLAUDE.md
-- docs/portfolio/graph.json
-- docs/portfolio/state.json
+The single writer of `docs/portfolio/state.json` is `node scripts/graph.mjs`.
+Hand-editing state.json is corruption.
 
-If state.active is false:
+## Boot
 
-set:
+1. Read CLAUDE.md, docs/portfolio/graph.json, docs/portfolio/DECISIONS.md.
+2. `node scripts/graph.mjs status`
+3. If inactive: `node scripts/graph.mjs start`
+4. If a blocker is recorded, resolve it (or ask the user), then
+   `node scripts/graph.mjs unblock`.
 
-active = true
-status = RUNNING
+## Node loop
 
-Never invent portfolio facts.
+At every node, in order:
 
-Never skip graph nodes.
+1. `node scripts/graph.mjs status` — it prints the node's executor binding,
+   unmet requirements, and available transitions.
+2. Do the work the node declares:
+   - `agents` listed → delegate. `parallel: true` → launch them in a single
+     message so they run concurrently.
+   - `skill` listed → that skill defines the working procedure.
+   - `owner: main` → judge and persist in this context; do not delegate
+     final judgement.
+3. Persist decisions in the declared output docs and DECISIONS.md.
+4. `node scripts/graph.mjs advance`
+   - The engine enforces outputs, evidence files, gates, and verification
+     tiers. If it refuses, produce what is missing; never work around it.
+5. Repeat until COMPLETE or a genuine blocker
+   (`node scripts/graph.mjs block "<reason>"`).
 
-At every graph node:
+Never invent portfolio facts. Never skip graph nodes.
 
-1. Read current state.
-2. Determine required specialist agents.
-3. Delegate independent work in parallel when appropriate.
-4. Collect results.
-5. Judge results.
-6. Persist decisions.
-7. Update currentNode.
-8. Continue.
+## Golden gate
 
-The main conversation is responsible for orchestration.
+GOLDEN_REVIEW requires:
 
-Specialist agents should perform scoped work and return evidence.
+- rendered evidence in `review/golden-slice/` — produce it with
+  `node scripts/capture.mjs review/golden-slice`;
+- numeric scores with evidence in `docs/portfolio/scorecard.json`
+  (mirror the table in SCORECARD.md for humans).
 
-# Graph
+The engine compares scores against graph.json thresholds and picks the edge
+itself: pass → EXPAND_SCENES, fail → GOLDEN_FIX (iteration increments).
+After 3 failed iterations on the same structure the engine forces
+GOLDEN_FIX → STRUCTURAL_BRANCH. A critic may demand an early structural
+branch: `node scripts/graph.mjs advance exhausted` from GOLDEN_FIX, with the
+rationale recorded in DECISIONS.md under `## Structural branch`.
 
-BOOTSTRAP
-→ REPOSITORY_AUDIT
-→ CONTENT_INVENTORY
-→ COMPONENT_RESEARCH
-→ ART_DIRECTION_BRANCH
-→ DIRECTION_JUDGE
-→ DESIGN_SYSTEM
-→ MOTION_SYSTEM
-→ SCENE_GRAPH
-→ GOLDEN_SLICE
-→ GOLDEN_REVIEW
-→ EXPAND_SCENES
-→ WHOLE_EXPERIENCE_AUDIT
-→ MOBILE_AUDIT
-→ PERFORMANCE_AUDIT
-→ ACCESSIBILITY_AUDIT
-→ REGRESSION
-→ COMPLETE
+## Verification tiers
 
-# Parallelization
+`.claude/runtime.json`:
 
-Use parallel specialist agents when work is independent.
+- `builder` (lint, typecheck, unit tests) — runs automatically when
+  frontend-builder stops.
+- `gate` (adds e2e, which builds and serves production) — runs once at the
+  REGRESSION node via the engine. Do not run it per-change.
 
-Examples:
+## Completion
 
-COMPONENT_RESEARCH:
-run multiple scouting tasks.
-
-GOLDEN_REVIEW:
-run visual, motion, performance and accessibility critics independently.
-
-Do not parallelize dependent work.
-
-# Golden Slice Gate
-
-The Golden Slice includes:
-
-- Hero
-- Hero → Projects transition
-- One representative project scene
-
-It must pass:
-
-Visual Impact >= 9
-Art Direction >= 9
-Motion Coherence >= 9
-Typography >= 8.5
-Originality >= 8.5
-Narrative Clarity >= 8
-Mobile >= 8
-
-If a category fails:
-
-patch.
-
-After three failed polishing iterations on the same structure:
-
-branch structurally.
-
-# Completion
-
-Do not set state.status to COMPLETE until:
-
-- rendered experience was inspected;
-- mobile was inspected;
-- performance audit passed;
-- accessibility audit passed;
-- regression passed;
-- FINAL_AUDIT.md exists.
-
-When complete:
-
-active = false
-status = COMPLETE
-currentNode = COMPLETE
+The engine refuses to enter COMPLETE until FINAL_AUDIT.md is no longer a
+placeholder, and the REGRESSION node's gate tier passed. FINAL_AUDIT.md must
+record rendered full-site inspection, mobile inspection, performance audit,
+accessibility audit, and regression results with evidence paths.

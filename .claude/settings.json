@@ -28,6 +28,15 @@
     ],
     "SubagentStop": [
       {
+        "matcher": "frontend-builder",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/verify-builder.mjs"
+          }
+        ]
+      },
+      {
         "matcher": "visual-critic|motion-critic",
         "hooks": [
           {

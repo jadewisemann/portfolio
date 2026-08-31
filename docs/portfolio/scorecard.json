@@ -1,0 +1,13 @@
+{
+  "reviewedAt": null,
+  "structureIteration": 0,
+  "scores": {
+    "visualImpact": { "value": null, "evidence": "" },
+    "artDirection": { "value": null, "evidence": "" },
+    "motionCoherence": { "value": null, "evidence": "" },
+    "typography": { "value": null, "evidence": "" },
+    "originality": { "value": null, "evidence": "" },
+    "narrativeClarity": { "value": null, "evidence": "" },
+    "mobile": { "value": null, "evidence": "" }
+  }
+}
