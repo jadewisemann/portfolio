@@ -3,7 +3,7 @@ import type { Reading } from "@/lib/reading";
 /**
  * 측정 막대. 서사의 핵심은 막대가 아니라 **하한 눈금의 위치**입니다.
  * 기성 Meter 와 Progress 는 임의 위치에 눈금을 꽂는 옵션을 주지 않아 직접 만듭니다
- * (COMPONENT_REGISTRY.md C3).
+ * (COMPONENT_REGISTRY.md B1).
  *
  * 모션 소유자: 없음. 정적입니다 (MOTION_LANGUAGE.md 12절).
  *

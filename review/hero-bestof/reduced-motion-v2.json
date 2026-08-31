@@ -1,0 +1,7 @@
+{
+  "route": "v2",
+  "note": "domcontentloaded, CPU 6x 스로틀 하의 opacity — 하이드레이션 이전 구간을 잡기 위함",
+  "opacityAtDomContentLoaded": "1",
+  "dataMotionReduceAttrSetPrePaint": true,
+  "pass": true
+}

@@ -4,3 +4,14 @@
 {"ts":"2026-08-31T13:34:06.636Z","event":"block","node":"CONTENT_INVENTORY","reason":"Portfolio facts not supplied: BRIEF.md and CONTENT.md require owner-verified content (audience, goals, projects, links). Ask the user; do not invent."}
 {"ts":"2026-08-31T13:37:39.104Z","event":"unblock","node":"CONTENT_INVENTORY"}
 {"ts":"2026-08-31T13:40:06.693Z","event":"block","node":"CONTENT_INVENTORY","reason":"User paused execution: CONTENT_INVENTORY and all subsequent nodes are to be executed by a /portfolio-build run, not ad-hoc. Content source is designated (../_jadewisemann, see CLAUDE.md)."}
+{"ts":"2026-08-31T13:53:36.400Z","event":"unblock","node":"CONTENT_INVENTORY"}
+{"ts":"2026-08-31T13:53:36.464Z","event":"advance","from":"CONTENT_INVENTORY","to":"COMPONENT_RESEARCH","outcome":"pass","iteration":0}
+{"ts":"2026-08-31T13:56:57.134Z","event":"advance","from":"COMPONENT_RESEARCH","to":"ART_DIRECTION_BRANCH","outcome":"pass","iteration":0}
+{"ts":"2026-08-31T14:00:56.046Z","event":"advance","from":"ART_DIRECTION_BRANCH","to":"DIRECTION_JUDGE","outcome":"pass","iteration":0}
+{"ts":"2026-08-31T14:02:43.360Z","event":"advance","from":"DIRECTION_JUDGE","to":"DESIGN_SYSTEM","outcome":"pass","iteration":0}
+{"ts":"2026-08-31T14:05:07.371Z","event":"advance","from":"DESIGN_SYSTEM","to":"MOTION_SYSTEM","outcome":"pass","iteration":0}
+{"ts":"2026-08-31T14:05:07.437Z","event":"advance","from":"MOTION_SYSTEM","to":"SCENE_GRAPH","outcome":"pass","iteration":0}
+{"ts":"2026-08-31T14:08:01.994Z","event":"advance","from":"SCENE_GRAPH","to":"GOLDEN_SLICE","outcome":"pass","iteration":0}
+{"ts":"2026-08-31T14:42:49.957Z","event":"advance","from":"GOLDEN_SLICE","to":"GOLDEN_REVIEW","outcome":"pass","iteration":0}
+{"ts":"2026-08-31T14:55:43.203Z","event":"advance","from":"GOLDEN_REVIEW","to":"GOLDEN_FIX","outcome":"fail","iteration":1,"gate":{"pass":false,"failed":[{"category":"visualImpact","value":4.5,"threshold":9},{"category":"artDirection","value":5.5,"threshold":9},{"category":"motionCoherence","value":5.8,"threshold":9},{"category":"typography","value":6,"threshold":8.5},{"category":"originality","value":6.5,"threshold":8.5},{"category":"narrativeClarity","value":7.5,"threshold":8},{"category":"mobile","value":4,"threshold":8}],"missing":[]}}
+{"ts":"2026-08-31T15:58:04.450Z","event":"block","node":"GOLDEN_FIX","reason":"소유자 지시로 런 일시 중단 (2026-09-01). GOLDEN_FIX iteration 1 미완: 패치 미적용, 히어로 Best-of-N 미실행. 재개 시 주의 2건 — (1) state.json failedCategories 는 스테일(7개, 디렉터 자체 추정값 + 상향 전 임계값)이므로 작업 목록은 scorecard.json 실측값 x graph.json 현재 임계값으로 재계산할 것: 실제 실패 10개, composition 2.9 / interactionQuality 5.2 / accessibility 6.8 누락. (2) 백그라운드 서브에이전트가 3회 조용히 죽었으므로 위임은 블로킹으로 할 것."}

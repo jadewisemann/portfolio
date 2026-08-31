@@ -29,7 +29,19 @@ import { useEffect } from "react";
  */
 let hasPlayed = false;
 
-export function Hero({ lines }: { lines: readonly string[] }) {
+export function Hero({
+  lines,
+  scale = "legacy",
+}: {
+  lines: readonly string[];
+  /**
+   * `"legacy"` 는 iteration 0 의 4단계(26/30/32/36px)를 유지합니다 — 기존 페이지가
+   * 이 값에 맞춰 검증되어 있으므로 바꾸지 않습니다.
+   * `"display"` 는 DESIGN_SYSTEM.md 4절의 개정(26/30/56/72px)입니다 — 데스크톱에
+   * 존재감 있는 오프닝이 필요한 곳(척추 비교 빌드)에서 씁니다.
+   */
+  scale?: "legacy" | "display";
+}) {
   const reduced = useReducedMotion();
   const animate = !reduced && !hasPlayed;
 
@@ -37,13 +49,22 @@ export function Hero({ lines }: { lines: readonly string[] }) {
     hasPlayed = true;
   }, []);
 
+  const sizeClass =
+    scale === "display"
+      ? "text-[26px] leading-[1.45] sm:text-[30px] md:max-w-[52rem] md:text-[56px] md:leading-[1.2] lg:text-[72px] lg:leading-[1.15]"
+      : "text-[26px] leading-[1.45] sm:text-[30px] md:text-[32px] lg:text-[36px]";
+  const headerClass =
+    scale === "display" ? "max-w-none pt-7 pb-7 md:pt-14 md:pb-10" : "max-w-measure pt-7 pb-7 md:pt-14 md:pb-10";
+
   return (
-    <header className="max-w-measure pt-7 pb-7 md:pt-14 md:pb-10">
-      <h1 className="text-[26px] font-semibold leading-[1.45] sm:text-[30px] md:text-[32px] lg:text-[36px]">
+    <header className={headerClass}>
+      <h1 className={`font-semibold ${sizeClass}`}>
         {lines.map((line, i) => (
           <motion.span
             animate={{ opacity: 1, y: 0 }}
-            className="block"
+            // 두 문장 사이에 반 리듬(14px)을 둡니다. 붙여 놓았더니 1440 렌더에서
+            // 여섯 줄이 한 문단으로 읽혀 훅과 차별점의 구분이 사라졌습니다.
+            className={i === 0 ? "block" : "block pt-[14px]"}
             data-enter=""
             // `false` 를 넘기면 Motion 이 인라인 스타일을 쓰지 않아
             // CSS 의 `[data-js] [data-enter] { opacity: 0 }` 가 영구히 이깁니다.

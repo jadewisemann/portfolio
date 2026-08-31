@@ -7,159 +7,279 @@
       "title": "하네스 무결성 점검",
       "owner": "main",
       "verify": "doctor",
-      "edges": { "pass": "REPOSITORY_AUDIT" }
+      "edges": {
+        "pass": "REPOSITORY_AUDIT"
+      }
     },
     "REPOSITORY_AUDIT": {
       "title": "저장소 감사",
       "owner": "main",
       "produces": [
-        { "path": "docs/portfolio/DECISIONS.md", "mustMatch": "## Repository audit" }
+        {
+          "path": "docs/portfolio/DECISIONS.md",
+          "mustMatch": "## Repository audit"
+        }
       ],
-      "edges": { "pass": "CONTENT_INVENTORY" }
+      "edges": {
+        "pass": "CONTENT_INVENTORY"
+      }
     },
     "CONTENT_INVENTORY": {
       "title": "검증된 포트폴리오 사실 수집",
       "owner": "main",
       "produces": [
-        { "path": "docs/portfolio/BRIEF.md", "mustNotMatch": "Status: not supplied" },
-        { "path": "docs/portfolio/CONTENT.md", "mustNotMatch": "Status: not supplied" }
+        {
+          "path": "docs/portfolio/BRIEF.md",
+          "mustNotMatch": "Status: not supplied"
+        },
+        {
+          "path": "docs/portfolio/CONTENT.md",
+          "mustNotMatch": "Status: not supplied"
+        }
       ],
-      "edges": { "pass": "COMPONENT_RESEARCH" }
+      "edges": {
+        "pass": "COMPONENT_RESEARCH"
+      }
     },
     "COMPONENT_RESEARCH": {
       "title": "컴포넌트·패턴 리서치",
-      "agents": ["component-scout"],
+      "agents": [
+        "component-scout"
+      ],
       "skill": "component-research",
       "parallel": true,
       "produces": [
-        { "path": "docs/portfolio/COMPONENT_REGISTRY.md", "mustMatch": "https?://" }
+        {
+          "path": "docs/portfolio/COMPONENT_REGISTRY.md",
+          "mustMatch": "https?://"
+        }
       ],
-      "edges": { "pass": "ART_DIRECTION_BRANCH" }
+      "edges": {
+        "pass": "ART_DIRECTION_BRANCH"
+      }
     },
     "ART_DIRECTION_BRANCH": {
       "title": "경쟁 아트 디렉션 생성",
-      "agents": ["art-director"],
+      "agents": [
+        "art-director"
+      ],
       "skill": "art-direction",
       "parallel": true,
-      "evidence": { "dir": "docs/portfolio/directions", "minFiles": 3, "pattern": "\\.md$" },
-      "edges": { "pass": "DIRECTION_JUDGE" }
+      "evidence": {
+        "dir": "docs/portfolio/directions",
+        "minFiles": 3,
+        "pattern": "\\.md$"
+      },
+      "edges": {
+        "pass": "DIRECTION_JUDGE"
+      }
     },
     "DIRECTION_JUDGE": {
       "title": "디렉션 심사·확정",
       "owner": "main",
       "produces": [
-        { "path": "docs/portfolio/ART_DIRECTION.md", "mustNotMatch": "Status: not selected" },
-        { "path": "docs/portfolio/DECISIONS.md", "mustMatch": "## Direction lock" }
+        {
+          "path": "docs/portfolio/ART_DIRECTION.md",
+          "mustNotMatch": "Status: not selected"
+        },
+        {
+          "path": "docs/portfolio/DECISIONS.md",
+          "mustMatch": "## Direction lock"
+        }
       ],
-      "edges": { "pass": "DESIGN_SYSTEM" }
+      "edges": {
+        "pass": "DESIGN_SYSTEM"
+      }
     },
     "DESIGN_SYSTEM": {
       "title": "디자인 시스템 정의",
-      "agents": ["art-director"],
-      "produces": [
-        { "path": "docs/portfolio/DESIGN_SYSTEM.md", "mustNotMatch": "Status: not defined" }
+      "agents": [
+        "art-director"
       ],
-      "edges": { "pass": "MOTION_SYSTEM" }
+      "produces": [
+        {
+          "path": "docs/portfolio/DESIGN_SYSTEM.md",
+          "mustNotMatch": "Status: not defined"
+        }
+      ],
+      "edges": {
+        "pass": "MOTION_SYSTEM"
+      }
     },
     "MOTION_SYSTEM": {
       "title": "모션 언어 정의",
-      "agents": ["motion-architect"],
+      "agents": [
+        "motion-architect"
+      ],
       "skill": "motion-system",
       "produces": [
-        { "path": "docs/portfolio/MOTION_LANGUAGE.md", "mustNotMatch": "Status: not defined" }
+        {
+          "path": "docs/portfolio/MOTION_LANGUAGE.md",
+          "mustNotMatch": "Status: not defined"
+        }
       ],
-      "edges": { "pass": "SCENE_GRAPH" }
+      "edges": {
+        "pass": "SCENE_GRAPH"
+      }
     },
     "SCENE_GRAPH": {
       "title": "씬 그래프 정의",
       "owner": "main",
       "skill": "scene-graph",
       "produces": [
-        { "path": "docs/portfolio/SCENE_GRAPH.md", "mustNotMatch": "Status: not defined" }
+        {
+          "path": "docs/portfolio/SCENE_GRAPH.md",
+          "mustNotMatch": "Status: not defined"
+        }
       ],
-      "edges": { "pass": "GOLDEN_SLICE" }
+      "edges": {
+        "pass": "GOLDEN_SLICE"
+      }
     },
     "GOLDEN_SLICE": {
       "title": "골든 슬라이스 구현",
-      "agents": ["frontend-builder"],
+      "agents": [
+        "frontend-builder"
+      ],
       "skill": "golden-slice",
-      "edges": { "pass": "GOLDEN_REVIEW" }
+      "edges": {
+        "pass": "GOLDEN_REVIEW"
+      }
     },
     "GOLDEN_REVIEW": {
       "title": "골든 슬라이스 게이트",
-      "agents": ["visual-critic", "motion-critic", "performance-auditor", "accessibility-auditor"],
+      "agents": [
+        "visual-critic",
+        "motion-critic",
+        "performance-auditor",
+        "accessibility-auditor"
+      ],
       "parallel": true,
-      "evidence": { "dir": "review/golden-slice", "minFiles": 4, "pattern": "\\.(png|jpg|md)$" },
+      "evidence": {
+        "dir": "review/golden-slice",
+        "minFiles": 8,
+        "pattern": "\\.(png|jpg|md)$"
+      },
       "gate": {
         "scorecard": "docs/portfolio/scorecard.json",
         "thresholds": {
           "visualImpact": 9,
           "artDirection": 9,
           "motionCoherence": 9,
-          "typography": 8.5,
+          "typography": 9,
+          "composition": 9,
           "originality": 8.5,
-          "narrativeClarity": 8,
-          "mobile": 8
+          "narrativeClarity": 8.5,
+          "interactionQuality": 8.5,
+          "mobile": 8.5,
+          "performance": 8,
+          "accessibility": 8
         }
       },
-      "edges": { "pass": "EXPAND_SCENES", "fail": "GOLDEN_FIX" }
+      "edges": {
+        "pass": "EXPAND_SCENES",
+        "fail": "GOLDEN_FIX"
+      }
     },
     "GOLDEN_FIX": {
       "title": "실패 카테고리 패치",
-      "agents": ["frontend-builder"],
+      "agents": [
+        "frontend-builder"
+      ],
       "maxIterations": 3,
-      "edges": { "pass": "GOLDEN_REVIEW", "exhausted": "STRUCTURAL_BRANCH" }
+      "edges": {
+        "pass": "GOLDEN_REVIEW",
+        "exhausted": "STRUCTURAL_BRANCH"
+      }
     },
     "STRUCTURAL_BRANCH": {
       "title": "슬라이스 구조 재설계",
-      "agents": ["art-director", "motion-architect"],
+      "agents": [
+        "art-director",
+        "motion-architect"
+      ],
       "resetIteration": true,
       "produces": [
-        { "path": "docs/portfolio/DECISIONS.md", "mustMatch": "## Structural branch" }
+        {
+          "path": "docs/portfolio/DECISIONS.md",
+          "mustMatch": "## Structural branch"
+        }
       ],
-      "edges": { "pass": "GOLDEN_SLICE" }
+      "edges": {
+        "pass": "GOLDEN_SLICE"
+      }
     },
     "EXPAND_SCENES": {
       "title": "잔여 씬 구현",
-      "agents": ["frontend-builder"],
-      "edges": { "pass": "WHOLE_EXPERIENCE_AUDIT" }
+      "agents": [
+        "frontend-builder"
+      ],
+      "edges": {
+        "pass": "WHOLE_EXPERIENCE_AUDIT"
+      }
     },
     "WHOLE_EXPERIENCE_AUDIT": {
       "title": "전체 경험 시각·모션 감사",
-      "agents": ["visual-critic", "motion-critic"],
+      "agents": [
+        "visual-critic",
+        "motion-critic"
+      ],
       "parallel": true,
-      "evidence": { "dir": "review/scenes", "minFiles": 2, "pattern": "\\.(png|jpg|md)$" },
-      "edges": { "pass": "MOBILE_AUDIT" }
+      "evidence": {
+        "dir": "review/scenes",
+        "minFiles": 2,
+        "pattern": "\\.(png|jpg|md)$"
+      },
+      "edges": {
+        "pass": "MOBILE_AUDIT"
+      }
     },
     "MOBILE_AUDIT": {
       "title": "모바일 경험 감사",
-      "agents": ["visual-critic"],
-      "edges": { "pass": "PERFORMANCE_AUDIT" }
+      "agents": [
+        "visual-critic"
+      ],
+      "edges": {
+        "pass": "PERFORMANCE_AUDIT"
+      }
     },
     "PERFORMANCE_AUDIT": {
       "title": "성능 감사",
-      "agents": ["performance-auditor"],
+      "agents": [
+        "performance-auditor"
+      ],
       "skill": "performance-review",
-      "edges": { "pass": "ACCESSIBILITY_AUDIT" }
+      "edges": {
+        "pass": "ACCESSIBILITY_AUDIT"
+      }
     },
     "ACCESSIBILITY_AUDIT": {
       "title": "접근성 감사",
-      "agents": ["accessibility-auditor"],
+      "agents": [
+        "accessibility-auditor"
+      ],
       "skill": "accessibility-review",
-      "edges": { "pass": "REGRESSION" }
+      "edges": {
+        "pass": "REGRESSION"
+      }
     },
     "REGRESSION": {
       "title": "최종 검증 게이트",
       "owner": "main",
       "skill": "final-experience-audit",
       "verify": "gate",
-      "edges": { "pass": "COMPLETE" }
+      "edges": {
+        "pass": "COMPLETE"
+      }
     },
     "COMPLETE": {
       "title": "워크플로 완료",
       "terminal": true,
       "requires": [
-        { "path": "docs/portfolio/FINAL_AUDIT.md", "mustNotMatch": "Status: pending" }
+        {
+          "path": "docs/portfolio/FINAL_AUDIT.md",
+          "mustNotMatch": "Status: pending"
+        }
       ]
     }
   }

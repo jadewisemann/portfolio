@@ -12,6 +12,13 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // 중첩된 빌드 산출물도 잡습니다 — 이전 패턴은 저장소 루트 기준으로만 걸려서
+    // `.claude/worktrees/<id>/.next/**` (병렬 에이전트 작업 트리의 빌드 산출물) 가
+    // 그대로 린트에 걸렸습니다. 이 저장소의 소스가 아니므로 전부 뺍니다.
+    "**/.next/**",
+    "**/out/**",
+    "**/build/**",
+    ".claude/**",
   ]),
   {
     // 화면에 나가는 수치는 src/data/readings.ts 를 통해서만 도달해야 한다.

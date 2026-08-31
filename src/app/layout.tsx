@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import { mono, sansKR } from "@/fonts";
+import { hero } from "@/content/golden";
 import "./globals.css";
 
 /*
-  메타데이터도 콘텐츠입니다. 개인 사실을 이 저장소에 두지 않기로 했으므로
-  주입 방식이 정해질 때 채웁니다.
+  메타데이터도 콘텐츠입니다. 문구는 src/content/golden.ts 의 히어로와 같은 출처를
+  씁니다 (DESIGN.md 1절 포지셔닝 v2, 근거 등급 A). PII 는 넣지 않습니다.
 */
 export const metadata: Metadata = {
-  title: "Frontend Engineer",
+  title: "정유진 — 프론트엔드",
+  description: hero.lines[0],
 };
 
 export default function RootLayout({
@@ -28,10 +30,20 @@ export default function RootLayout({
           첫 페인트 전에 data-js 를 세웁니다 (MOTION_LANGUAGE.md 9.1 다).
           히어로의 초기 은닉을 [data-js] 아래에서만 적용하므로, JS 가 차단되면
           은닉이 적용되지 않아 포지셔닝 두 문장이 완전히 보입니다.
+
+          같은 스크립트가 축소 모션 여부도 첫 페인트 전에 결정합니다
+          (MOTION_LANGUAGE.md 13.1, GOLDEN_FIX 1). Motion 의 `useReducedMotion()` 은
+          하이드레이션 이후에야 해석되므로, 그때까지 서버 HTML 의 인라인
+          opacity:0(Motion 의 `initial`)이 그대로 페인트됩니다 — 실측 192ms
+          (6x 스로틀 1399ms). data-motion-reduce 는 이 스크립트가 body 를 파싱하기
+          전에 세우므로 아래 !important 규칙이 Motion 의 인라인 스타일보다 먼저
+          이깁니다.
         */}
         <script
           dangerouslySetInnerHTML={{
-            __html: 'document.documentElement.dataset.js="1"',
+            __html:
+              'var d=document.documentElement;d.dataset.js="1";' +
+              'if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches){d.dataset.motionReduce="1"}',
           }}
         />
         {/*

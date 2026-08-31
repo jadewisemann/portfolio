@@ -1,0 +1,25 @@
+{
+  "viewport": {
+    "w": 320,
+    "h": 640
+  },
+  "docHeight": 5207,
+  "screens": 8.14,
+  "hero": {
+    "top": 28,
+    "height": 316,
+    "width": 280,
+    "fontSize": "26px",
+    "vhShare": 49.3
+  },
+  "railWidthShare": 0,
+  "railAreaShare": 0,
+  "seamBandWidth": 261,
+  "biggestType": "40px",
+  "bodyMeasure": 280,
+  "inkSpan": {
+    "left": 20,
+    "right": 300,
+    "share": 87.5
+  }
+}

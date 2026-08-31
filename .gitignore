@@ -46,3 +46,6 @@ next-env.d.ts
 # Playwright 산출물
 /test-results/
 /playwright-report/
+
+# 에이전트 워크트리 (내용은 worktree-agent-* 브랜치로 보존)
+/.claude/worktrees/
