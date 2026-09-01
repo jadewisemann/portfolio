@@ -2,15 +2,18 @@ import { describe, expect, it } from "vitest";
 import {
   CHANNEL_HALF,
   CORRIDOR_CAMERA_START_Z,
-  corridorCameraZ,
-  corridorItems,
-  corridorTotalDepth,
   HERO_CAMERA_DESKTOP,
   HERO_CAMERA_MOBILE,
+  corridorCameraZ,
+  corridorIndexForZ,
+  corridorItems,
+  corridorPlanesInView,
+  corridorTotalDepth,
   heroItemsDesktop,
   heroItemsMobile,
   projectToScreen,
 } from "./layout";
+import { PROJECTS } from "../shots";
 
 /**
  * 기하 불변식 테스트. `/f1` 이 「카메라가 평면 안으로 들어간다」로 죽은 프레임을
@@ -42,6 +45,39 @@ describe("복도 배치 — 채널 불변식", () => {
     expect(a).toBeGreaterThan(b);
     expect(b).toBeGreaterThan(c);
     expect(a).toBe(CORRIDOR_CAMERA_START_Z);
+  });
+});
+
+describe("복도 밀도 — 끝까지 성기지 않는다", () => {
+  /*
+    실측 결함: /t1 스크롤 90% 에서 화면에 평면이 2장뿐이었다
+    (`review/tone/scroll-t1-1920-90.png`). 카메라가 평면 밭 끝까지 달려서
+    마지막 구간에 남는 평면이 없었던 것이다. 카메라 행정을 한 밴드 줄여 고쳤고,
+    그 수정이 되돌아가지 않도록 밀도를 수로 검사한다.
+  */
+  it("어느 진행률에서도 화면에 평면이 최소 3장 있다", () => {
+    const thin: string[] = [];
+    for (let step = 0; step <= 20; step += 1) {
+      const progress = step / 20;
+      const ahead = corridorPlanesInView(progress);
+      if (ahead < 3) thin.push(`${Math.round(progress * 100)}% → ${ahead}장`);
+    }
+    expect(thin).toEqual([]);
+  });
+
+  it("진행률 100% 는 마지막 프로젝트에 머문다", () => {
+    // 꼬리를 그냥 잘랐더니 끝에서 두 번째 프로젝트에 멈춰 있었다.
+    const total = corridorTotalDepth();
+    const endZ = corridorCameraZ(1, total);
+    expect(corridorIndexForZ(endZ, PROJECTS.length)).toBe(PROJECTS.length - 1);
+  });
+
+  it("카메라는 평면 밭보다 먼저 멈춘다", () => {
+    const total = corridorTotalDepth();
+    const endZ = corridorCameraZ(1, total);
+    const furthest = Math.min(...corridorItems().map((item) => item.z));
+    // 종점에서도 앞에 평면이 남아 있어야 한다 — 밭 끝에 도달하면 화면이 빈다.
+    expect(endZ - furthest).toBeGreaterThan(1);
   });
 });
 

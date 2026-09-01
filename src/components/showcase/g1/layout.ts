@@ -200,8 +200,44 @@ export function projectToScreen(item: Item, camera: Camera): ScreenRect | null {
 
 export const CHANNEL_HALF = 0.75;
 export const DEPTH_PER_PROJECT = 6;
-export const CORRIDOR_CAMERA_START_Z = 3.2;
+/*
+  카메라 출발 z. 3.2 에서 1.6 으로 당겼다 — 3.2 에서는 출발 직후 앞에 평면이
+  2장뿐이어서 복도가 성기게 시작했다 (`corridorPlanesAhead` 로 실측).
+  꼬리(CORRIDOR_TAIL)가 끝을 채우고 이 값이 시작을 채운다.
+*/
+export const CORRIDOR_CAMERA_START_Z = 1.6;
 export const CORRIDOR_FOV = 62;
+
+/**
+ * 카메라가 평면 밭보다 먼저 멈추는 거리.
+ *
+ * 실측 결함 (`review/tone/scroll-t1-1920-90.png`): 스크롤 90% 에서 화면에 평면이
+ * 2장만 남고 나머지가 전부 지면이다. 죽은 프레임은 아니지만 55% 대비 눈에 띄게
+ * 성기다 — 끝으로 갈수록 얇아진다.
+ *
+ * 원인은 배치가 아니라 **카메라 행정**이다. 카메라가 총 깊이만큼 끝까지 가면
+ * 마지막 구간에서는 앞에 남은 평면이 마지막 프로젝트의 뒤쪽 몇 장뿐이고, 이미
+ * 지나친 평면은 뒤에 있으므로 화면에 없다. 평면을 더 늘리는 것이 아니라 카메라를
+ * 한 밴드 일찍 세워서 항상 앞에 밭이 남아 있게 한다.
+ */
+export const CORRIDOR_TAIL = DEPTH_PER_PROJECT * 0.75;
+
+/**
+ * 카메라가 실제로 지나는 거리.
+ *
+ * 꼬리를 그냥 잘라내면 **마지막 프로젝트에 스크롤로 도달하지 못한다** — 실제로
+ * 그렇게 만들었다가 진행률 100% 가 세 번째가 아니라 두 번째 프로젝트에 머물렀다.
+ * 그래서 종점은 임의의 값이 아니라 **마지막 프로젝트의 목표 z** 다. 밭 끝보다
+ * 앞에서 멈추므로 앞에 평면이 남고, 동시에 마지막 프로젝트가 화면 중앙에 온다.
+ */
+export function corridorTravel(
+  totalDepth: number,
+  projects: readonly ShowcaseProject[] = PROJECTS,
+): number {
+  const lastTargetZ = corridorProjectTargetZ(projects.length - 1);
+  const travel = CORRIDOR_CAMERA_START_Z - lastTargetZ;
+  return Math.min(totalDepth, Math.max(DEPTH_PER_PROJECT, travel));
+}
 
 export interface CorridorItem extends Item {
   readonly projectIndex: number;
@@ -264,7 +300,7 @@ export function corridorCameraZ(
   totalDepth: number,
 ): number {
   const p = Math.min(1, Math.max(0, progress));
-  return CORRIDOR_CAMERA_START_Z - p * totalDepth;
+  return CORRIDOR_CAMERA_START_Z - p * corridorTravel(totalDepth);
 }
 
 export function corridorIndexForZ(z: number, projectCount: number): number {
@@ -277,6 +313,30 @@ export function corridorProjectTargetZ(projectIndex: number): number {
 }
 
 export function corridorProgressForZ(z: number, totalDepth: number): number {
-  const p = (CORRIDOR_CAMERA_START_Z - z) / totalDepth;
+  const p = (CORRIDOR_CAMERA_START_Z - z) / corridorTravel(totalDepth);
   return Math.min(1, Math.max(0, p));
+}
+
+/**
+ * 진행률 `progress` 에서 화면에 잡히는 평면 수.
+ *
+ * 「끝으로 갈수록 성기다」는 눈으로만 보이는 결함이므로 수로 만들어 테스트한다.
+ *
+ * 창을 카메라 **앞쪽만**으로 잡았더니 스크린샷과 어긋났다 — 진행률 100% 에서
+ * 실제 화면에는 평면이 다섯 장 보이는데 계수는 2였다. 평면은 전부 중심선에서
+ * 옆으로 비켜나 있으므로(채널 불변식) 카메라를 막 지난 평면도 화면 가장자리에
+ * 남는다. 그래서 창을 카메라 **뒤쪽 `BEHIND` 까지** 넓힌다. 임계값을 낮추는 것이
+ * 아니라 계측을 화면에 맞추는 것이다.
+ */
+const VIEW_BEHIND = 2;
+
+export function corridorPlanesInView(
+  progress: number,
+  depth = DEPTH_PER_PROJECT,
+  projects: readonly ShowcaseProject[] = PROJECTS,
+): number {
+  const cameraZ = corridorCameraZ(progress, corridorTotalDepth(projects));
+  return corridorItems(projects).filter(
+    (item) => item.z < cameraZ + VIEW_BEHIND && item.z > cameraZ - depth,
+  ).length;
 }
