@@ -18,3 +18,4 @@
 {"ts":"2026-08-31T16:29:20.434Z","event":"unblock","node":"GOLDEN_FIX"}
 {"ts":"2026-08-31T16:29:20.489Z","event":"advance","from":"GOLDEN_FIX","to":"STRUCTURAL_BRANCH","outcome":"exhausted","iteration":0}
 {"ts":"2026-09-01T06:36:12.509Z","event":"block","node":"STRUCTURAL_BRANCH","reason":"소유자 결정 대기 (2026-09-01). STRUCTURAL_BRANCH 의 DECISIONS.md 잠금 항목을 쓸 수 없다 — 방향이 승인되지 않았기 때문이고, 미승인 방향으로 잠금 항목을 쓰는 것은 게이트를 우회하는 것이다. 대기 2건: (1) 색 정본 — /t1 어두운 지면(추천) · /t2 종이 유지 · /t3 클레이 중 택1. t1 을 고르면 DESIGN_SYSTEM.md 3절의 '라이트가 정본' 을 뒤집는 결정이므로 문서 개정과 DECISIONS.md 기록이 함께 간다. (2) 프로젝트 스크린샷 — 이 컨테이너는 이그레스가 *.vercel.app 을 막아 데모를 찍을 수 없다. docs/portfolio/CAPTURE_SHOTS.md 의 프롬프트를 네트워크 열린 로컬에서 실행해야 한다. 현재 최선 후보는 /g1 (+ 톤 3안), 증거는 review/structural/accepted-g1/ 과 review/tone/. 루트 / 는 기각된 이음선 문서 그대로이고 의도적으로 안 건드렸다. 배포는 되어 있지 않다 — 배포 설정도 CI 워크플로도 없고 main 은 20c0e24 다."}
+{"ts":"2026-09-01T06:57:47.003Z","event":"unblock","node":"STRUCTURAL_BRANCH"}
