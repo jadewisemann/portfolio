@@ -226,8 +226,8 @@ Each round is on disk. The pixels, not the prose, are why each died.
 
 | Round | Routes | Evidence | Why it died |
 |---|---|---|---|
-| 1 · text-forward | `/c1` `/c2` `/c3` | `review/structural/` | Sentences, readouts, a headline at 149px. Still a document, in bigger type |
-| 2 · wordless | `/d1` `/d2` `/d3` | `review/wordless/` | Owner: 셋 다 약하다. Flat, quiet, ink on paper |
+| 1 · text-forward | `/c1` `/c2` `/c3` | `review/rejected/01-text/` | Sentences, readouts, a headline at 149px. Still a document, in bigger type |
+| 2 · wordless | `/d1` `/d2` `/d3` | `review/rejected/02-flat/` · `review/wordless/` | Owner: 셋 다 약하다. Flat, quiet, ink on paper |
 | 3 · mechanisms in 3D | never built | — | Halted mid-build by the owner's correction below |
 | 4 · screenshot showcase | `/f1` `/f2` `/f3` | `review/showcase/` | `/f1` has one good frame at 35% scroll and a blank one at 55%; `/f2` is an ordinary three-column card list; `/f3` puts everything in a narrow centre column with empty sides |
 
@@ -313,6 +313,51 @@ existed in the source — `HANDOFF.md`'s stale-screenshot trap, mechanised.
   `scripts/capture-shots.mjs` and `docs/portfolio/CAPTURE_SHOTS.md` exist so a local agent
   with network access can capture them. YORR has no deployed URL at all
   (`CONTENT.md` §8), so it needs the mirror run locally or an honest "not captured".
-- **The direction is not locked.** Nothing built so far survives the owner's own question,
-  지금 아름답나 — answered no, on all of it. This entry records the structure and what was
-  eliminated; it does not lock a composition.
+- **Screenshot slots.** The frames are designed to be finished while empty, so the images no
+  longer block the direction — but the corridor's last stretch is thinner than its middle,
+  and the honest fix is more shots per project rather than tuning the plane spacing now.
+
+### Locked (2026-09-01)
+
+The direction is locked. Evidence: `review/structural/locked/`, `review/tone/`, `review/root/`.
+
+The rejected rounds moved to `review/rejected/`. They belong in the record but not in the
+judged directory: the gate calls any file older than `src/` stale, and an archive of a
+concept whose code has been deleted can never be fresh again. Leaving them there would
+have meant either a permanently red gate or a habit of ignoring it.
+
+**Composition.** The landing opens *inside* the arrangement rather than becoming it on
+scroll — planes at depth with the name across them, 160px at 1920 and 56px on two lines at
+320. First-screen text stays exactly the name: `firstScreenChars` is 12 at every breakpoint
+and the capture pipeline measures it. Then a corridor the visitor scrolls through, then a
+footer of the links `CONTENT.md` §8 marks 사용.
+
+Measured against the slice this replaces: strong ink 2.00% at 1920 versus 2.42%, and empty
+bands **0% versus 58.3%**. The ink totals are nearly identical, which is the finding — the
+rejected page was never short of ink, it put all of it in a left-hand column and left the
+right 58% dead.
+
+**Two defects fixed by geometry rather than by eye.** The camera could fly inside a plane
+and fill the frame with flat interior, so every plane's near edge is now held outside a
+channel around the axis and the camera travels straight down it: intersection is
+impossible, and `layout.test.ts` asserts it analytically. Cutting a fixed tail off the
+camera's travel to stop it running past the planes then made scroll progress 100% land on
+the second project, leaving the third unreachable by scrolling; the stop point is now the
+last project's own target.
+
+**Tone: the dark ground, `/t1` of three treatments.** Chosen on what the frames will
+actually hold. A screenshot is a bright rectangle: on the dark ground it separates
+completely, on the clay it separates well, and on the kept-paper treatment it does not
+separate at all — that treatment looks best today and is the only one that collapses the
+moment real images arrive.
+
+This inverts `DESIGN_SYSTEM.md` §3's canonical-light rule, and the inversion is total
+rather than a toggle: there is no second theme state. Nothing in the code queried
+`prefers-color-scheme`, no light design existed against the new canon, and a
+half-maintained light theme is worse than none in a repo that has already shipped one
+invisible-contrast failure. §3's table is replaced with the measured values; every one
+clears its floor, including the 1.6:1 rule floor the old `--rule` never met at 1.18:1.
+
+**The site is the landing.** `/` renders it; nineteen candidate routes and the entire seam
+page are deleted. The rendered evidence stays under `review/` as the record of what was
+rejected and why.
