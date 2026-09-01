@@ -56,7 +56,9 @@
 }
 
 .navButton[aria-current="true"] {
-  border-color: var(--ink);
+  /* 테두리 기본값은 --ink 와 같다(globals.css) — /t2 만 신호색으로 재정의한다.
+     글자색은 그대로 --ink 다 — 신호색을 텍스트로 쓰지 않는다(DESIGN_SYSTEM.md §3). */
+  border-color: var(--nav-current-border);
   color: var(--ink);
 }
 

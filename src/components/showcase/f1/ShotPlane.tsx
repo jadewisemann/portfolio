@@ -1,6 +1,7 @@
 "use client";
 
 import { useTexture } from "@react-three/drei";
+import { useThree } from "@react-three/fiber";
 import { useMemo } from "react";
 import type { Shot } from "../shots";
 import { getPlaceholderTexture, readColorToken } from "../texture";
@@ -55,16 +56,20 @@ function PlaceholderPlane({
   position: readonly [number, number, number];
   rotation?: readonly [number, number, number];
 }) {
+  // 캔버스 DOM 요소에서 읽는다 — `[data-tone]` 톤 서브트리 안에 있으므로 그 톤이
+  // 재정의한 값을 본다(`texture.ts` 의 `readColorToken` 주석 참고). 톤이 없는
+  // 라우트에서는 documentElement 로 물러나는 것과 값이 같다.
+  const canvasEl = useThree((state) => state.gl.domElement);
   const texture = useMemo(() => {
     return getPlaceholderTexture(
       shot.width,
       shot.height,
-      readColorToken("--ground-sub"),
-      readColorToken("--rule"),
-      readColorToken("--ground"),
-      readColorToken("--ink-3"),
+      readColorToken("--ground-sub", canvasEl),
+      readColorToken("--rule", canvasEl),
+      readColorToken("--ground", canvasEl),
+      readColorToken("--ink-3", canvasEl),
     );
-  }, [shot.width, shot.height]);
+  }, [shot.width, shot.height, canvasEl]);
 
   return (
     <mesh position={position} rotation={rotation}>

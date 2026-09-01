@@ -28,7 +28,8 @@
 }
 
 .keyword {
-  border: 1px solid var(--rule);
+  /* 기본값은 --rule 과 같다(globals.css) — /t2 만 신호색으로 재정의한다. */
+  border: 1px solid var(--chip-border);
   padding: 4px 10px;
   font-family: var(--font-mono), monospace;
   font-size: var(--text-mono);

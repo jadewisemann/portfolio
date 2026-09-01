@@ -64,8 +64,18 @@ export function getPlaceholderTexture(
   return texture;
 }
 
-/** 문서 루트에서 실제 계산된 토큰 값을 읽는다. three.js 머티리얼은 CSS 변수를 모른다. */
-export function readColorToken(name: string): string {
+/**
+ * 실제 계산된 토큰 값을 읽는다. three.js 머티리얼은 CSS 변수를 모른다.
+ *
+ * `el` 을 반드시 씬의 DOM 요소(캔버스 등)로 넘겨라 — `document.documentElement` 로
+ * 고정하면 `[data-tone="t1"]` 처럼 라우트 루트보다 아래에서 재정의된 토큰을 못 읽는다
+ * (커스텀 프로퍼티는 아래로만 상속되고, `documentElement` 는 그 톤 서브트리의 조상이라
+ * 값이 안 보인다). 캔버스 DOM 요소는 톤이 걸린 서브트리 **안**에 있으므로 항상 맞는
+ * 값을 읽는다. 인자를 생략하면 기존과 같이 `document.documentElement` 로 물러난다 —
+ * 톤이 없는 라우트(`/f1` 등)에서는 그 값이 곧 유일한 값이므로 동작이 같다.
+ */
+export function readColorToken(name: string, el?: Element): string {
   if (typeof window === "undefined") return "#f1efea";
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const target = el ?? document.documentElement;
+  return getComputedStyle(target).getPropertyValue(name).trim();
 }
