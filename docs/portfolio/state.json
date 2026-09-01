@@ -1,11 +1,11 @@
 {
   "active": true,
   "status": "RUNNING",
-  "currentNode": "STRUCTURAL_BRANCH",
+  "currentNode": "GOLDEN_SLICE",
   "iteration": 0,
   "currentScene": null,
   "lockedScenes": [],
   "failedCategories": {},
-  "nextAction": "[STRUCTURAL_BRANCH] 슬라이스 구조 재설계 — 위임: art-director, motion-architect — 필요: docs/portfolio/DECISIONS.md: /## Structural branch/ 패턴이 없습니다",
+  "nextAction": "[GOLDEN_SLICE] 골든 슬라이스 구현 — 위임: frontend-builder — 스킬: golden-slice",
   "blocker": null
 }
