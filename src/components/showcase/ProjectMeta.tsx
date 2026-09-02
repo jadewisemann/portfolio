@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ShowcaseProject } from "./shots";
 import styles from "./ProjectMeta.module.css";
 
@@ -18,6 +19,16 @@ export function ProjectMeta({ project }: { project: ShowcaseProject }) {
           </li>
         ))}
       </ul>
+      {/*
+        아키텍처 · 코드 리딩은 프로젝트 페이지로 간다 — 랜딩은 보여주고, 거기서
+        설명한다 (CLAUDE.md 「What the owner actually wants」). 페이지가 아직 없는
+        프로젝트는 href 가 없으므로 링크를 만들지 않는다.
+      */}
+      {project.href ? (
+        <p className={styles.more}>
+          <Link href={project.href}>더 보기 — 아키텍처 · 코드 리딩</Link>
+        </p>
+      ) : null}
     </div>
   );
 }
