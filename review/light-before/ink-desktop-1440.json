@@ -1,0 +1,70 @@
+{
+  "viewport": {
+    "w": 1440,
+    "h": 900
+  },
+  "ground": "rgb(23,19,16)",
+  "strongInkSharePct": 54.84,
+  "detailSharePct": 3.52,
+  "flatBandSharePct": 0,
+  "paintedSharePct": 57.04,
+  "emptyBandSharePct": 0,
+  "blankBandSharePct": 0,
+  "bands": [
+    {
+      "x0": 0,
+      "strongPct": 56.672,
+      "faintPct": 60.209,
+      "detailPct": 6.71
+    },
+    {
+      "x0": 160,
+      "strongPct": 41.235,
+      "faintPct": 43.417,
+      "detailPct": 1.971
+    },
+    {
+      "x0": 320,
+      "strongPct": 36.581,
+      "faintPct": 38.967,
+      "detailPct": 2.744
+    },
+    {
+      "x0": 480,
+      "strongPct": 42.993,
+      "faintPct": 45.584,
+      "detailPct": 3.867
+    },
+    {
+      "x0": 640,
+      "strongPct": 44.831,
+      "faintPct": 47.133,
+      "detailPct": 3.358
+    },
+    {
+      "x0": 800,
+      "strongPct": 66.73,
+      "faintPct": 68.669,
+      "detailPct": 4.862
+    },
+    {
+      "x0": 960,
+      "strongPct": 72.519,
+      "faintPct": 73.794,
+      "detailPct": 3.299
+    },
+    {
+      "x0": 1120,
+      "strongPct": 70.6,
+      "faintPct": 72.248,
+      "detailPct": 3.535
+    },
+    {
+      "x0": 1280,
+      "strongPct": 61.428,
+      "faintPct": 63.338,
+      "detailPct": 1.343
+    }
+  ],
+  "screens": 4.85
+}

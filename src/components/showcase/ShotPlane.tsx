@@ -66,8 +66,10 @@ function PlaceholderPlane({
       shot.height,
       readColorToken("--ground-sub", canvasEl),
       readColorToken("--rule", canvasEl),
-      readColorToken("--ground", canvasEl),
+      readColorToken("--frame-mat", canvasEl),
       readColorToken("--ink-3", canvasEl),
+      readColorToken("--frame-edge-lit", canvasEl),
+      readColorToken("--frame-edge-shadow", canvasEl),
     );
   }, [shot.width, shot.height, canvasEl]);
 

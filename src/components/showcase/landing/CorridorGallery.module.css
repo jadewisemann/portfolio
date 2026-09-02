@@ -21,6 +21,19 @@
   display: block;
 }
 
+/*
+  방에 세 번째 값을 준다 — HeroDiorama.module.css 의 `.stage` 와 같은 웅덩이.
+  `.sticky` 는 스크롤 중에도 뷰포트에 고정되므로 이 배경도 항상 같은 자리에
+  머문다. body::before 의 28px 괘선 기판이 계속 비치도록 반투명으로 섞는다.
+*/
+.sticky {
+  background: radial-gradient(
+    ellipse 70% 60% at 50% 42%,
+    color-mix(in srgb, var(--ground-2) 55%, transparent),
+    transparent 72%
+  );
+}
+
 .nav {
   position: absolute;
   bottom: 28px;
@@ -66,19 +79,27 @@
   color: var(--ink);
 }
 
+/*
+  결함 수정 (ART_DIRECTION 비평 §4 — "캡션 판이 액자를 벤다"). 이전 판은
+  좌상단에 떠 있는 카드였고, 불투명 배경의 가장자리가 뒤에 있는 액자를 임의의
+  사각형으로 잘랐다(review/corridor/corridor-1920-100.png 실측) — 저작되지 않은
+  실루엣이 구도 위에 얹혀 있었다. 투명하게 만들면 대비를 잃으므로(요구사항),
+  구성으로 푼다: 캡션을 뷰포트 상단 전폭 마스트헤드로 만든다. 뷰포트 가장자리에
+  닿는 판은 "우연히 걸린 사각형"이 아니라 "의도된 띠"로 읽힌다 — 신문 마스트헤드,
+  미술관 벽 라벨과 같은 관례다. 안쪽 콘텐츠는 `ProjectMeta` 의 측정폭(34rem)이
+  이미 죄고 있으므로 판 자체가 전폭이어도 텍스트는 좁게 남는다.
+*/
 .caption {
   position: absolute;
-  top: 28px;
-  left: 20px;
+  inset: 0 0 auto 0;
   z-index: 1;
-  max-width: calc(100vw - 40px);
   background: var(--ground);
-  padding: 4px 12px 12px 0;
+  border-bottom: 1px solid var(--rule);
+  padding: 24px 20px 20px;
 }
 
 @media (min-width: 1024px) {
   .caption {
-    top: 40px;
-    left: 40px;
+    padding: 32px 40px 28px;
   }
 }

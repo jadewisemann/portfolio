@@ -7,8 +7,14 @@
 
 .name {
   margin: 0;
-  font-size: var(--text-decision);
+  /*
+    급수 계단의 중간층(globals.css `--text-title`, ART_DIRECTION 비평 §3 —
+    "28px 다음이 곧장 히어로"). 복도 캡션의 프로젝트 이름이 이 계단에서
+    무게를 받는 첫 자리다.
+  */
+  font-size: var(--text-title);
   font-weight: 600;
+  line-height: 1.1;
   color: var(--ink);
 }
 
@@ -18,13 +24,21 @@
   color: var(--ink-2);
 }
 
+/*
+  결함 수정 (ART_DIRECTION 비평 §5 — "칩이 들쭉날쭉 줄바꿈된다"). `flex-wrap` 은
+  각 줄이 그 줄 내용의 실제 폭만큼만 차지해 두 번째 줄이 첫 줄의 어느 경계와도
+  맞지 않았다(실측 525px · 421px, 서로 다른 오른쪽 끝). 4개 항목을 2열 그리드에
+  고정하면 모든 행이 같은 두 칸 폭을 공유한다 — 내용 길이가 달라도 왼쪽·오른쪽
+  끝이 항상 같은 열에 정렬된다.
+*/
 .keywords {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin: 8px 0 0;
   padding: 0;
   list-style: none;
+  max-width: var(--spacing-measure);
 }
 
 .keyword {

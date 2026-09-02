@@ -184,7 +184,13 @@ export default function YorrProjectPage() {
         <BackLink />
 
         <header className="mt-7">
-          <h1 className="text-[32px] font-semibold leading-tight text-ink md:text-[44px] lg:text-[56px]">
+          {/*
+            급수 계단의 중간층을 쓴다(globals.css `--text-title`) — 랜딩 복도
+            캡션의 제목과 같은 토큰이라 "이 사이트에 진짜 계단이 있다"는 사실이
+            페이지를 넘어가도 유지된다. 이전에는 이 페이지만의 임의값(32/44/56)
+            이었다.
+          */}
+          <h1 className="text-[length:var(--text-title)] font-semibold leading-tight text-ink">
             {project.name}
           </h1>
           <p className="mt-4 max-w-[var(--spacing-measure)] text-ink-2">{project.blurb}</p>

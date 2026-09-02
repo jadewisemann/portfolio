@@ -28,6 +28,18 @@
   background: var(--frame-mat);
   border: 1px solid var(--ink-3);
   padding: var(--mat);
+  /*
+    매트에 경사(bevel)를 준다 — 좌상단에서 오는 빛 하나, 사이트 전체 액자에
+    같은 방향으로. inset 만 쓴다(DESIGN_SYSTEM.md §2, motion-ownership.test.ts 가
+    inset 아닌 box-shadow 를 소스 grep 으로 막는다). 흐림 반경은 0 이다 —
+    MOTION_LANGUAGE.md §7 "블러 언어: 없다"를 inset 그림자에도 그대로 지킨다.
+    양수 오프셋은 그 반대쪽 안쪽 모서리에 그림자로 나타난다 — 우하단에 어두운
+    값(경사가 빛을 등진 면), 좌상단에 밝은 값(경사가 빛을 받는 면). WebGL
+    액자(texture.ts)도 같은 두 토큰과 같은 방향으로 매트를 대각선으로 가른다 —
+    모양은 렌더러마다 다르지만(여기는 사각 모서리, 거기는 대각선) 빛의 방향은
+    같다.
+  */
+  box-shadow: inset 2px 2px 0 0 var(--frame-edge-shadow), inset -2px -2px 0 0 var(--frame-edge-lit);
 }
 
 /* 안쪽 면. 이미지가 들어오면 이 자리를 그대로 차지한다. */

@@ -2,9 +2,19 @@
 
 import { Canvas, useFrame, useStore } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
+import { DepthFog } from "../DepthFog";
 import { ShotPlane } from "../ShotPlane";
 import { heroItemsDesktop } from "./layout";
 import styles from "./HeroScene.module.css";
+
+/*
+  깊이 안개의 near/far. 히어로 항목의 dz(카메라 z=0 기준, `layout.ts` 의
+  heroItemsDesktop)는 1.65~4.9 사이다. 포인터 시차가 카메라를 ±0.22 만큼 옮기므로
+  (`PARALLAX_RANGE`) 그 여유를 넣는다 — near 를 실측 최솟값보다 낮춰 가장 가까운
+  액자는 거의 안개 없이, far 를 최댓값보다 높여 가장 먼 액자만 뚜렷이 어두워지게 한다.
+*/
+const HERO_FOG_NEAR = 1.7;
+const HERO_FOG_FAR = 7.5;
 
 /**
  * 히어로의 라이브 씬. 카메라는 스크롤과 무관하게 원점에 고정된다 — 히어로는
@@ -91,6 +101,7 @@ export function HeroScene() {
         frameloop="demand"
       >
         <Rig />
+        <DepthFog far={HERO_FOG_FAR} near={HERO_FOG_NEAR} />
         {items.map((item) => (
           <ShotPlane
             height={item.height}

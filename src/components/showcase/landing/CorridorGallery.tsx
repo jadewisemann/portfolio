@@ -3,6 +3,7 @@
 import { Canvas, useFrame, useStore } from "@react-three/fiber";
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import { PROJECTS } from "../shots";
+import { DepthFog } from "../DepthFog";
 import { ProjectMeta } from "../ProjectMeta";
 import { ShotPlane } from "../ShotPlane";
 import {
@@ -21,6 +22,17 @@ import styles from "./CorridorGallery.module.css";
 
 const DEPTH = corridorTotalDepth(PROJECTS);
 const ITEMS = corridorItems(PROJECTS);
+
+/*
+  깊이 안개의 near/far. 복도는 카메라가 스크롤을 따라 계속 움직이므로(`Rig`) 고정된
+  근/원 값 하나가 모든 진행률에 완벽히 맞지는 않는다 — 대신 화면에 걸리는 평면들의
+  전형적인 dz 범위(`corridorPlanesInView` 의 실측 창, VIEW_BEHIND=2 ~ DEPTH_PER_PROJECT
+  근방)를 덮도록 잡는다. 결과: 항상 화면 앞쪽 평면은 밝고, 뒤쪽으로 갈수록 방 색
+  (`--ground`)속으로 가라앉는다 — "복도가 어둠 속으로 이어진다"는 읽기를 스크롤
+  위치와 무관하게 유지한다.
+*/
+const CORRIDOR_FOG_NEAR = 2.2;
+const CORRIDOR_FOG_FAR = 13;
 
 /**
  * 스크롤 이벤트가 만든 z 와 얼마나 가까우면 "방금 우리가 실행한 `jumpTo()` 의
@@ -218,6 +230,7 @@ export function CorridorGallery() {
             onJumpHandled={handleJumpHandled}
             wrapperRef={wrapperRef}
           />
+          <DepthFog far={CORRIDOR_FOG_FAR} near={CORRIDOR_FOG_NEAR} />
           <Field />
         </Canvas>
 
