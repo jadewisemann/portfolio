@@ -1,11 +1,11 @@
 {
   "active": true,
   "status": "RUNNING",
-  "currentNode": "GOLDEN_SLICE",
+  "currentNode": "GOLDEN_REVIEW",
   "iteration": 0,
   "currentScene": null,
   "lockedScenes": [],
   "failedCategories": {},
-  "nextAction": "[GOLDEN_SLICE] 골든 슬라이스 구현 — 위임: frontend-builder — 스킬: golden-slice",
+  "nextAction": "[GOLDEN_REVIEW] 골든 슬라이스 게이트 — 위임: visual-critic, motion-critic, performance-auditor, accessibility-auditor (병렬) — 필요: review/golden-slice: 증거 파일 8개 필요, 현재 0개 (/\\.(png|jpg|md)$/) — 게이트: docs/portfolio/scorecard.json 점수 기록 후 advance",
   "blocker": null
 }
