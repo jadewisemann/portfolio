@@ -23,6 +23,24 @@
   font-size: var(--text-mono);
 }
 
+/*
+  터치 목표 44×44px, 예외 없음(DESIGN_SYSTEM.md §7). 실측: 50×18 · 42×18 ·
+  28×24 — 활자 급수(--text-mono, 14px)는 그대로 두고 히트 영역만
+  `padding` · `min-height` 로 키운다. `.tree-toggle button` 이 참조 패턴이었으나
+  그 컴포넌트는 삭제됐으므로 새로 쓴다. `gap` 은 그대로 두므로 인접 링크와
+  겹치지 않는다 — flex 의 `gap` 은 각 항목의 바깥 테두리 사이 간격이고, 이
+  padding·min-height 는 그 테두리 안쪽에서 커진다.
+*/
+.general a,
+.projectLinks a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 4px 10px;
+}
+
 .projects {
   display: flex;
   flex-direction: column;

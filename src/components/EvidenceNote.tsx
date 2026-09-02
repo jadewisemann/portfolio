@@ -25,7 +25,17 @@ export function EvidenceNote({
       <ul className="mt-1 space-y-1">
         {links.map((l) => (
           <li key={l.href}>
-            <a href={l.href} rel="noreferrer noopener" target="_blank">
+            {/*
+              터치 목표 44×44, 예외 없음(DESIGN_SYSTEM.md §7). 실측 216×17 ·
+              177×17 — 활자 급수(text-note, 13px)는 그대로 두고 히트 영역만
+              min-height · padding 으로 키운다.
+            */}
+            <a
+              className="-mx-2 inline-flex min-h-11 items-center px-2"
+              href={l.href}
+              rel="noreferrer noopener"
+              target="_blank"
+            >
               {l.label}
             </a>
           </li>

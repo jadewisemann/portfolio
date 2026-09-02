@@ -38,6 +38,10 @@
 }
 
 .navButton {
+  display: inline-flex;
+  align-items: center;
+  /* 터치 목표 44×44, 예외 없음(DESIGN_SYSTEM.md §7) — 실측 높이 42px. */
+  min-height: 44px;
   border: 1px solid var(--rule);
   background: var(--ground);
   color: var(--ink-2);

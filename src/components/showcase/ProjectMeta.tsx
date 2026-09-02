@@ -10,7 +10,7 @@ import styles from "./ProjectMeta.module.css";
 export function ProjectMeta({ project }: { project: ShowcaseProject }) {
   return (
     <div className={styles.meta}>
-      <p className={styles.name}>{project.name}</p>
+      <h2 className={styles.name}>{project.name}</h2>
       <p className={styles.blurb}>{project.blurb}</p>
       <ul className={styles.keywords}>
         {project.keywords.map((keyword) => (

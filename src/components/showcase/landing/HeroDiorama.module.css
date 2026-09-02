@@ -29,6 +29,20 @@
   z-index: 0;
 }
 
+/*
+  라이브 씬이 켜지면 포스터를 완전히 지운다. `data-hidden` 은 `HeroDiorama.tsx`
+  가 세우기만 하고 이 규칙이 없어서 실측(6.32%, 1440×900) 만큼 두 렌더러가
+  겹쳐 그려졌었다 — 포스터가 투명 캔버스 아래 계속 `opacity: 1` 로 남아 매
+  프레임 두 벌의 사각형이 어긋난 채 보였다. 전이를 걸지 않는다 — 이 전환은
+  스크롤이 아니라 로드 이벤트(WebGL·IO·축소 모션 게이트)이고, 두 렌더러가 같은
+  프레임에 공존해야 할 이유가 없으므로 대비를 만들 필요도 없다.
+*/
+.poster[data-hidden] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .scene {
   z-index: 1;
 }

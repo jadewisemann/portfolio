@@ -133,6 +133,18 @@ export function CorridorGallery() {
           <Field />
         </Canvas>
 
+        {/*
+          WebGL 캔버스는 스크린리더에 아무것도 노출하지 않는다 — `ShotPlane` 은
+          텍스처만 그리고 `shot.alt` 를 읽지 않는다. 지금 화면에 있는(활성)
+          프로젝트의 샷만 알려준다 — 캡션이 가리키는 것과 같은 범위다
+          (WCAG 1.1.1).
+        */}
+        <ul className="sr-only">
+          {active.shots.map((shot, index) => (
+            <li key={`${active.id}-${index}`}>{shot.alt}</li>
+          ))}
+        </ul>
+
         <div className={styles.caption} key={active.id}>
           <ProjectMeta project={active} />
         </div>
