@@ -15,13 +15,38 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
-import { launchChromium } from "./lib/browser.mjs";
+import {
+  assertPortFree,
+  launchChromium,
+  startServer,
+  waitForServer,
+} from "./lib/browser.mjs";
 
 const args = process.argv.slice(2);
 const outDir = args.find((a) => !a.startsWith("--")) ?? "review/golden-slice";
 const port = args.includes("--port") ? args[args.indexOf("--port") + 1] : "3101";
 const url = `http://localhost:${port}/`;
 fs.mkdirSync(outDir, { recursive: true });
+
+/*
+  서버를 스스로 띄운다 (2026-09-01).
+
+  이전에는 「서버는 이미 떠 있어야 합니다」를 주석으로만 적어 두고, 안 떠 있으면
+  fetch 실패로 크래시했다 — 종료 코드도 0 이라 파이프라인에서는 성공으로 보였다.
+  `capture.mjs` 는 자기 서버를 띄웠다 죽이므로 둘을 이어서 돌리면 반드시 이 상태가 된다.
+  안내 없는 크래시는 증거 없는 통과로 이어진다.
+*/
+let stopServer = () => {};
+try {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("not ok");
+  console.log(`서버: 이미 떠 있는 ${url} 에 붙는다`);
+} catch {
+  console.log(`서버: ${url} 이 응답하지 않아 직접 띄운다`);
+  await assertPortFree(Number(port));
+  ({ stop: stopServer } = startServer(Number(port)));
+  await waitForServer(url);
+}
 
 const shot = (p) => path.join(outDir, p);
 const md5 = (buf) => crypto.createHash("md5").update(buf).digest("hex");
@@ -172,6 +197,7 @@ try {
   await page.close();
 } finally {
   await browser.close();
+  stopServer();
 }
 
 if (midFrameProblems.length) {
