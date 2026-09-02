@@ -1,0 +1,62 @@
+/*
+  프로젝트 페이지 상단의 전폭 액자. 랜딩의 회랑과 같은 언어(PlaceholderFrame 그대로 —
+  바깥 테두리 · 매트 · 면 세 겹)를 쓰되, 여기서는 한 장을 컨테이너 폭 전체로 편다.
+  "두 개의 똑같은 74×155 액자가 왼쪽 위에, 오른쪽에 빈 공간 1270px" 이던 실패를
+  대신한다 — 큰 액자 하나 + 실측 화면비 + 캡션.
+*/
+
+.banner {
+  position: relative;
+  width: 100%;
+}
+
+.slot {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+/* 모바일 화면비(9:19.5)가 기본이다 — 컨트롤러가 휴대폰인 게임이라 모바일이 지배적이다. */
+.slot[data-set="desktop"] {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .slot[data-set="mobile"] {
+    display: none;
+  }
+  .slot[data-set="desktop"] {
+    display: block;
+  }
+}
+
+/*
+  실측 화면비(16:10 · 9:19.5)를 유지하되 높이 상한을 둔다. 상한이 없으면 1920px
+  폭에서 16:10 액자가 1200px 높이가 되어 캡션(액자 맨 아래)이 첫 뷰포트를 한참
+  넘어간다 — "이게 액자다"라는 판독 정보가 스크롤해야만 나온다. object-fit: cover
+  (PlaceholderFrame.module.css)가 실사진에서도 잘림을 다룬다.
+*/
+.frame {
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+}
+
+/* 랜딩 회랑의 캡션과 같은 자리(CorridorGallery.module.css: top-left) — 불투명 --ground 판.
+   위쪽에 둬서 액자에 도착하는 즉시(스크롤 없이) "이것이 액자다"가 읽히게 한다. */
+.caption {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  max-width: calc(100% - 40px);
+  margin: 16px;
+  background: var(--ground);
+  padding: 6px 12px;
+}
+
+@media (min-width: 1024px) {
+  .caption {
+    margin: 24px;
+  }
+}
