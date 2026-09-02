@@ -4,71 +4,85 @@
     "h": 1080
   },
   "ground": "rgb(23,19,16)",
-  "strongInkSharePct": 59.92,
-  "paintedSharePct": 61.84,
+  "strongInkSharePct": 52.85,
+  "detailSharePct": 2.6,
+  "flatBandSharePct": 0,
+  "paintedSharePct": 57.11,
   "emptyBandSharePct": 0,
   "blankBandSharePct": 0,
   "bands": [
     {
       "x0": 0,
-      "strongPct": 82.132,
-      "faintPct": 84.627
+      "strongPct": 83.289,
+      "faintPct": 91.22,
+      "detailPct": 5.87
     },
     {
       "x0": 160,
-      "strongPct": 53.166,
-      "faintPct": 55.511
+      "strongPct": 52.158,
+      "faintPct": 55.443,
+      "detailPct": 2.209
     },
     {
       "x0": 320,
-      "strongPct": 41.266,
-      "faintPct": 43.452
+      "strongPct": 37.769,
+      "faintPct": 40.01,
+      "detailPct": 1.62
     },
     {
       "x0": 480,
-      "strongPct": 37.097,
-      "faintPct": 39.36
+      "strongPct": 30.231,
+      "faintPct": 32.345,
+      "detailPct": 1.854
     },
     {
       "x0": 640,
-      "strongPct": 38.718,
-      "faintPct": 40.932
+      "strongPct": 29.749,
+      "faintPct": 31.945,
+      "detailPct": 1.951
     },
     {
       "x0": 800,
-      "strongPct": 65.45,
-      "faintPct": 67.328
+      "strongPct": 47.549,
+      "faintPct": 53.274,
+      "detailPct": 3.661
     },
     {
       "x0": 960,
-      "strongPct": 46.615,
-      "faintPct": 49.072
+      "strongPct": 38.138,
+      "faintPct": 54.145,
+      "detailPct": 3.219
     },
     {
       "x0": 1120,
-      "strongPct": 75.922,
-      "faintPct": 77.07
+      "strongPct": 61.209,
+      "faintPct": 63.344,
+      "detailPct": 2.769
     },
     {
       "x0": 1280,
-      "strongPct": 75.887,
-      "faintPct": 76.943
+      "strongPct": 63.668,
+      "faintPct": 65.59,
+      "detailPct": 2.678
     },
     {
       "x0": 1440,
-      "strongPct": 78.204,
-      "faintPct": 79.511
+      "strongPct": 67.2,
+      "faintPct": 70.356,
+      "detailPct": 2.99
     },
     {
       "x0": 1600,
-      "strongPct": 61.421,
-      "faintPct": 63.278
+      "strongPct": 61.098,
+      "faintPct": 63.276,
+      "detailPct": 1.253
     },
     {
       "x0": 1760,
-      "strongPct": 63.172,
-      "faintPct": 65.034
+      "strongPct": 62.172,
+      "faintPct": 64.363,
+      "detailPct": 1.163
     }
   ],
-  "screens": 4.85
+  "screens": 5.04
 }

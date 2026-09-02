@@ -4,56 +4,67 @@
     "h": 900
   },
   "ground": "rgb(23,19,16)",
-  "strongInkSharePct": 57.31,
-  "paintedSharePct": 58.81,
+  "strongInkSharePct": 52.19,
+  "detailSharePct": 3.56,
+  "flatBandSharePct": 0,
+  "paintedSharePct": 54.97,
   "emptyBandSharePct": 0,
   "blankBandSharePct": 0,
   "bands": [
     {
       "x0": 0,
       "strongPct": 69.803,
-      "faintPct": 71.274
+      "faintPct": 71.274,
+      "detailPct": 7.888
     },
     {
       "x0": 160,
-      "strongPct": 41.141,
-      "faintPct": 43.125
+      "strongPct": 38.022,
+      "faintPct": 39.919,
+      "detailPct": 2.028
     },
     {
       "x0": 320,
-      "strongPct": 37.434,
-      "faintPct": 39.533
+      "strongPct": 31.259,
+      "faintPct": 33.208,
+      "detailPct": 2.394
     },
     {
       "x0": 480,
-      "strongPct": 45.142,
-      "faintPct": 47.032
+      "strongPct": 38.455,
+      "faintPct": 40.149,
+      "detailPct": 3.78
     },
     {
       "x0": 640,
-      "strongPct": 49.56,
-      "faintPct": 51.149
+      "strongPct": 42.926,
+      "faintPct": 55.149,
+      "detailPct": 3.346
     },
     {
       "x0": 800,
-      "strongPct": 72.674,
-      "faintPct": 73.658
+      "strongPct": 63.636,
+      "faintPct": 65.889,
+      "detailPct": 4.542
     },
     {
       "x0": 960,
-      "strongPct": 74.267,
-      "faintPct": 75.087
+      "strongPct": 65.078,
+      "faintPct": 65.877,
+      "detailPct": 3.172
     },
     {
       "x0": 1120,
-      "strongPct": 64.447,
-      "faintPct": 65.647
+      "strongPct": 59.229,
+      "faintPct": 60.455,
+      "detailPct": 3.391
     },
     {
       "x0": 1280,
       "strongPct": 61.287,
-      "faintPct": 62.822
+      "faintPct": 62.822,
+      "detailPct": 1.492
     }
   ],
-  "screens": 4.76
+  "screens": 4.98
 }

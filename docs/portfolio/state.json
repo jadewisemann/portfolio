@@ -1,7 +1,7 @@
 {
   "active": true,
   "status": "RUNNING",
-  "currentNode": "GOLDEN_FIX",
+  "currentNode": "GOLDEN_REVIEW",
   "iteration": 1,
   "currentScene": null,
   "lockedScenes": [],
@@ -51,6 +51,6 @@
       "threshold": 8
     }
   },
-  "nextAction": "[GOLDEN_FIX] 실패 카테고리 패치 — 위임: frontend-builder",
+  "nextAction": "[GOLDEN_REVIEW] 골든 슬라이스 게이트 — 위임: visual-critic, motion-critic, performance-auditor, accessibility-auditor (병렬) — 필요: review/golden-slice: 증거 파일 8개 필요, 현재 5개 (/\\.(png|jpg|md)$/) — 게이트: docs/portfolio/scorecard.json 점수 기록 후 advance",
   "blocker": null
 }

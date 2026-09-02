@@ -4,21 +4,25 @@
     "h": 640
   },
   "ground": "rgb(23,19,16)",
-  "strongInkSharePct": 45.66,
-  "paintedSharePct": 47.58,
+  "strongInkSharePct": 42.04,
+  "detailSharePct": 7.35,
+  "flatBandSharePct": 0,
+  "paintedSharePct": 43.94,
   "emptyBandSharePct": 0,
   "blankBandSharePct": 0,
   "bands": [
     {
       "x0": 0,
-      "strongPct": 55.839,
-      "faintPct": 57.408
+      "strongPct": 50.974,
+      "faintPct": 52.473,
+      "detailPct": 7.27
     },
     {
       "x0": 160,
-      "strongPct": 35.484,
-      "faintPct": 37.747
+      "strongPct": 33.097,
+      "faintPct": 35.402,
+      "detailPct": 7.427
     }
   ],
-  "screens": 5.38
+  "screens": 5.35
 }
