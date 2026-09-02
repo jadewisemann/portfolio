@@ -1,56 +1,56 @@
 {
   "active": true,
   "status": "RUNNING",
-  "currentNode": "GOLDEN_REVIEW",
-  "iteration": 1,
+  "currentNode": "GOLDEN_FIX",
+  "iteration": 2,
   "currentScene": null,
   "lockedScenes": [],
   "failedCategories": {
     "visualImpact": {
-      "value": 5.2,
+      "value": 6.1,
       "threshold": 9
     },
     "artDirection": {
-      "value": 4,
+      "value": 4.3,
       "threshold": 9
     },
     "motionCoherence": {
-      "value": 4.1,
+      "value": 5.4,
       "threshold": 9
     },
     "typography": {
-      "value": 4.2,
+      "value": 5.6,
       "threshold": 9
     },
     "composition": {
-      "value": 3.4,
+      "value": 3.9,
       "threshold": 9
     },
     "originality": {
-      "value": 3.8,
+      "value": 4.1,
       "threshold": 8.5
     },
     "narrativeClarity": {
-      "value": 5.8,
+      "value": 6,
       "threshold": 8.5
     },
     "interactionQuality": {
-      "value": 3.9,
+      "value": 4.6,
       "threshold": 8.5
     },
     "mobile": {
-      "value": 3.9,
+      "value": 4.2,
       "threshold": 8.5
     },
     "performance": {
-      "value": 6.2,
+      "value": 6.4,
       "threshold": 8
     },
     "accessibility": {
-      "value": 5.7,
+      "value": 6.8,
       "threshold": 8
     }
   },
-  "nextAction": "[GOLDEN_REVIEW] 골든 슬라이스 게이트 — 위임: visual-critic, motion-critic, performance-auditor, accessibility-auditor (병렬) — 필요: review/golden-slice: 증거 파일 8개 필요, 현재 5개 (/\\.(png|jpg|md)$/) — 게이트: docs/portfolio/scorecard.json 점수 기록 후 advance",
+  "nextAction": "[GOLDEN_FIX] 실패 카테고리 패치 — 위임: frontend-builder",
   "blocker": null
 }
