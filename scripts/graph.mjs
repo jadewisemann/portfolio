@@ -97,6 +97,55 @@ export function checkDocRule(content, rule) {
 }
 
 /** 스코어카드를 임계값과 비교. { pass, failed:[], missing:[] } */
+/**
+ * `state.failedCategories` 가 지금의 스코어카드 x 임계값과 일치하는지 본다.
+ * 어긋나면 사람이 읽을 수 있는 문제 문자열, 일치하면 null.
+ *
+ * 어떤 게이트 노드를 기준으로 볼지는 상태가 정하지 않으므로, 실패 스냅샷을 남긴
+ * 게이트 노드(= `fail` 엣지를 가진 노드) 중 스코어카드가 읽히는 것을 쓴다.
+ */
+export function checkFailedCategoriesSnapshot(graph, state) {
+  const snapshot = state?.failedCategories;
+  if (!snapshot || Object.keys(snapshot).length === 0) return null;
+
+  const gateNode = Object.values(graph.nodes).find((n) => n.gate?.thresholds);
+  if (!gateNode) return null;
+
+  let scorecard;
+  try {
+    scorecard = readJson(gateNode.gate.scorecard);
+  } catch {
+    return null; // 스코어카드 부재는 위에서 따로 보고된다.
+  }
+
+  const live = evaluateGate(gateNode.gate, scorecard);
+  const liveFailed = new Map(live.failed.map((f) => [f.category, f]));
+  const differences = [];
+
+  for (const [category, snap] of Object.entries(snapshot)) {
+    const now = liveFailed.get(category);
+    if (!now) {
+      differences.push(`${category} 는 지금 실패가 아니다 (스냅샷: ${snap.value}/${snap.threshold})`);
+    } else if (now.value !== snap.value || now.threshold !== snap.threshold) {
+      differences.push(
+        `${category} 스냅샷 ${snap.value}/${snap.threshold} 대 실측 ${now.value}/${now.threshold}`,
+      );
+    }
+  }
+  for (const [category, now] of liveFailed) {
+    if (!(category in snapshot)) {
+      differences.push(`${category} ${now.value}/${now.threshold} 가 스냅샷에 없다`);
+    }
+  }
+
+  if (differences.length === 0) return null;
+  return (
+    `state.json 의 failedCategories 가 스코어카드와 어긋납니다 (${differences.length}건). ` +
+    `작업 목록으로 쓰지 마세요 — 스코어카드 실측값 x graph.json 현재 임계값으로 다시 계산하세요:\n` +
+    differences.map((d) => `      · ${d}`).join("\n")
+  );
+}
+
 export function evaluateGate(gate, scorecard) {
   const failed = [];
   const missing = [];
@@ -194,17 +243,58 @@ export function unmetRequirements(node) {
   // 노드는 산문 스펙과 **렌더된 픽셀**을 동시에 요구해야 한다. 규칙이 하나뿐이면
   // 마크다운만으로 게이트가 열리고, 그러면 종이에서만 성립하는 방향이 통과한다.
   for (const rule of [node.evidence ?? []].flat()) {
-    const { dir, minFiles, pattern, why } = rule;
+    const { dir, minFiles, pattern, why, fresherThan } = rule;
     const re = new RegExp(pattern ?? ".");
-    const files = fs.existsSync(abs(dir)) ? fs.readdirSync(abs(dir)).filter((f) => re.test(f)) : [];
+    // 하위 폴더까지 센다. 예전에는 한 단계만 읽어서, 증거를 `rejected-01-text/` 처럼
+    // 정리해 넣으면 42장이 0장으로 집계됐다. 정리하면 깨지는 게이트는 정리를 막거나
+    // 우회를 부른다 — 둘 다 증거를 나쁘게 만든다. 경로는 dir 기준 상대로 매칭하므로
+    // `320.*\.png$` 같은 패턴이 폴더를 건너도 그대로 걸린다.
+    const files = fs.existsSync(abs(dir))
+      ? fs
+          .readdirSync(abs(dir), { recursive: true, withFileTypes: true })
+          .filter((e) => e.isFile())
+          .map((e) =>
+            path
+              .relative(abs(dir), path.join(e.parentPath ?? e.path, e.name))
+              .split(path.sep)
+              .join("/"),
+          )
+          .filter((f) => re.test(f))
+      : [];
     if (files.length < minFiles) {
       unmet.push(
         `${dir}: 증거 파일 ${minFiles}개 필요, 현재 ${files.length}개 (/${pattern}/)` +
           (why ? ` — ${why}` : ""),
       );
+      continue;
+    }
+    // `fresherThan` 은 「판정 직전에 재캡처한다」를 기계로 강제한다. 파일 개수만 세면
+    // 이전 런의 스크린샷으로 게이트가 열리고, 그러면 소스에 더는 없는 화면을 심사하게
+    // 된다 — 2026-08-31 런이 실제로 그 직전까지 갔다.
+    if (fresherThan) {
+      const source = newestMtime(abs(fresherThan));
+      const stale = files.filter((f) => fs.statSync(path.join(abs(dir), ...f.split("/"))).mtimeMs < source);
+      if (stale.length) {
+        unmet.push(
+          `${dir}: ${fresherThan}/ 보다 오래된 증거 ${stale.length}개 ` +
+            `(예: ${stale.slice(0, 3).join(", ")}) — 판정 직전에 재캡처하세요`,
+        );
+      }
     }
   }
   return unmet;
+}
+
+/** 디렉터리 안에서 가장 최근 수정 시각(ms). 없으면 0. */
+function newestMtime(dir) {
+  if (!fs.existsSync(dir)) return 0;
+  let newest = 0;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) newest = Math.max(newest, newestMtime(full));
+    else newest = Math.max(newest, fs.statSync(full).mtimeMs);
+  }
+  return newest;
 }
 
 /** runtime.json 의 검증 티어를 실행. 성공 시 true. */
@@ -272,6 +362,21 @@ function runDoctor(graph) {
       }
     }
   }
+
+  /*
+    스테일 스냅샷 점검.
+
+    `state.json` 의 `failedCategories` 는 advance 시점에 굳는다. 그 뒤에 스코어카드가
+    실측값으로 다시 쓰이거나 임계값이 바뀌면 스냅샷은 아무도 모르게 거짓이 된다.
+    2026-08-31 런에서 실제로 그렇게 됐다 — 스냅샷은 실패 7개를 말했고 실제로는
+    10개였으며, 남아 있던 값은 디렉터가 스스로 관대하다고 판정해 폐기한 자체 추정치였다
+    (visualImpact 4.5 대 실측 2.8). 그 목록으로 작업하면 세 항목을 통째로 놓친다.
+
+    `HANDOFF.md` §3 은 이것을 「미해결 하네스 결함」으로 적어 두고 사람에게 재계산을
+    부탁했다. 부탁 대신 검사로 바꾼다.
+  */
+  const snapshotProblem = checkFailedCategoriesSnapshot(graph, readJson(PATHS.state));
+  if (snapshotProblem) problems.push(snapshotProblem);
 
   // 훅 배선 점검: settings.json 이 참조하는 로컬 훅 스크립트 존재 여부
   const settingsRaw = readDocOrNull(PATHS.settings);

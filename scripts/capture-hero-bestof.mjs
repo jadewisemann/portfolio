@@ -14,7 +14,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { chromium } from "@playwright/test";
+import { launchChromium } from "./lib/browser.mjs";
 
 const BASE = "http://localhost:3199";
 const OUT = "review/hero-bestof";
@@ -154,7 +154,7 @@ async function geometryFor(page) {
   );
 }
 
-const browser = await chromium.launch({ channel: "chrome" });
+const browser = await launchChromium();
 try {
   await waitForServer(`${BASE}/v1`);
 

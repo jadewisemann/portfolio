@@ -1,0 +1,83 @@
+/*
+  히어로 — 이름 하나와 구도 하나. 첫 뷰포트에 다른 글자는 없다
+  (owner 지시: "첫 화면에는 글자가 거의 없어야 해" — firstScreenChars == 12).
+*/
+
+.stage {
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.poster,
+.scene {
+  position: absolute;
+  inset: 0;
+}
+
+/*
+  z-index 를 명시해 각 층이 자체 쌓임 맥락을 갖게 한다. `.poster` 안 프레임은
+  `layout.ts` 의 zIndex(최대 ~1000)로 서로 겹치는 순서를 매기는데, `.poster` 에
+  z-index 가 없으면(auto) 그 값이 쌓임 맥락에 갇히지 않고 형제인 `.name`(z-index 2)
+  보다 위로 새어 나가 이름이 프레임 뒤에 완전히 가려진다(실측). 정수 z-index 를
+  주면 그 안의 값이 이 층 안에서만 유효해진다.
+*/
+.poster {
+  z-index: 0;
+}
+
+.scene {
+  z-index: 1;
+}
+
+.name {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  max-width: calc(100vw - 24px);
+  font-family: var(--font-mono), monospace;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  background: var(--ground);
+  padding: 0 0.15em;
+  font-size: 56px;
+  line-height: 1.04;
+}
+
+/* 좁은 화면에서만 두 줄. 640px 부터는 다시 한 줄이다. */
+.namePart {
+  display: block;
+  white-space: nowrap;
+}
+
+@media (min-width: 640px) {
+  .name {
+    font-size: 72px;
+  }
+
+  .namePart {
+    display: inline;
+  }
+}
+
+@media (min-width: 1024px) {
+  .name {
+    font-size: 108px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .name {
+    font-size: 136px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .name {
+    font-size: 160px;
+  }
+}

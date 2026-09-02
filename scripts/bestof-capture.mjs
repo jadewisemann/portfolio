@@ -1,6 +1,6 @@
-import { chromium } from "playwright";
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { launchChromium } from "./lib/browser.mjs";
 
 const OUT = path.resolve(process.cwd(), "review/hero-bestof");
 mkdirSync(OUT, { recursive: true });
@@ -101,7 +101,7 @@ async function scrollToSceneCross(page, rootSelector, s1Top, viewportHeight) {
 }
 
 async function run() {
-  const browser = await chromium.launch({ channel: "chrome" });
+  const browser = await launchChromium();
 
   for (const variant of VARIANTS) {
     for (const vp of VIEWPORTS) {

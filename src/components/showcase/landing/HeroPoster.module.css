@@ -1,0 +1,32 @@
+/*
+  히어로 포스터. 자리표시자 언어는 PlaceholderFrame 그대로다(민무늬 --ground-sub
+  면 + --rule 테두리) — 여기서는 그것을 layout.ts 가 계산한 좌표에 절대 배치만
+  한다.
+*/
+
+.frames {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.frames[data-set="desktop"] {
+  display: none;
+}
+
+.frames[data-set="mobile"] {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .frames[data-set="desktop"] {
+    display: block;
+  }
+  .frames[data-set="mobile"] {
+    display: none;
+  }
+}
+
+.frame {
+  position: absolute;
+}

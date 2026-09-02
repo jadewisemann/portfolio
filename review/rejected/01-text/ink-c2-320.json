@@ -1,0 +1,38 @@
+{
+  "viewport": {
+    "w": 320,
+    "h": 640
+  },
+  "screens": 1,
+  "enclosedFormSharePct": 28.99,
+  "largestTypePx": 88,
+  "firstScreenChars": 98,
+  "horizontalOverflowPx": 0,
+  "formBands": [
+    {
+      "x0": 0,
+      "x1": 160,
+      "share": 32.88
+    },
+    {
+      "x0": 160,
+      "x1": 320,
+      "share": 25.09
+    }
+  ],
+  "paintedSharePct": 11.24,
+  "emptyBandSharePct": 0,
+  "nearEmptyBandSharePct": 0,
+  "paintedBands": [
+    {
+      "x0": 0,
+      "x1": 160,
+      "paintedPct": 12.523
+    },
+    {
+      "x0": 160,
+      "x1": 320,
+      "paintedPct": 9.948
+    }
+  ]
+}

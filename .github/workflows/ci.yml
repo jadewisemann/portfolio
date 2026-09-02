@@ -1,0 +1,49 @@
+name: CI
+
+# 왜 이 워크플로가 있는가:
+#
+# 배포 자체는 Vercel 이 GitHub 연동으로 처리하므로 여기서 배포하지 않는다 —
+# 배포 토큰을 저장소 시크릿에 두지 않아도 되고, 배포 경로가 둘로 갈라지지도 않는다.
+# 이 워크플로는 **검증만** 한다. Vercel 은 `next build` 만 돌리므로 린트 · 타입 ·
+# 단위 테스트 · E2E 는 아무도 안 돌리게 되고, 그러면 게이트가 있으나 마나가 된다.
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+
+      # E2E 는 프로덕션 빌드를 검증한다 (playwright.config.ts 의 webServer 가
+      # `npm run build && npm run start` 를 돌린다). 그래서 빌드를 따로 돌리지 않는다.
+      - run: npx playwright install --with-deps chromium
+      - run: npm run e2e
+
+      - name: 그래프 무결성
+        run: node scripts/graph.mjs doctor
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

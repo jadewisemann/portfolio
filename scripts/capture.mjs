@@ -14,8 +14,13 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { spawn, spawnSync } from "node:child_process";
-import { chromium } from "@playwright/test";
+import { spawnSync } from "node:child_process";
+import {
+  assertPortFree,
+  launchChromium,
+  startServer,
+  waitForServer,
+} from "./lib/browser.mjs";
 
 const PORT = 3101;
 const args = process.argv.slice(2);
@@ -35,26 +40,8 @@ if (!skipBuild) {
   if (build.status !== 0) process.exit(build.status ?? 1);
 }
 
-const server = spawn(`npm run start -- --port ${PORT}`, { shell: true, stdio: "pipe" });
-const kill = () => {
-  // Windows 에서 npm 쉘 자식까지 확실히 정리한다.
-  spawnSync(`taskkill /pid ${server.pid} /T /F`, { shell: true, stdio: "ignore" });
-};
-process.on("exit", kill);
-
-async function waitForServer(url, timeoutMs = 60_000) {
-  const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
-    try {
-      const res = await fetch(url);
-      if (res.ok) return;
-    } catch {
-      /* 서버가 아직 안 떴다 — 재시도 */
-    }
-    await new Promise((r) => setTimeout(r, 500));
-  }
-  throw new Error(`서버가 ${timeoutMs}ms 안에 뜨지 않았습니다: ${url}`);
-}
+await assertPortFree(PORT);
+const { stop: kill } = startServer(PORT);
 
 const url = `http://localhost:${PORT}${route}`;
 await waitForServer(`http://localhost:${PORT}/`);
@@ -77,7 +64,7 @@ const viewports = [
 const schemes = ["light", "dark"];
 const slug = route === "/" ? "home" : route.replace(/\W+/g, "-").replace(/^-|-$/g, "");
 
-const browser = await chromium.launch({ channel: "chrome" });
+const browser = await launchChromium();
 try {
   for (const vp of viewports) {
     for (const colorScheme of schemes) {

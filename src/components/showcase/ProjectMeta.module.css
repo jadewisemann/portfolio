@@ -1,0 +1,37 @@
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: var(--spacing-measure);
+}
+
+.name {
+  margin: 0;
+  font-size: var(--text-decision);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.blurb {
+  margin: 0;
+  font-size: 17px;
+  color: var(--ink-2);
+}
+
+.keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.keyword {
+  /* 기본값은 --rule 과 같다(globals.css) — /t2 만 신호색으로 재정의한다. */
+  border: 1px solid var(--chip-border);
+  padding: 4px 10px;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+  color: var(--ink-2);
+}
