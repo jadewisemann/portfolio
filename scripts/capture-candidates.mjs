@@ -90,14 +90,14 @@ const slug = (route) => route.replace(/\W+/g, "") || "root";
 */
 
 /** 스크린샷 PNG 를 캔버스로 다시 읽어 칠해진 픽셀을 센다. */
-async function measurePainted(browser, pngBuffer) {
+async function measurePainted(browser, pngBuffer, groundHex) {
   const page = await browser.newPage();
   try {
     await page.setContent(
       `<img id="s" src="data:image/png;base64,${pngBuffer.toString("base64")}">`,
     );
     await page.locator("#s").waitFor({ state: "attached" });
-    return await page.evaluate(async () => {
+    return await page.evaluate(async (declaredGround) => {
       const img = document.getElementById("s");
       if (!img.complete) await img.decode();
       const w = img.naturalWidth;
@@ -109,23 +109,44 @@ async function measurePainted(browser, pngBuffer) {
       ctx.drawImage(img, 0, 0);
       const { data } = ctx.getImageData(0, 0, w, h);
 
-      // 지면색은 「가장 흔한 색」이다. 라이트/다크를 가정하지 않는다.
-      const tally = new Map();
-      for (let i = 0; i < data.length; i += 4) {
-        const key = (data[i] << 16) | (data[i + 1] << 8) | data[i + 2];
-        tally.set(key, (tally.get(key) ?? 0) + 1);
-      }
-      let ground = 0;
-      let best = -1;
-      for (const [key, n] of tally) {
-        if (n > best) {
-          best = n;
-          ground = key;
+      /*
+        지면색은 **페이지가 선언한 `--ground`** 를 쓴다. 최빈색으로 추정하지 않는다.
+
+        추정판은 지면이 화면의 대부분일 때만 맞는다. 어두운 랜딩의 히어로는 크림색
+        액자가 화면의 절반을 넘으므로 최빈색이 액자가 되고, 그러면 **어두운 지면이
+        잉크로 집계되어** 진한 잉크 41% 라는 값이 나왔다. 실제로는 그 반대다.
+        선언된 값이 있는데 추정할 이유가 없다.
+      */
+      const parse = (hex) => {
+        const m = /^#?([0-9a-f]{6})$/i.exec((hex ?? "").trim());
+        return m
+          ? [
+              parseInt(m[1].slice(0, 2), 16),
+              parseInt(m[1].slice(2, 4), 16),
+              parseInt(m[1].slice(4, 6), 16),
+            ]
+          : null;
+      };
+      let [gr, gg, gb] = parse(declaredGround) ?? [];
+      if (gr === undefined) {
+        // 선언된 값을 못 읽었을 때만 최빈색으로 물러난다.
+        const tally = new Map();
+        for (let i = 0; i < data.length; i += 4) {
+          const key = (data[i] << 16) | (data[i + 1] << 8) | data[i + 2];
+          tally.set(key, (tally.get(key) ?? 0) + 1);
         }
+        let ground = 0;
+        let best = -1;
+        for (const [key, n] of tally) {
+          if (n > best) {
+            best = n;
+            ground = key;
+          }
+        }
+        gr = (ground >> 16) & 255;
+        gg = (ground >> 8) & 255;
+        gb = ground & 255;
       }
-      const gr = (ground >> 16) & 255;
-      const gg = (ground >> 8) & 255;
-      const gb = ground & 255;
 
       /*
         임계를 둘로 나눈다. 하나로는 못 잰다.
@@ -189,9 +210,11 @@ async function measurePainted(browser, pngBuffer) {
         blankBandSharePct: +(
           (bands.filter((b) => b.faintPct === 0).length / bands.length) * 100
         ).toFixed(1),
+        ground: `rgb(${gr},${gg},${gb})`,
+        groundSource: parse(declaredGround) ? "declared" : "modal-fallback",
         paintedBands: bands,
       };
-    });
+    }, groundHex);
   } finally {
     await page.close();
   }
@@ -283,9 +306,21 @@ try {
         else hashes[route][vp.name] = md5(buf);
 
         if (reducedMotion === "no-preference") {
+          // 페이지가 선언한 지면색을 읽어 계측기에 넘긴다.
+          const groundHex = await page.evaluate(() => {
+            const raw = getComputedStyle(document.documentElement)
+              .getPropertyValue("--ground")
+              .trim();
+            if (/^#[0-9a-f]{6}$/i.test(raw)) return raw;
+            // 토큰이 rgb() 형태면 캔버스로 정규화한다.
+            const probe = document.createElement("canvas").getContext("2d");
+            probe.fillStyle = raw || getComputedStyle(document.body).backgroundColor;
+            return probe.fillStyle;
+          });
+
           const ink = {
             ...(await page.evaluate(measureForm)),
-            ...(await measurePainted(browser, buf)),
+            ...(await measurePainted(browser, buf, groundHex)),
           };
           report[route][vp.name] = ink;
           fs.writeFileSync(

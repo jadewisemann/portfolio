@@ -3,68 +3,72 @@
     "w": 1920,
     "h": 1080
   },
-  "screens": 4.85,
-  "zeroInkBandShare": 33.3,
+  "ground": "rgb(23,19,16)",
+  "strongInkSharePct": 58.67,
+  "paintedSharePct": 60.08,
+  "emptyBandSharePct": 0,
+  "blankBandSharePct": 0,
   "bands": [
     {
       "x0": 0,
-      "x1": 160,
-      "share": 0
+      "strongPct": 76.682,
+      "faintPct": 77.828
     },
     {
       "x0": 160,
-      "x1": 320,
-      "share": 0
+      "strongPct": 49.947,
+      "faintPct": 51.82
     },
     {
       "x0": 320,
-      "x1": 480,
-      "share": 10.4
+      "strongPct": 40.687,
+      "faintPct": 42.587
     },
     {
       "x0": 480,
-      "x1": 640,
-      "share": 19.26
+      "strongPct": 37.33,
+      "faintPct": 39.354
     },
     {
       "x0": 640,
-      "x1": 800,
-      "share": 19.26
+      "strongPct": 38.196,
+      "faintPct": 40.222
     },
     {
       "x0": 800,
-      "x1": 960,
-      "share": 19.26
+      "strongPct": 65.86,
+      "faintPct": 66.976
     },
     {
       "x0": 960,
-      "x1": 1120,
-      "share": 19.26
+      "strongPct": 44.82,
+      "faintPct": 46.656
     },
     {
       "x0": 1120,
-      "x1": 1280,
-      "share": 19.26
+      "strongPct": 76.531,
+      "faintPct": 77.215
     },
     {
       "x0": 1280,
-      "x1": 1440,
-      "share": 19.26
+      "strongPct": 74.726,
+      "faintPct": 75.376
     },
     {
       "x0": 1440,
-      "x1": 1600,
-      "share": 10.4
+      "strongPct": 76.485,
+      "faintPct": 77.157
     },
     {
       "x0": 1600,
-      "x1": 1760,
-      "share": 0
+      "strongPct": 61.398,
+      "faintPct": 62.903
     },
     {
       "x0": 1760,
-      "x1": 1920,
-      "share": 0
+      "strongPct": 61.339,
+      "faintPct": 62.894
     }
-  ]
+  ],
+  "screens": 4.85
 }

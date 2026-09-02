@@ -3,18 +3,22 @@
     "w": 320,
     "h": 640
   },
-  "screens": 5.38,
-  "zeroInkBandShare": 0,
+  "ground": "rgb(23,19,16)",
+  "strongInkSharePct": 45.66,
+  "paintedSharePct": 47.58,
+  "emptyBandSharePct": 0,
+  "blankBandSharePct": 0,
   "bands": [
     {
       "x0": 0,
-      "x1": 160,
-      "share": 15.03
+      "strongPct": 55.839,
+      "faintPct": 57.408
     },
     {
       "x0": 160,
-      "x1": 320,
-      "share": 15.03
+      "strongPct": 35.484,
+      "faintPct": 37.747
     }
-  ]
+  ],
+  "screens": 5.38
 }

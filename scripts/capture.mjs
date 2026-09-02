@@ -102,43 +102,113 @@ try {
           첫 뷰포트의 잉크 분포를 160px 세로 띠로 계측한다. 「중앙 정렬 컬럼 옆의
           거대한 빈 공간」은 스크린샷을 봐도 놓치기 쉽고 수치로는 즉시 드러난다.
         */
-        const ink = await page.evaluate(() => {
-          const vw = innerWidth;
-          const bands = [];
-          for (let x0 = 0; x0 < vw; x0 += 160) {
-            const x1 = Math.min(x0 + 160, vw);
-            let area = 0;
-            for (const el of document.querySelectorAll("main *, nav *, header *")) {
-              const t = el.textContent;
-              if (!t || !t.trim()) continue;
-              if (el.children.length > 0) continue;
-              const r = el.getBoundingClientRect();
-              if (r.top >= innerHeight || r.bottom <= 0 || r.width === 0) continue;
-              const ox = Math.max(0, Math.min(r.right, x1) - Math.max(r.left, x0));
-              const oy = Math.max(0, Math.min(r.bottom, innerHeight) - Math.max(r.top, 0));
-              area += ox * oy;
-            }
-            bands.push({
-              x0,
-              x1,
-              share: +((area / ((x1 - x0) * innerHeight)) * 100).toFixed(2),
-            });
-          }
-          return {
-            viewport: { w: innerWidth, h: innerHeight },
-            screens: +(document.documentElement.scrollHeight / innerHeight).toFixed(2),
-            zeroInkBandShare: +(
-              (bands.filter((b) => b.share === 0).length / bands.length) * 100
-            ).toFixed(1),
-            bands,
-          };
+        /*
+          잉크 계측 (개정 2026-09-01).
+
+          이전 구현은 `main/nav/header` 의 **leaf 텍스트 요소 바운딩박스**만 더했다.
+          그래서 내용이 `<canvas>` 인 페이지는 아무것도 못 본다 — 다크 랜딩을 재면
+          빈 띠 33.3% 가 나오는데, 실제로 화면은 액자로 가득 차 있었고 그 값이
+          비평가를 오도했다.
+
+          이제 스크린샷의 픽셀을 센다. 지면색은 추정하지 않고 페이지가 선언한
+          `--ground` 를 읽는다 — 최빈색 추정판은 액자가 화면의 절반을 넘는 순간
+          지면과 잉크를 뒤집는다.
+        */
+        const groundHex = await page.evaluate(() => {
+          const raw = getComputedStyle(document.documentElement)
+            .getPropertyValue("--ground")
+            .trim();
+          if (/^#[0-9a-f]{6}$/i.test(raw)) return raw;
+          const probe = document.createElement("canvas").getContext("2d");
+          probe.fillStyle = raw || getComputedStyle(document.body).backgroundColor;
+          return probe.fillStyle;
         });
+
+        const measurePage = await browser.newPage();
+        let ink;
+        try {
+          await measurePage.setContent(
+            `<img id="s" src="data:image/png;base64,${(await fs.promises.readFile(firstFile)).toString("base64")}">`,
+          );
+          await measurePage.locator("#s").waitFor({ state: "attached" });
+          ink = await measurePage.evaluate(async (declaredGround) => {
+            const img = document.getElementById("s");
+            if (!img.complete) await img.decode();
+            const w = img.naturalWidth;
+            const h = img.naturalHeight;
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d", { willReadFrequently: true });
+            ctx.drawImage(img, 0, 0);
+            const { data } = ctx.getImageData(0, 0, w, h);
+
+            const m = /^#?([0-9a-f]{6})$/i.exec((declaredGround ?? "").trim());
+            const gr = m ? parseInt(m[1].slice(0, 2), 16) : 250;
+            const gg = m ? parseInt(m[1].slice(2, 4), 16) : 249;
+            const gb = m ? parseInt(m[1].slice(4, 6), 16) : 246;
+
+            // 옅은 것(기판·헤어라인)과 진한 것(눈에 잡히는 표시)을 나눈다.
+            const FAINT = 6;
+            const STRONG = 64;
+            const BAND = 160;
+            const bandFaint = new Array(Math.ceil(w / BAND)).fill(0);
+            const bandStrong = new Array(Math.ceil(w / BAND)).fill(0);
+            let faint = 0;
+            let strong = 0;
+            for (let y = 0; y < h; y += 1) {
+              for (let x = 0; x < w; x += 1) {
+                const i = (y * w + x) * 4;
+                const diff = Math.max(
+                  Math.abs(data[i] - gr),
+                  Math.abs(data[i + 1] - gg),
+                  Math.abs(data[i + 2] - gb),
+                );
+                if (diff <= FAINT) continue;
+                const b = Math.floor(x / BAND);
+                faint += 1;
+                bandFaint[b] += 1;
+                if (diff > STRONG) {
+                  strong += 1;
+                  bandStrong[b] += 1;
+                }
+              }
+            }
+            const area = (i) => (Math.min((i + 1) * BAND, w) - i * BAND) * h;
+            const strongPct = bandStrong.map((n, i) => (n / area(i)) * 100);
+            const faintPct = bandFaint.map((n, i) => (n / area(i)) * 100);
+            return {
+              viewport: { w, h },
+              ground: `rgb(${gr},${gg},${gb})`,
+              strongInkSharePct: +((strong / (w * h)) * 100).toFixed(2),
+              paintedSharePct: +((faint / (w * h)) * 100).toFixed(2),
+              emptyBandSharePct: +(
+                (strongPct.filter((v) => v < 0.05).length / strongPct.length) * 100
+              ).toFixed(1),
+              blankBandSharePct: +(
+                (faintPct.filter((v) => v === 0).length / faintPct.length) * 100
+              ).toFixed(1),
+              bands: strongPct.map((v, i) => ({
+                x0: i * BAND,
+                strongPct: +v.toFixed(3),
+                faintPct: +faintPct[i].toFixed(3),
+              })),
+            };
+          }, groundHex);
+        } finally {
+          await measurePage.close();
+        }
+        ink.screens = await page.evaluate(
+          () => +(document.documentElement.scrollHeight / innerHeight).toFixed(2),
+        );
+
         fs.writeFileSync(
           path.join(outDir, `ink-${vp.name}${parts}.json`),
           JSON.stringify(ink, null, 2),
         );
         console.log(
-          `  잉크: ${vp.name}${parts} 빈 띠 ${ink.zeroInkBandShare}% · ${ink.screens} 화면`,
+          `  잉크: ${vp.name}${parts} 진한 ${ink.strongInkSharePct}% · ` +
+            `빈 띠 ${ink.emptyBandSharePct}% · ${ink.screens} 화면`,
         );
 
         // 스크롤 트리거 요소가 관측되도록 끝까지 스크롤 후 복귀
