@@ -148,14 +148,28 @@ try {
             const gg = m ? parseInt(m[1].slice(2, 4), 16) : 249;
             const gb = m ? parseInt(m[1].slice(4, 6), 16) : 246;
 
-            // 옅은 것(기판·헤어라인)과 진한 것(눈에 잡히는 표시)을 나눈다.
+            /*
+              세 번째 값: 디테일.
+
+              잉크만 재면 **평평한 큰 면이 「가득 찬 화면」으로 집계된다.** 실제로
+              그렇게 됐다 — 프로젝트 페이지의 첫 뷰포트를 1900x760 빈 크림색 액자
+              하나로 채웠더니 진한 잉크 1.86% -> 69.6%, 빈 띠 50% -> 0% 로 「고쳐졌다」.
+              눈으로는 빈 슬래브 하나다.
+
+              디테일은 이웃 픽셀과의 차이가 있는 픽셀의 비율이다. 평평한 면은 내부가
+              0에 수렴하고, 활자 · 선 · 실제 스크린샷은 높다. 「밝다」와 「내용이 있다」를
+              가른다.
+            */
             const FAINT = 6;
             const STRONG = 64;
             const BAND = 160;
             const bandFaint = new Array(Math.ceil(w / BAND)).fill(0);
             const bandStrong = new Array(Math.ceil(w / BAND)).fill(0);
+            const bandDetail = new Array(Math.ceil(w / BAND)).fill(0);
             let faint = 0;
             let strong = 0;
+            let detail = 0;
+            const DETAIL = 12;
             for (let y = 0; y < h; y += 1) {
               for (let x = 0; x < w; x += 1) {
                 const i = (y * w + x) * 4;
@@ -164,8 +178,27 @@ try {
                   Math.abs(data[i + 1] - gg),
                   Math.abs(data[i + 2] - gb),
                 );
-                if (diff <= FAINT) continue;
                 const b = Math.floor(x / BAND);
+
+                // 오른쪽·아래 이웃과의 차이. 평면 내부는 0, 가장자리와 활자는 크다.
+                if (x + 1 < w && y + 1 < h) {
+                  const right = (y * w + x + 1) * 4;
+                  const below = ((y + 1) * w + x) * 4;
+                  const grad = Math.max(
+                    Math.abs(data[i] - data[right]),
+                    Math.abs(data[i + 1] - data[right + 1]),
+                    Math.abs(data[i + 2] - data[right + 2]),
+                    Math.abs(data[i] - data[below]),
+                    Math.abs(data[i + 1] - data[below + 1]),
+                    Math.abs(data[i + 2] - data[below + 2]),
+                  );
+                  if (grad > DETAIL) {
+                    detail += 1;
+                    bandDetail[b] += 1;
+                  }
+                }
+
+                if (diff <= FAINT) continue;
                 faint += 1;
                 bandFaint[b] += 1;
                 if (diff > STRONG) {
@@ -177,10 +210,17 @@ try {
             const area = (i) => (Math.min((i + 1) * BAND, w) - i * BAND) * h;
             const strongPct = bandStrong.map((n, i) => (n / area(i)) * 100);
             const faintPct = bandFaint.map((n, i) => (n / area(i)) * 100);
+            const detailPct = bandDetail.map((n, i) => (n / area(i)) * 100);
             return {
               viewport: { w, h },
               ground: `rgb(${gr},${gg},${gb})`,
               strongInkSharePct: +((strong / (w * h)) * 100).toFixed(2),
+              // 구조가 있는 픽셀. 평평한 큰 면은 여기서 잉크와 갈린다.
+              detailSharePct: +((detail / (w * h)) * 100).toFixed(2),
+              // 디테일이 거의 없는 띠. 「밝지만 비어 있는」 구간을 잡는다.
+              flatBandSharePct: +(
+                (detailPct.filter((v) => v < 0.5).length / detailPct.length) * 100
+              ).toFixed(1),
               paintedSharePct: +((faint / (w * h)) * 100).toFixed(2),
               emptyBandSharePct: +(
                 (strongPct.filter((v) => v < 0.05).length / strongPct.length) * 100
@@ -192,6 +232,7 @@ try {
                 x0: i * BAND,
                 strongPct: +v.toFixed(3),
                 faintPct: +faintPct[i].toFixed(3),
+                detailPct: +detailPct[i].toFixed(3),
               })),
             };
           }, groundHex);
