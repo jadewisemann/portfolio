@@ -1,9 +1,7 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 /** 기하 판정. 스크린샷 비교를 쓰지 않습니다. 콘텐츠와 무관한 불변식만 남겼습니다. */
-test("본문이 가로로 스크롤되지 않고 넘치는 요소가 없다", async ({ page }) => {
-  await page.goto("/");
-
+async function assertNoHorizontalOverflow(page: Page) {
   const overflow = await page.evaluate(() => {
     const vw = document.documentElement.clientWidth;
     /*
@@ -41,6 +39,11 @@ test("본문이 가로로 스크롤되지 않고 넘치는 요소가 없다", as
     document.documentElement.clientWidth,
   ]);
   expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
+}
+
+test("랜딩 — 본문이 가로로 스크롤되지 않고 넘치는 요소가 없다", async ({ page }) => {
+  await page.goto("/");
+  await assertNoHorizontalOverflow(page);
 });
 
 test("스킵 링크가 첫 포커스 가능 요소다", async ({ page }) => {
@@ -54,4 +57,24 @@ test("스킵 링크가 첫 포커스 가능 요소다", async ({ page }) => {
 
   expect(focused.tag).toBe("A");
   expect(focused.href).toBe("#main");
+});
+
+/*
+  /projects/yorr — 긴 글 페이지는 측정폭을 넘기거나 표 · SVG 다이어그램이 320px 에서
+  넘치기 쉽다. 랜딩과 같은 기하 판정을 그대로 재사용한다(스크린샷 비교가 아니라
+  요소 위치 · scrollWidth 로 판정 — CONTENT.md §2.4 가 소개하는 narrow-width.spec.ts
+  의 방법과 같다. 같은 방법을 이 사이트 자신에도 쓰지 않으면 그 절의 포지셔닝이
+  반증된다).
+*/
+test("프로젝트 페이지(YORR) — 본문이 가로로 스크롤되지 않고 넘치는 요소가 없다", async ({
+  page,
+}) => {
+  await page.goto("/projects/yorr");
+  await assertNoHorizontalOverflow(page);
+});
+
+test("프로젝트 페이지(YORR) — 랜딩으로 돌아가는 링크가 있다", async ({ page }) => {
+  await page.goto("/projects/yorr");
+  const back = page.getByRole("link", { name: "← 처음으로" }).first();
+  await expect(back).toHaveAttribute("href", "/");
 });

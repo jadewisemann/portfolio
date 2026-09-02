@@ -33,6 +33,12 @@ export interface ShowcaseProject {
   blurb: string;
   keywords: readonly string[];
   shots: readonly Shot[];
+  /**
+   * 프로젝트 페이지 경로. 아키텍처 · 코드 리딩은 랜딩이 아니라 여기서 보여준다
+   * (`CLAUDE.md` 「What the owner actually wants」 · `docs/portfolio/SCENE_GRAPH.md` 2절).
+   * 아직 페이지가 없는 프로젝트는 이 필드를 비워 둔다 — 없는 곳으로 링크를 만들지 않는다.
+   */
+  href?: string;
 }
 
 /** 9:19.5 — 모바일 세로 화면. */
@@ -64,6 +70,7 @@ export const PROJECTS: readonly ShowcaseProject[] = [
       "프론트엔드 단독 개발",
       "WebSocket · WebRTC 음성",
     ],
+    href: "/projects/yorr",
     shots: [
       mobileShot("YORR 모바일 화면 자리표시자, 로비"),
       mobileShot("YORR 모바일 화면 자리표시자, 게임판"),

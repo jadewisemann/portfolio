@@ -35,3 +35,9 @@
   font-size: var(--text-mono);
   color: var(--ink-2);
 }
+
+.more {
+  margin: 4px 0 0;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+}
