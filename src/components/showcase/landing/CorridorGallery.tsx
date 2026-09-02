@@ -4,6 +4,7 @@ import { Canvas, useFrame, useStore } from "@react-three/fiber";
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import { PROJECTS } from "../shots";
 import { DepthFog } from "../DepthFog";
+import { FirstFrameSignal } from "../FirstFrameSignal";
 import { ProjectMeta } from "../ProjectMeta";
 import { ShotPlane } from "../ShotPlane";
 import {
@@ -16,12 +17,14 @@ import {
   corridorProgressForZ,
   corridorProjectTargetZ,
   corridorTotalDepth,
-  easeSpine,
+  easeTravel,
 } from "./layout";
 import styles from "./CorridorGallery.module.css";
 
 const DEPTH = corridorTotalDepth(PROJECTS);
 const ITEMS = corridorItems(PROJECTS);
+
+function noop() {}
 
 /*
   깊이 안개의 near/far. 복도는 카메라가 스크롤을 따라 계속 움직이므로(`Rig`) 고정된
@@ -39,7 +42,9 @@ const CORRIDOR_FOG_FAR = 13;
  * 결과"로 볼지. `window.scrollTo` 가 정수 픽셀로 반올림하며 생기는 오차(총 이동
  * 거리 대비 0.5px 미만)보다 넉넉하지만, 실제 휠 · 키보드 스크롤 입력(수십 px
  * 이상)보다는 훨씬 촘촘하다 — 진짜 스크롤 입력과 프로그램이 만든 스크롤을
- * 가르는 값이지 물리적 정밀도가 아니다.
+ * 가르는 값이지 물리적 정밀도가 아니다. 트윈이 매 프레임 실제 스크롤도 함께
+ * 옮기므로(아래 `EasingState.lastAppliedZ`), 이 값은 "최종 목적지"가 아니라
+ * "이번 프레임에 우리가 방금 적용한 z"와 비교한다.
  */
 const JUMP_MATCH_EPSILON = 0.01;
 
@@ -48,6 +53,12 @@ interface EasingState {
   fromZ: number;
   toZ: number;
   startTime: number;
+  /** 이번 트윈이 가장 최근에 스스로 적용한 z — 진짜 입력인지 우리 메아리인지 가른다. */
+  lastAppliedZ: number;
+  /** 래퍼의 문서 기준 절대 top(px). 스크롤이 시작돼도 변하지 않는 값이다. */
+  docTop: number;
+  /** 래퍼 안에서 실제로 스크롤 가능한 거리(px). */
+  scrollable: number;
 }
 
 /**
@@ -56,24 +67,35 @@ interface EasingState {
  * 특정 평면을 피해 다닐 필요가 없다). rAF 루프를 돌지 않는다 — 이벤트가 올 때만
  * `invalidate()` 를 부른다(`frameloop="demand"`).
  *
- * 예외 하나: `jumpToIndex` 로 들어오는 점프. 스크롤 이송 자체(`window.scrollTo`)는
- * 여전히 즉시 실행하지만(MOTION_LANGUAGE.md §5.3, 소유할 수 없는 지속 시간을
- * 만들지 않는다), 화면에 그려지는 카메라 위치는 장면 간 대역(`--duration-spine`
- * 620ms, `--ease-spine`)에 걸쳐 옮긴다 — 전에는 2,430px 순간이동이 한 프레임에
- * 일어났다. 카메라 변환은 씬의 좌표계에 속해 DOM 속성이 아니므로
- * `MOTION_LANGUAGE.md` §8 의 DOM 속성 제한을 받지 않는다(§1.4·§6, 3D 씬 안의
- * 명시적 변환).
+ * 예외 하나: `jumpToIndex` 로 들어오는 점프. 화면에 그려지는 카메라 위치는
+ * `--ease-travel` 로 `CORRIDOR_JUMP_DURATION_MS`(900ms, 장면 간 대역 상한)에
+ * 걸쳐 옮긴다 — 전에는 2,430px 순간이동이 한 프레임에 일어났다. 카메라 변환은
+ * 씬의 좌표계에 속해 DOM 속성이 아니므로 `MOTION_LANGUAGE.md` §8 의 DOM 속성
+ * 제한을 받지 않는다(§1.4·§6, 3D 씬 안의 명시적 변환).
+ *
+ * 실제 스크롤 위치(`window.scrollTo`)도 이 트윈과 같은 속도로 매 프레임 함께
+ * 옮긴다(실측 결함 수정, 비평 4의 "landing wrong") — 예전에는 점프 시작 시
+ * 스크롤이 목적지로 즉시 이동하고 화면의 카메라만 뒤따라갔다. 그 사이 진짜
+ * 스크롤 입력이 오면 "이미 목적지에 가 있는" 위치 위에 더해져, 취소했을 때
+ * 화면이 보여주던 자리와 무관한 곳(1.162 유닛 불연속)으로 떨어졌다. 스크롤과
+ * 카메라를 늘 같은 자리로 묶으면 취소는 "지금 보이는 자리에서 자연스럽게
+ * 이어간다"가 된다 — 이 지속 시간은 우리가 소유하고(§5.1), 진짜 입력이 오면
+ * 즉시 넘겨준다(스크롤 이송을 가로채지 않는다는 원칙은 그대로다, §5.1·§5.3).
  */
 function Rig({
   wrapperRef,
   onCameraZ,
   jumpToIndex,
   onJumpHandled,
+  onJumpStart,
+  onJumpSettled,
 }: {
   wrapperRef: RefObject<HTMLDivElement | null>;
   onCameraZ: (z: number) => void;
   jumpToIndex: number | null;
   onJumpHandled: () => void;
+  onJumpStart: (index: number) => void;
+  onJumpSettled: () => void;
 }) {
   const store = useStore();
   const lastZRef = useRef(CORRIDOR_CAMERA_START_Z);
@@ -102,8 +124,17 @@ function Rig({
     if (!easing || !easing.active) return;
     const elapsed = performance.now() - easing.startTime;
     const t = Math.min(1, elapsed / CORRIDOR_JUMP_DURATION_MS);
-    const z = easing.fromZ + (easing.toZ - easing.fromZ) * easeSpine(t);
-    if (t >= 1) easing.active = false;
+    const z = easing.fromZ + (easing.toZ - easing.fromZ) * easeTravel(t);
+
+    const progress = corridorProgressForZ(z, DEPTH);
+    const top = easing.docTop + progress * Math.max(0, easing.scrollable);
+    easing.lastAppliedZ = z;
+    window.scrollTo({ top });
+
+    if (t >= 1) {
+      easing.active = false;
+      onJumpSettled();
+    }
     applyCamera(z);
     onCameraZ(z);
   });
@@ -120,14 +151,20 @@ function Rig({
       const z = corridorCameraZ(progress, DEPTH);
 
       const easing = easingRef.current;
-      if (easing?.active && Math.abs(z - easing.toZ) < JUMP_MATCH_EPSILON) {
-        // 이 scroll 이벤트는 방금 실행한 jumpTo() 자신이 만든 것이다 — 트윈이
-        // 이미 카메라를 옮기고 있으므로 여기서 다시 스냅하지 않는다.
+      if (easing?.active && Math.abs(z - easing.lastAppliedZ) < JUMP_MATCH_EPSILON) {
+        // 이 scroll 이벤트는 방금 우리 트윈이 이번 프레임에 스스로 만든 것이다 —
+        // 트윈이 이미 카메라와 스크롤을 함께 옮기고 있으므로 여기서 다시 스냅하지
+        // 않는다.
         return;
       }
       // 실제 스크롤 입력이 도착했다 — 진행 중이던 트윈이 있어도 그 입력이 이긴다
-      // (스크롤 이송은 절대 가로채지 않는다, MOTION_LANGUAGE.md §5.1·§5.3).
-      if (easing) easing.active = false;
+      // (스크롤 이송은 절대 가로채지 않는다, MOTION_LANGUAGE.md §5.1·§5.3). 트윈과
+      // 스크롤을 같은 자리로 묶어 뒀으므로 여기서 읽는 z 는 화면이 지금 보여주는
+      // 자리에서 사용자가 실제로 스크롤한 만큼만 떨어져 있다.
+      if (easing?.active) {
+        easing.active = false;
+        onJumpSettled();
+      }
 
       onCameraZ(z);
       applyCamera(z);
@@ -140,7 +177,7 @@ function Rig({
       window.removeEventListener("scroll", applyScroll);
       window.removeEventListener("resize", applyScroll);
     };
-  }, [applyCamera, onCameraZ, wrapperRef]);
+  }, [applyCamera, onCameraZ, onJumpSettled, wrapperRef]);
 
   useEffect(() => {
     if (jumpToIndex === null) return;
@@ -151,26 +188,27 @@ function Rig({
     }
 
     const targetZ = corridorProjectTargetZ(jumpToIndex);
-    const progress = corridorProgressForZ(targetZ, DEPTH);
     const rect = wrapper.getBoundingClientRect();
     const scrollable = rect.height - window.innerHeight;
-    const top = window.scrollY + rect.top + progress * Math.max(0, scrollable);
+    // 문서 기준 절대 top — 스크롤이 진행돼도 변하지 않는다(`rect.top` 은 변한다).
+    const docTop = window.scrollY + rect.top;
 
+    onJumpStart(jumpToIndex);
     easingRef.current = {
       active: true,
       fromZ: lastZRef.current,
       toZ: targetZ,
       startTime: performance.now(),
+      lastAppliedZ: lastZRef.current,
+      docTop,
+      scrollable,
     };
-    // scroll-behavior 는 소유할 수 없는 지속 시간이므로 쓰지 않는다
-    // (MOTION_LANGUAGE.md §5.3). 스크롤 이송 자체는 기본 동작(즉시 이동)에 맡기고,
-    // 카메라 위치만 위 트윈이 담당한다.
-    window.scrollTo({ top });
     // frameloop="demand" 는 invalidate() 가 없으면 렌더하지 않는다 — 트윈의 첫
-    // 프레임을 깨운다(카메라 값 자체는 바꾸지 않는다).
+    // 프레임을 깨운다(카메라 값 자체는 바꾸지 않는다). 실제 스크롤은 위 useFrame
+    // 트윈이 매 프레임 카메라와 함께 옮긴다.
     applyCamera(lastZRef.current);
     onJumpHandled();
-  }, [applyCamera, jumpToIndex, onJumpHandled, wrapperRef]);
+  }, [applyCamera, jumpToIndex, onJumpHandled, onJumpStart, wrapperRef]);
 
   return null;
 }
@@ -198,19 +236,43 @@ function Field() {
  * "카메라가 평면 안으로 들어간다" 결함을 원천적으로 막는다(`layout.ts` 참고).
  *
  * 키보드 경로: 프로젝트 이름 버튼 3개가 포인터 · 스크롤 돌리와 나란히 있다.
+ *
+ * `onFirstFrame`: 캔버스가 실제로 첫 프레임을 그리면 부모(`CorridorCanvas`)에
+ * 알린다 — 청크가 "요청된" 시점(`live`)이 아니라 "그려진" 시점을 부모가 구분해야
+ * 폴백을 그 사이에도 계속 보여줄 수 있다(성능 감사 §2).
  */
-export function CorridorGallery() {
+export function CorridorGallery({
+  onFirstFrame = noop,
+}: {
+  onFirstFrame?: () => void;
+}) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [jumpToIndex, setJumpToIndex] = useState<number | null>(null);
+  // 점프 트윈이 도는 동안 캡션을 목적지에 고정한다(실측 결함, 비평 4: 트윈이
+  // 중간 프로젝트들의 z 대역을 그대로 지나가면서 캡션이 5ms YORR · 240ms
+  // FestiFriends · 287ms Pookjayo 로 세 번 다시 마운트됐다). `onJumpStart` 가
+  // 도착 인덱스로 즉시 고정하고, `onJumpSettled` (트윈 완료 또는 진짜 스크롤
+  // 입력에 의한 취소)가 다시 풀어 스크롤 기반 계산으로 돌아간다.
+  const latchedRef = useRef(false);
 
   const handleCameraZ = useCallback((z: number) => {
+    if (latchedRef.current) return;
     const index = corridorIndexForZ(z, PROJECTS.length);
     setActiveIndex((current) => (current === index ? current : index));
   }, []);
 
   const handleJumpHandled = useCallback(() => {
     setJumpToIndex(null);
+  }, []);
+
+  const handleJumpStart = useCallback((index: number) => {
+    latchedRef.current = true;
+    setActiveIndex(index);
+  }, []);
+
+  const handleJumpSettled = useCallback(() => {
+    latchedRef.current = false;
   }, []);
 
   const active = PROJECTS[activeIndex];
@@ -228,8 +290,11 @@ export function CorridorGallery() {
             jumpToIndex={jumpToIndex}
             onCameraZ={handleCameraZ}
             onJumpHandled={handleJumpHandled}
+            onJumpSettled={handleJumpSettled}
+            onJumpStart={handleJumpStart}
             wrapperRef={wrapperRef}
           />
+          <FirstFrameSignal onFirstFrame={onFirstFrame} />
           <DepthFog far={CORRIDOR_FOG_FAR} near={CORRIDOR_FOG_NEAR} />
           <Field />
         </Canvas>
@@ -247,7 +312,7 @@ export function CorridorGallery() {
         </ul>
 
         <div className={styles.caption} key={active.id}>
-          <ProjectMeta project={active} />
+          <ProjectMeta project={active} variant="masthead" />
         </div>
 
         <nav aria-label="프로젝트로 이동" className={styles.nav}>

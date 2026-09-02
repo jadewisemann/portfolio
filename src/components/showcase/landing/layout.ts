@@ -477,24 +477,55 @@ export function corridorPlanesInView(
 /* ==========================================================================
    점프 이징 — 프로젝트로 이동 버튼이 스크롤을 2,430px 순간이동시키던 결함.
    스크롤 이송 자체는 계속 가로채지 않는다(`window.scrollTo` 는 즉시 실행,
-   MOTION_LANGUAGE.md §5.3) — 대신 **카메라가 화면에 그리는 위치**를 장면 간
-   대역(`--duration-spine` 620ms, `--ease-spine`)에 걸쳐 옮긴다. 카메라 변환은
-   씬의 좌표계에 속하고 DOM 속성이 아니므로 `MOTION_LANGUAGE.md` §8 의 DOM
-   속성 목록 제한을 받지 않는다 — 3D 씬 안의 명시적 변환이다(§1.4·§6).
+   MOTION_LANGUAGE.md §5.3) — 대신 **카메라가 화면에 그리는 위치**를 옮긴다.
+   카메라 변환은 씬의 좌표계에 속하고 DOM 속성이 아니므로 `MOTION_LANGUAGE.md`
+   §8 의 DOM 속성 목록 제한을 받지 않는다 — 3D 씬 안의 명시적 변환이다(§1.4·§6).
+
+   실측 결함(비평 4): `--ease-spine`(expo-out, 평균 초기 속도 6.25배)을 12.8
+   유닛 돌리에 그대로 썼더니 126ms 만에 거리의 55% 를 이동하고 마지막 258ms 는
+   0.02 유닛만 움직였다 — 순간이동 + 잔류 드리프트였지 이동이 아니었다.
+   `--ease-travel`("다른 자리로 이동할 때", MOTION_LANGUAGE.md §3)로 바꾸고,
+   그 더 평평한 곡선이 큰 거리에서도 이동으로 읽히도록 지속 시간을 장면 간
+   대역 상한(§4, 420~900ms)까지 늘린다. 900ms 자체는 이름 붙은 지속 시간
+   토큰이 아니다(§4 표는 `--duration-spine` 620ms 까지만 토큰화한다) — 대역의
+   서술된 경계값이므로 CSS 커스텀 프로퍼티로 읽을 수 없고, 그래서 여기 리터럴로
+   남기며 그 이유를 주석에 적는다(이 문서 자신의 요구: "토큰을 읽을 수 없으면
+   이유를 적는다").
    ========================================================================== */
 
-export const CORRIDOR_JUMP_DURATION_MS = 620;
+export const CORRIDOR_JUMP_DURATION_MS = 900;
+
+const bezierCache = new Map<string, readonly [number, number, number, number]>();
 
 /**
- * `--ease-spine` (`cubic-bezier(0.16, 1, 0.3, 1)`, `MOTION_LANGUAGE.md` §3) 을
- * 그대로 옮긴 순수 함수다. CSS 토큰과 여기 상수가 갈라지면 같은 이름의 이징이
- * DOM 과 3D 씬에서 다르게 움직인다 — `globals.css` 의 `--ease-spine` 값을 바꾸면
- * 이 상수 넷도 같이 바꾼다.
+ * `globals.css` 의 `cubic-bezier(...)` 커스텀 프로퍼티를 실행 시점에 읽어 네
+ * 제어점을 돌려준다 — 예전에는 `--ease-spine` 의 네 숫자를 JS 상수로 손으로
+ * 옮겨 적어서(`EASE_SPINE_P1X` 등) `globals.css` 를 바꾸면 이 파일도 같이
+ * 바꿔야 하는 두 번째 정본이 생겼다. 이제 `globals.css` 하나만 정본이다.
+ *
+ * SSR·테스트(jsdom, 이 스타일시트를 로드하지 않는다) 처럼 커스텀 프로퍼티를
+ * 읽을 수 없는 환경에서는 문서에 적힌 값과 동일한 폴백으로 물러난다 — 폴백이
+ * 실제로 쓰이는 경로다(`layout.test.ts` 가 이 경로를 그대로 탄다).
  */
-const EASE_SPINE_P1X = 0.16;
-const EASE_SPINE_P1Y = 1;
-const EASE_SPINE_P2X = 0.3;
-const EASE_SPINE_P2Y = 1;
+function readEasingControlPoints(
+  cssVar: string,
+  fallback: readonly [number, number, number, number],
+): readonly [number, number, number, number] {
+  const cached = bezierCache.get(cssVar);
+  if (cached) return cached;
+  let points = fallback;
+  if (typeof document !== "undefined" && typeof getComputedStyle === "function") {
+    const raw = getComputedStyle(document.documentElement).getPropertyValue(cssVar).trim();
+    const match = raw.match(
+      /cubic-bezier\(\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\)/,
+    );
+    if (match) {
+      points = [Number(match[1]), Number(match[2]), Number(match[3]), Number(match[4])];
+    }
+  }
+  bezierCache.set(cssVar, points);
+  return points;
+}
 
 function bezierComponent(t: number, p1: number, p2: number): number {
   const mt = 1 - t;
@@ -502,21 +533,23 @@ function bezierComponent(t: number, p1: number, p2: number): number {
 }
 
 /**
- * 진행률(시간, 0~1)을 받아 이징된 진행률을 돌려준다. x(t) 는 이분 탐색으로
- * 뒤집는다 — 프레임당 호출 몇 번뿐이라 비용이 무시할 만하다. 이 곡선(P1y=P2y=1)
- * 은 t 에 대해 단조 증가라 오버슈트가 없다(도함수 `3(1-t)^2 >= 0`) — 카메라가
- * 목표를 지나쳤다 되돌아오지 않는다.
+ * 진행률(시간, 0~1)을 받아 `--ease-travel`(`cubic-bezier(0.4, 0, 0.2, 1)`,
+ * MOTION_LANGUAGE.md §3)로 이징된 진행률을 돌려준다. x(t) 는 이분 탐색으로
+ * 뒤집는다 — 프레임당 호출 몇 번뿐이라 비용이 무시할 만하다. 이 곡선은 P1y=0 ·
+ * P2y=1 로 t 에 대해 단조 증가라 오버슈트가 없다 — 카메라가 목표를 지나쳤다
+ * 되돌아오지 않는다.
  */
-export function easeSpine(x: number): number {
+export function easeTravel(x: number): number {
+  const [p1x, p1y, p2x, p2y] = readEasingControlPoints("--ease-travel", [0.4, 0, 0.2, 1]);
   const clamped = Math.min(1, Math.max(0, x));
   if (clamped === 0 || clamped === 1) return clamped;
   let lo = 0;
   let hi = 1;
   for (let i = 0; i < 24; i += 1) {
     const mid = (lo + hi) / 2;
-    const xAtMid = bezierComponent(mid, EASE_SPINE_P1X, EASE_SPINE_P2X);
+    const xAtMid = bezierComponent(mid, p1x, p2x);
     if (xAtMid < clamped) lo = mid;
     else hi = mid;
   }
-  return bezierComponent((lo + hi) / 2, EASE_SPINE_P1Y, EASE_SPINE_P2Y);
+  return bezierComponent((lo + hi) / 2, p1y, p2y);
 }

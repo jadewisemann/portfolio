@@ -10,7 +10,7 @@ import {
   corridorItems,
   corridorPlanesInView,
   corridorTotalDepth,
-  easeSpine,
+  easeTravel,
   heroItemsDesktop,
   heroItemsMobile,
   projectToScreen,
@@ -142,17 +142,18 @@ describe("복도 캡션 — z 밴드가 아니라 화면 점유율과 맞는다"
   });
 });
 
-describe("점프 이징 — `--ease-spine` 을 그대로 옮긴 순수 함수", () => {
-  // 실측 결함: 프로젝트로 이동 버튼이 스크롤을 한 프레임에 2,430px 순간이동시켰다.
-  // 스크롤 이송 자체는 계속 즉시 실행하되(MOTION_LANGUAGE.md §5.3), 카메라가
-  // 그리는 위치만 이 곡선으로 620ms 에 걸쳐 옮긴다(`CorridorGallery.tsx`).
+describe("점프 이징 — `--ease-travel` 을 실행 시점에 읽는 순수 함수", () => {
+  // 실측 결함(비평 4): 프로젝트로 이동 버튼이 스크롤을 한 프레임에 2,430px
+  // 순간이동시켰고, 그 뒤 고친 `--ease-spine` 판도 12.8 유닛 돌리를 126ms 만에
+  // 55% 이동시켜 순간이동 + 드리프트로 보였다. `--ease-travel` 로 바꾸고
+  // 900ms(장면 간 대역 상한)에 걸쳐 옮긴다(`CorridorGallery.tsx`).
   it("양 끝은 그대로, 중간은 단조 증가한다 (오버슈트 없음)", () => {
-    expect(easeSpine(0)).toBe(0);
-    expect(easeSpine(1)).toBe(1);
+    expect(easeTravel(0)).toBe(0);
+    expect(easeTravel(1)).toBe(1);
     let prev = -Infinity;
     for (let i = 0; i <= 20; i += 1) {
       const t = i / 20;
-      const eased = easeSpine(t);
+      const eased = easeTravel(t);
       expect(eased).toBeGreaterThanOrEqual(prev);
       expect(eased).toBeGreaterThanOrEqual(0);
       expect(eased).toBeLessThanOrEqual(1);
@@ -160,8 +161,11 @@ describe("점프 이징 — `--ease-spine` 을 그대로 옮긴 순수 함수", 
     }
   });
 
-  it("빠르게 시작해 느리게 끝난다 — 중간 지점(t=0.5)이 절반보다 앞서 있다", () => {
-    expect(easeSpine(0.5)).toBeGreaterThan(0.5);
+  it("초반이 완만하고 오버슈트 없이 목표에 닿는다", () => {
+    // `--ease-travel` = cubic-bezier(0.4, 0, 0.2, 1) — `--ease-spine` 과 달리
+    // 초반 가속이 급하지 않다. t=0.25 에서 이미 25% 를 넘겨버리던 expo-out과
+    // 달리 25% 지점을 넘지 않아야 "순간이동"이 아니라 "이동"으로 읽힌다.
+    expect(easeTravel(0.25)).toBeLessThan(0.25);
   });
 });
 

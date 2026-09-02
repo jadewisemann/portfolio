@@ -3,9 +3,12 @@
 import { Canvas, useFrame, useStore } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import { DepthFog } from "../DepthFog";
+import { FirstFrameSignal } from "../FirstFrameSignal";
 import { ShotPlane } from "../ShotPlane";
 import { heroItemsDesktop } from "./layout";
 import styles from "./HeroScene.module.css";
+
+function noop() {}
 
 /*
   깊이 안개의 near/far. 히어로 항목의 dz(카메라 z=0 기준, `layout.ts` 의
@@ -89,7 +92,7 @@ function Rig() {
   return null;
 }
 
-export function HeroScene() {
+export function HeroScene({ onFirstFrame = noop }: { onFirstFrame?: () => void }) {
   const items = heroItemsDesktop();
 
   return (
@@ -101,6 +104,7 @@ export function HeroScene() {
         frameloop="demand"
       >
         <Rig />
+        <FirstFrameSignal onFirstFrame={onFirstFrame} />
         <DepthFog far={HERO_FOG_FAR} near={HERO_FOG_NEAR} />
         {items.map((item) => (
           <ShotPlane

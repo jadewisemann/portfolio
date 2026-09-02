@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useCallback, useState } from "react";
 import { useEnhancementGate } from "../useEnhancementGate";
 import { HeroPoster } from "./HeroPoster";
 import { useIsWide } from "./useIsWide";
@@ -46,15 +47,39 @@ export function HeroDiorama() {
   const { ref, enhanced } = useEnhancementGate<HTMLDivElement>();
   const wide = useIsWide();
   const live = enhanced && wide;
+  /*
+    실측 결함(성능 감사 §2): 포스터를 `live`(청크가 **요청된** 시점) 에 숨기면
+    청크 로드·파싱·첫 렌더 사이 빈 무대가 남는다(무통제 300ms, 4× CPU 스로틀 +
+    느린 네트워크 1664ms). `live` 대신 씬의 첫 페인트(`FirstFrameSignal`)를
+    기다린다 — "숨기는 것은 대안이 아니다"(`useEnhancementGate.ts`)를 포스터
+    자신에게도 적용한다.
+  */
+  const [scenePainted, setScenePainted] = useState(false);
+  const handleScenePainted = useCallback(() => setScenePainted(true), []);
+
+  // `live` 가 바뀔 때 다음번에도 첫 프레임을 기다리도록 되돌린다 — 렌더 도중
+  // 조정하는 React 의 표준 패턴이다(prop 변화에 반응해 상태를 리셋할 때
+  // useEffect 대신 쓴다. https://react.dev/learn/you-might-not-need-an-effect).
+  const [prevLive, setPrevLive] = useState(live);
+  if (live !== prevLive) {
+    setPrevLive(live);
+    setScenePainted(false);
+  }
+
+  const posterHidden = live && scenePainted;
 
   return (
     <div className={styles.stage} ref={ref}>
-      <div aria-hidden={live ? "true" : undefined} className={styles.poster} data-hidden={live || undefined}>
+      <div
+        aria-hidden={posterHidden ? "true" : undefined}
+        className={styles.poster}
+        data-hidden={posterHidden || undefined}
+      >
         <HeroPoster />
       </div>
       {live ? (
         <div className={styles.scene}>
-          <DynamicHeroScene />
+          <DynamicHeroScene onFirstFrame={handleScenePainted} />
         </div>
       ) : null}
       <h1 className={styles.name}>

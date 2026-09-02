@@ -5,6 +5,46 @@
   max-width: var(--spacing-measure);
 }
 
+/*
+  기본(stacked)에서는 그냥 통로다 — 이름 · 블러브 · 키워드 · 더보기가 `.meta`
+  의 flex column에 직접 참여한다(`display: contents`가 이 두 div를 레이아웃에서
+  지운다). `masthead` 변형만 아래에서 이 값을 재정의해 실제 칸으로 만든다.
+*/
+.primary,
+.secondary {
+  display: contents;
+}
+
+/*
+  masthead 변형(성능/시각 감사 §5) — `CorridorGallery` 의 전폭 캡션 판 전용.
+  이름 · 블러브는 계속 34rem 안에서 읽히게 하고(가독 측정폭은 산문에 대한
+  것이지 판 전체 폭에 대한 것이 아니다), 키워드 · 더보기는 옆 칸으로 옮긴다 —
+  네 요소의 세로 합이 아니라 더 큰 한 칸의 높이만큼만 판이 자란다(348px, 1280
+  ×720 뷰포트의 48.4%였던 실측 — 프레임을 매 프레임 수평으로 베던 원인).
+*/
+@media (min-width: 768px) {
+  .metaMasthead {
+    display: grid;
+    grid-template-columns: minmax(0, var(--spacing-measure)) minmax(0, 1fr);
+    column-gap: 32px;
+    align-items: start;
+    max-width: none;
+  }
+
+  .metaMasthead .primary,
+  .metaMasthead .secondary {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* flex 컨테이너가 되면 `.keywords` 자체 margin-top 이 gap 위에 또 쌓인다 —
+     `.primary` 쪽(이름의 margin:0)과 위쪽 끝이 맞도록 여기서만 지운다. */
+  .metaMasthead .secondary .keywords {
+    margin-top: 0;
+  }
+}
+
 .name {
   margin: 0;
   /*
@@ -54,4 +94,17 @@
   margin: 4px 0 0;
   font-family: var(--font-mono), monospace;
   font-size: var(--text-mono);
+}
+
+/*
+  터치 목표 44×44px, 예외 없음(DESIGN_SYSTEM.md §7). 실측: 221×18px — 세 렌더
+  경로(회랑 캡션 · `StaticFallback` · `MobileFilmstrip`) 전부 같은 결함이었고,
+  랜딩에서 프로젝트 페이지로 가는 유일한 통로다. 활자 급수는 그대로 두고 히트
+  영역만 `min-height` 로 키운다(`Footer.module.css` 와 같은 패턴) — 가로 padding
+  은 넣지 않는다, 문단 왼쪽 여백과 어긋나 보이지 않도록.
+*/
+.more a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
 }
