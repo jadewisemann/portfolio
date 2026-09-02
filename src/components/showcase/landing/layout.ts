@@ -244,6 +244,32 @@ function noise(seed: number): number {
   return (n - Math.floor(n)) * 2 - 1;
 }
 
+/**
+ * 밴드당 각 샷을 몇 번 반복하는가. 결함 실측: 밴드당 4장(샷 그대로)으로는 근접 거리에서
+ * 채널 폭이 시야보다 넓어지는 구간(작은 dz)마다 화면에 남는 평면이 사라진다 — 채널
+ * 불변식이 모든 평면을 중심선에서 최소 `CHANNEL_HALF` 만큼 밀어내는데, 그 밀어낸 만큼의
+ * 수평 시야를 확보하려면 카메라와 평면 사이 거리(dz)가 일정 문턱을 넘어야 하고, 4장을
+ * 밴드 전체(`DEPTH_PER_PROJECT`)에 성기게 펼치면 그 문턱을 넘는 평면이 한 번에 1~2장뿐인
+ * 구간이 생긴다(진행률 100% 실측: 1장).
+ *
+ * `shots.ts` 가 정한 4장(프로젝트당)은 늘리지 않는다 — 그것은 owner 의 몫이다. 대신
+ * 같은 4장을 밴드 안에서 두 번씩 배치한다. 같은 샷의 두 사본은 항상 같은 쪽 벽(`side`)에
+ * 앉고, 가까운 사본이 크게 · 먼 사본이 작게 보인다 — 우연한 중복이 아니라 "같은 액자가
+ * 복도 한쪽 벽을 따라 다시 걸려 있다"는 저작된 리듬으로 읽히게 하기 위해서다.
+ *
+ * (실측: 두 사본은 한 번 화면에 들어오면(문턱 dz 를 넘으면) 상당한 구간 동안 **함께**
+ * 보인다 — 가까운 큰 사본과 먼 작은 사본이 동시에 화면에 있는 프레임이 드물지 않다.
+ * 처음에는 "겹쳐 보이는 프레임이 없어야 우연한 중복처럼 안 보인다"고 가정했지만 실측은
+ * 반대였다: 두 사본이 같은 프레임에 함께, 크기만 다르게 보이는 것이 오히려 "같은 액자가
+ * 원근으로 두 번 반복된다"는 신호를 더 분명하게 준다 — 한 번에 하나씩만 보였다면 반복
+ * 자체를 알아챌 수 없었을 것이다. 지금은 자리표시자뿐이라 실제 사진이 들어와야 최종
+ * 판정이 가능하다).
+ */
+const REPEATS_PER_SHOT = 2;
+
+/** 밴드 앞뒤 여백 — 4장 배치일 때 실측한 값(`bandTop - 0.6 .. bandTop - 5.1`)을 그대로 쓴다. */
+const BAND_MARGIN = 0.6;
+
 export function corridorItems(
   projects: readonly ShowcaseProject[] = PROJECTS,
 ): readonly CorridorItem[] {
@@ -251,33 +277,40 @@ export function corridorItems(
 
   projects.forEach((project, projectIndex) => {
     const bandTop = -projectIndex * DEPTH_PER_PROJECT;
-    const step = DEPTH_PER_PROJECT / project.shots.length;
+    const slotCount = project.shots.length * REPEATS_PER_SHOT;
+    const step = (DEPTH_PER_PROJECT - 2 * BAND_MARGIN) / (slotCount - 1);
 
-    project.shots.forEach((shot, shotIndex) => {
-      const seed = projectIndex * 97 + shotIndex * 11;
-      const { width, height } = sizeFor(shot);
-      const halfWidth = width / 2;
-      const side = shotIndex % 2 === 0 ? -1 : 1;
-      const extra = 0.15 + Math.abs(noise(seed)) * 0.35;
-      const x = side * (CHANNEL_HALF + halfWidth + extra);
-      const y = noise(seed + 1) * 0.45;
-      const z = bandTop - 0.6 - shotIndex * step;
-      const rotZ = noise(seed + 2) * 0.05;
-      const rotY = noise(seed + 3) * 0.1;
+    for (let repeatIndex = 0; repeatIndex < REPEATS_PER_SHOT; repeatIndex += 1) {
+      project.shots.forEach((shot, shotIndex) => {
+        // 반복 회차(repeatIndex)를 바깥 루프로 두어 한 회차의 4장이 밴드 앞쪽에,
+        // 다음 회차의 4장이 밴드 뒤쪽에 온다 — "같은 4장이 두 번 지나간다"는 구조가
+        // z 좌표에서 그대로 읽힌다.
+        const slot = repeatIndex * project.shots.length + shotIndex;
+        const seed = projectIndex * 97 + shotIndex * 11 + repeatIndex * 53;
+        const { width, height } = sizeFor(shot);
+        const halfWidth = width / 2;
+        const side = shotIndex % 2 === 0 ? -1 : 1;
+        const extra = 0.15 + Math.abs(noise(seed)) * 0.35;
+        const x = side * (CHANNEL_HALF + halfWidth + extra);
+        const y = noise(seed + 1) * 0.45;
+        const z = bandTop - BAND_MARGIN - slot * step;
+        const rotZ = noise(seed + 2) * 0.05;
+        const rotY = noise(seed + 3) * 0.1;
 
-      items.push({
-        key: `${project.id}-${shotIndex}`,
-        shot,
-        x,
-        y,
-        z,
-        rotY,
-        rotZ,
-        width,
-        height,
-        projectIndex,
+        items.push({
+          key: `${project.id}-${shotIndex}-${repeatIndex}`,
+          shot,
+          x,
+          y,
+          z,
+          rotY,
+          rotZ,
+          width,
+          height,
+          projectIndex,
+        });
       });
-    });
+    }
   });
 
   return items;
@@ -312,15 +345,21 @@ export function corridorCameraZ(
  * `layout.test.ts` 가 이 일치율을 오프셋이 아니라 화면 점유율 기준으로
  * 재검증한다.
  */
-export const CORRIDOR_LOOKAHEAD = DEPTH_PER_PROJECT / 2;
+export const CORRIDOR_LOOKAHEAD = 3.5;
 
 export function corridorIndexForZ(z: number, projectCount: number): number {
   const index = Math.floor(-(z - CORRIDOR_LOOKAHEAD) / DEPTH_PER_PROJECT);
   return Math.min(projectCount - 1, Math.max(0, index));
 }
 
+const TARGET_DEPTH_FRACTION = 0.17;
+
 export function corridorProjectTargetZ(projectIndex: number): number {
-  return -projectIndex * DEPTH_PER_PROJECT - DEPTH_PER_PROJECT / 2 + CORRIDOR_CAMERA_START_Z / 4;
+  return (
+    -projectIndex * DEPTH_PER_PROJECT -
+    DEPTH_PER_PROJECT * TARGET_DEPTH_FRACTION +
+    CORRIDOR_CAMERA_START_Z / 4
+  );
 }
 
 export function corridorProgressForZ(z: number, totalDepth: number): number {
@@ -433,4 +472,51 @@ export function corridorPlanesInView(
       item.z > cameraZ - depth &&
       corridorItemOnScreen(item, cameraZ, aspect),
   ).length;
+}
+
+/* ==========================================================================
+   점프 이징 — 프로젝트로 이동 버튼이 스크롤을 2,430px 순간이동시키던 결함.
+   스크롤 이송 자체는 계속 가로채지 않는다(`window.scrollTo` 는 즉시 실행,
+   MOTION_LANGUAGE.md §5.3) — 대신 **카메라가 화면에 그리는 위치**를 장면 간
+   대역(`--duration-spine` 620ms, `--ease-spine`)에 걸쳐 옮긴다. 카메라 변환은
+   씬의 좌표계에 속하고 DOM 속성이 아니므로 `MOTION_LANGUAGE.md` §8 의 DOM
+   속성 목록 제한을 받지 않는다 — 3D 씬 안의 명시적 변환이다(§1.4·§6).
+   ========================================================================== */
+
+export const CORRIDOR_JUMP_DURATION_MS = 620;
+
+/**
+ * `--ease-spine` (`cubic-bezier(0.16, 1, 0.3, 1)`, `MOTION_LANGUAGE.md` §3) 을
+ * 그대로 옮긴 순수 함수다. CSS 토큰과 여기 상수가 갈라지면 같은 이름의 이징이
+ * DOM 과 3D 씬에서 다르게 움직인다 — `globals.css` 의 `--ease-spine` 값을 바꾸면
+ * 이 상수 넷도 같이 바꾼다.
+ */
+const EASE_SPINE_P1X = 0.16;
+const EASE_SPINE_P1Y = 1;
+const EASE_SPINE_P2X = 0.3;
+const EASE_SPINE_P2Y = 1;
+
+function bezierComponent(t: number, p1: number, p2: number): number {
+  const mt = 1 - t;
+  return 3 * mt * mt * t * p1 + 3 * mt * t * t * p2 + t * t * t;
+}
+
+/**
+ * 진행률(시간, 0~1)을 받아 이징된 진행률을 돌려준다. x(t) 는 이분 탐색으로
+ * 뒤집는다 — 프레임당 호출 몇 번뿐이라 비용이 무시할 만하다. 이 곡선(P1y=P2y=1)
+ * 은 t 에 대해 단조 증가라 오버슈트가 없다(도함수 `3(1-t)^2 >= 0`) — 카메라가
+ * 목표를 지나쳤다 되돌아오지 않는다.
+ */
+export function easeSpine(x: number): number {
+  const clamped = Math.min(1, Math.max(0, x));
+  if (clamped === 0 || clamped === 1) return clamped;
+  let lo = 0;
+  let hi = 1;
+  for (let i = 0; i < 24; i += 1) {
+    const mid = (lo + hi) / 2;
+    const xAtMid = bezierComponent(mid, EASE_SPINE_P1X, EASE_SPINE_P2X);
+    if (xAtMid < clamped) lo = mid;
+    else hi = mid;
+  }
+  return bezierComponent((lo + hi) / 2, EASE_SPINE_P1Y, EASE_SPINE_P2Y);
 }

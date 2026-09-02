@@ -10,6 +10,7 @@ import {
   corridorItems,
   corridorPlanesInView,
   corridorTotalDepth,
+  easeSpine,
   heroItemsDesktop,
   heroItemsMobile,
   projectToScreen,
@@ -63,13 +64,16 @@ describe("복도 밀도 — 끝까지 성기지 않는다", () => {
     완전히 화면 밖인데도 "화면에 있다"고 잡혔다. `corridorPlanesInView` 를
     수평 프러스텀까지 보게 고쳤더니(아래 "화면에 실제로 보이는 평면 수" 검사가
     그 실측값이다) 이 임계값 자체가 깨진다: 95% 에서 2장, 100% 에서 1장.
-    이것은 복도 평면 배치(카메라 경로가 아니라 평면들의 z·x 좌표)라는 구조적
-    사안이고, 이번 작업 범위에서 제외된 "복도 평면 배치" 결정 대상이다. 계수를
-    화면에 맞추는 게 아니라 **임계값을 낮추는 것**으로 통과시키지 않기 위해
-    `it.fails` 로 남긴다 — 배치가 실제로 고쳐져 이 조건이 다시 참이 되는 날
-    이 테스트가 실패로 뒤집히며 그 사실을 알린다.
+
+    구조적 결함이었다: 평면 밴드당 4장을 밴드 전체에 성기게 펼치면, 채널
+    불변식이 만드는 최소 오프셋(`CHANNEL_HALF`)을 화면에 담을 만큼 dz 가 커지는
+    평면이 한 번에 1~2장뿐인 구간이 반드시 생긴다. `corridorItems` 를
+    밴드당 4장 → 8장(같은 4장을 같은 벽에서 두 번, `REPEATS_PER_SHOT`)으로
+    다시 배치해 해소했다 — `shots.ts` 의 4장은 그대로 두고 배치 밀도만 두 배로
+    올린다. 이 테스트는 `it.fails` 였다가 배치가 실제로 고쳐지며 참으로
+    뒤집혔다 — 더 이상 구조적 결함이 아니므로 일반 `it` 로 되돌린다.
   */
-  it.fails("어느 진행률에서도 화면에 평면이 최소 3장 있다 (구조적 결함 — 복도 평면 배치 미해결)", () => {
+  it("어느 진행률에서도 화면에 평면이 최소 3장 있다", () => {
     const thin: string[] = [];
     for (let step = 0; step <= 20; step += 1) {
       const progress = step / 20;
@@ -81,12 +85,14 @@ describe("복도 밀도 — 끝까지 성기지 않는다", () => {
 
   it("화면에 실제로 보이는 평면 수 — 수평 프러스텀까지 포함한 실측값", () => {
     // 정본 데스크톱 뷰포트(1440×900)에서 z 창 + 수평 프러스텀을 모두 통과하는
-    // 평면 수. 이전 z-only 계수는 0/0.2/0.4/0.6/0.8/1.0 에서 3/5/5/6/6/3 을
-    // 보고했다 — 실제로는 아래 값이다. 이 값 자체를 회귀 기준으로 고정한다.
+    // 평면 수. 밴드당 4장이던 배치는 0/0.2/0.4/0.6/0.8/1.0 에서 3/3/3/4/3/1 을
+    // 보고했다 — 마지막 프로젝트(진행률 1.0)가 전체 곡선에서 가장 성긴 프레임
+    // 이었다. 밴드당 8장(반복 배치)으로 고친 뒤의 실측값을 회귀 기준으로 고정한다
+    // — 종점(1.0)이 더는 최솟값이 아니다.
     const measured = [0, 0.2, 0.4, 0.6, 0.8, 1.0].map((progress) =>
       corridorPlanesInView(progress),
     );
-    expect(measured).toEqual([3, 3, 3, 4, 3, 1]);
+    expect(measured).toEqual([6, 6, 7, 6, 6, 6]);
   });
 
   it("진행률 100% 는 마지막 프로젝트에 머문다", () => {
@@ -126,10 +132,36 @@ describe("복도 캡션 — z 밴드가 아니라 화면 점유율과 맞는다"
         mismatches.push(`${Math.round(progress * 100)}%: 캡션=${caption} 화면점유=${dominant}`);
       }
     }
-    // 실측: 21 샘플 중 정확히 1개(진행률 25%)만 어긋난다 — 두 프로젝트가 화면을
-    // 거의 반반씩 나눠 갖는 진짜 경계 프레임이라 "정답"이 없는 지점이다. 오프셋
-    // 도입 전에는 8개가 어긋났다.
-    expect(mismatches).toEqual(["25%: 캡션=0 화면점유=1"]);
+    // 실측: 밴드당 8장(반복 배치)으로 고친 뒤 `CORRIDOR_LOOKAHEAD` 를 3.5 로,
+    // 마지막 프로젝트의 정지 지점(`corridorProjectTargetZ`)의 밴드 안쪽 비율을
+    // 0.32 → 0.17 로 다시 맞췄다 — 정지 지점을 밴드 앞쪽으로 당겨 종점 밀도를
+    // 올린 결과이므로(위 "화면에 실제로 보이는 평면 수" 참고) 캡션 근사도 그
+    // 새 정지 지점 기준으로 재검증해야 한다. 21 샘플 전부 일치한다(0개 어긋남) —
+    // 오프셋 도입 전에는 8개, 이전 배치에서는 1개(25%, 경계 프레임)가 어긋났다.
+    expect(mismatches).toEqual([]);
+  });
+});
+
+describe("점프 이징 — `--ease-spine` 을 그대로 옮긴 순수 함수", () => {
+  // 실측 결함: 프로젝트로 이동 버튼이 스크롤을 한 프레임에 2,430px 순간이동시켰다.
+  // 스크롤 이송 자체는 계속 즉시 실행하되(MOTION_LANGUAGE.md §5.3), 카메라가
+  // 그리는 위치만 이 곡선으로 620ms 에 걸쳐 옮긴다(`CorridorGallery.tsx`).
+  it("양 끝은 그대로, 중간은 단조 증가한다 (오버슈트 없음)", () => {
+    expect(easeSpine(0)).toBe(0);
+    expect(easeSpine(1)).toBe(1);
+    let prev = -Infinity;
+    for (let i = 0; i <= 20; i += 1) {
+      const t = i / 20;
+      const eased = easeSpine(t);
+      expect(eased).toBeGreaterThanOrEqual(prev);
+      expect(eased).toBeGreaterThanOrEqual(0);
+      expect(eased).toBeLessThanOrEqual(1);
+      prev = eased;
+    }
+  });
+
+  it("빠르게 시작해 느리게 끝난다 — 중간 지점(t=0.5)이 절반보다 앞서 있다", () => {
+    expect(easeSpine(0.5)).toBeGreaterThan(0.5);
   });
 });
 
