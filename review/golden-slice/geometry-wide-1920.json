@@ -3,23 +3,23 @@
     "w": 1920,
     "h": 1080
   },
-  "docHeight": 3202,
-  "screens": 2.96,
+  "docHeight": 5440,
+  "screens": 5.04,
   "hero": {
-    "top": 56,
-    "height": 327,
-    "width": 544,
-    "fontSize": "36px",
-    "vhShare": 30.3
+    "top": 407,
+    "height": 266,
+    "width": 1165,
+    "fontSize": "160px",
+    "vhShare": 24.6
   },
-  "railWidthShare": 3.75,
-  "railAreaShare": 3.75,
-  "seamBandWidth": 968,
-  "biggestType": "96px",
-  "bodyMeasure": 544,
+  "railWidthShare": null,
+  "railAreaShare": null,
+  "seamBandWidth": null,
+  "biggestType": null,
+  "bodyMeasure": 0,
   "inkSpan": {
-    "left": 476,
-    "right": 1548,
-    "share": 55.8
+    "left": -1,
+    "right": 1920,
+    "share": 100.1
   }
 }

@@ -39,22 +39,43 @@ export function useEnhancementGate<T extends HTMLElement>() {
       return;
     }
 
+    let cancelled = false;
+    let confirmFrame = 0;
+
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setEnhanced(true);
-          io.disconnect();
-        }
+        if (!entry.isIntersecting) return;
+        /*
+          실측 결함: 뷰포트 아래(예: 900px 뷰포트에서 top: 900px)에 있는 래퍼가
+          스크롤 전(`window.scrollY === 0`)에 켜졌다. 옵저버의 이 첫 콜백이
+          `100dvh` 레이아웃이 자리 잡기 전에 실행되면 그 시점의 (아직 정착하지
+          않은) 레이아웃을 보고 "닿았다"고 오판할 수 있다 — 히어로용으로 이미
+          문서화한 것과 같은 dvh 경합이다. `isIntersecting` 을 그대로 믿지 않고
+          다음 프레임에서 실제 DOM 치수로 다시 잰다. **여기서 disconnect 하지
+          않는다** — 확인에 실패하면(레이아웃이 아직 안 정착했거나 정말로 화면
+          밖이면) 옵저버가 계속 관찰하다가 상태가 실제로 바뀔 때 다시 알려준다.
+          연결을 먼저 끊으면 그 실패가 영구히 고정된다(실제로 이 버그의 원인이
+          바로 그것이었다 — 원래 코드는 첫 신호에서 바로 disconnect 했다).
+        */
+        confirmFrame = requestAnimationFrame(() => {
+          if (cancelled) return;
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= window.innerHeight * 0.5) {
+            setEnhanced(true);
+            io.disconnect();
+          }
+        });
       },
-      // 히어로가 정확히 100dvh 라서 감시 지점이 뷰포트 경계에 딱 붙는다 —
-      // 스크롤바 유무 · dvh 반올림에 따라 로드 시점에 이미 "닿아 있다"고
-      // 판정될 수 있다(실측: rootMargin 0 에서도 스크롤 전에 청크가 왔다).
       // 아래쪽을 -50% 만큼 좁혀서, 뷰포트 절반 이상 들어와야 비로소
       // "다가왔다"고 본다. 로드 직후의 경계 오차를 확실히 벗어난다.
       { rootMargin: "0px 0px -50% 0px" },
     );
     io.observe(el);
-    return () => io.disconnect();
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(confirmFrame);
+      io.disconnect();
+    };
   }, []);
 
   return { ref, enhanced };

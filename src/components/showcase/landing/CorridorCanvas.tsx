@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useCallback, useState } from "react";
 import { StaticFallback } from "../StaticFallback";
 import { useEnhancementGate } from "../useEnhancementGate";
 import { MobileFilmstrip } from "./MobileFilmstrip";
@@ -28,13 +29,49 @@ export function CorridorCanvas() {
   const wide = useIsWide();
   const live = enhanced && wide;
 
+  /*
+    실측 결함(성능 감사 §2): 폴백을 `live`(청크가 **요청된** 시점)에 치우면
+    청크 로드·파싱·첫 렌더 사이 빈 무대가 남는다(4× CPU 스로틀 + 느린
+    네트워크에서 1133ms). `live` 로 바로 스위치하지 않고, 라이브 갤러리가
+    실제로 첫 프레임을 그릴 때까지 폴백을 겹쳐 둔다(`FirstFrameSignal`).
+
+    CLS 수정(성능 감사 §1)도 같은 구조를 쓴다: `.slot` 이 라이브/폴백 어느
+    쪽이든 항상 같은 높이(`--corridor-reserve`)를 차지하므로, 이 스위치는
+    "무엇이 그려지는가"만 바꾸고 "문서가 얼마나 큰가"는 바꾸지 않는다
+    (`CorridorCanvas.module.css`).
+  */
+  const [liveReady, setLiveReady] = useState(false);
+  const handleLivePainted = useCallback(() => setLiveReady(true), []);
+
+  // `live` 가 바뀔 때(예: 리사이즈로 `wide` 가 뒤집혀) 다음번에도 첫 프레임을
+  // 기다리도록 되돌린다 — 렌더 도중 조정하는 React 의 표준 패턴이다(prop 변화에
+  // 반응해 상태를 리셋할 때 useEffect 대신 쓴다. https://react.dev/learn/you-might-not-need-an-effect).
+  const [prevLive, setPrevLive] = useState(live);
+  if (live !== prevLive) {
+    setPrevLive(live);
+    setLiveReady(false);
+  }
+
   return (
     <div ref={ref}>
       <div className={styles.mobile}>
         <MobileFilmstrip />
       </div>
       <div className={styles.desktop}>
-        {live ? <DynamicCorridorGallery /> : <StaticFallback />}
+        <div className={styles.slot}>
+          <div
+            aria-hidden={liveReady ? "true" : undefined}
+            className={styles.fallbackLayer}
+            data-hidden={liveReady || undefined}
+          >
+            <StaticFallback />
+          </div>
+          {live ? (
+            <div className={styles.liveLayer}>
+              <DynamicCorridorGallery onFirstFrame={handleLivePainted} />
+            </div>
+          ) : null}
+        </div>
       </div>
     </div>
   );

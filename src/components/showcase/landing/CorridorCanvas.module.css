@@ -14,3 +14,50 @@
     display: block;
   }
 }
+
+/*
+  CLS 수정(성능 감사 §1). 실측: 라이브 갤러리가 켜지는 순간 문서가 4480→4579px
+  로 자라 CLS 0.7756(하한의 3배) — 라이브(`.wrapper`, calc(270vh + 100dvh))와
+  폴백(`StaticFallback`, 보통 문서 흐름 높이)이 서로 다른 높이를 차지했기
+  때문이다. `.slot` 을 두 상태 공통의 칸으로 만들어, 스위치가 "무엇이
+  그려지는가"만 바꾸고 "문서가 얼마나 큰가"는 바꾸지 않게 한다.
+  `CorridorGallery.module.css` 의 `.wrapper` 가 이 값을 그대로 읽는다
+  (`var(--corridor-reserve, …)`) — 두 곳이 갈라지면 이 수정이 무의미해지므로
+  커스텀 프로퍼티 하나로 묶는다.
+*/
+.desktop {
+  --corridor-reserve: calc(270vh + 100dvh);
+}
+
+.slot {
+  position: relative;
+  height: var(--corridor-reserve);
+}
+
+/*
+  라이브 갤러리의 첫 프레임이 그려지기 전까지 폴백을 겹쳐 둔다(성능 감사 §2,
+  "empty-stage" 결함 — `live` 는 청크가 요청된 시점이지 그려진 시점이 아니다).
+  `HeroDiorama.module.css` 의 `.poster`/`.scene` 과 같은 기법이다: 두 층을
+  절대 배치로 포개고, 그려질 준비가 됐다는 신호(`FirstFrameSignal`)가 오면
+  `data-hidden` 으로 폴백만 지운다. `.slot` 이 폴백보다 훨씬 크므로(라이브의
+  스크롤 주행 거리만큼) 세로 가운데에 놓는다 — 실제 스크린샷이 들어와
+  내용이 늘어나면 이 여백은 자연히 줄어든다.
+*/
+.fallbackLayer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.fallbackLayer[data-hidden] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.liveLayer {
+  position: absolute;
+  inset: 0;
+}

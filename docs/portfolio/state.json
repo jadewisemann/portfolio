@@ -1,11 +1,56 @@
 {
   "active": true,
-  "status": "RUNNING",
-  "currentNode": "GOLDEN_SLICE",
-  "iteration": 0,
+  "status": "BLOCKED",
+  "currentNode": "GOLDEN_FIX",
+  "iteration": 2,
   "currentScene": null,
   "lockedScenes": [],
-  "failedCategories": {},
-  "nextAction": "[GOLDEN_SLICE] 골든 슬라이스 구현 — 위임: frontend-builder — 스킬: golden-slice",
-  "blocker": null
+  "failedCategories": {
+    "visualImpact": {
+      "value": 6.1,
+      "threshold": 9
+    },
+    "artDirection": {
+      "value": 4.3,
+      "threshold": 9
+    },
+    "motionCoherence": {
+      "value": 5.4,
+      "threshold": 9
+    },
+    "typography": {
+      "value": 5.6,
+      "threshold": 9
+    },
+    "composition": {
+      "value": 3.9,
+      "threshold": 9
+    },
+    "originality": {
+      "value": 4.1,
+      "threshold": 8.5
+    },
+    "narrativeClarity": {
+      "value": 6,
+      "threshold": 8.5
+    },
+    "interactionQuality": {
+      "value": 4.6,
+      "threshold": 8.5
+    },
+    "mobile": {
+      "value": 4.2,
+      "threshold": 8.5
+    },
+    "performance": {
+      "value": 6.4,
+      "threshold": 8
+    },
+    "accessibility": {
+      "value": 6.8,
+      "threshold": 8
+    }
+  },
+  "nextAction": "[GOLDEN_FIX] 실패 카테고리 패치 — 위임: frontend-builder",
+  "blocker": "스크린샷 대기 (2026-09-01). GOLDEN_FIX iteration 2 완료 — CLS 0.7756 → 0, 빈 무대 1.7초 → 0, 점프 곡선 교정, 더보기 링크 44px, 자리표시자 문구 삭제. 전부 커밋·검증 완료. 세 번째 iteration 을 지금 쓰지 않는 이유: 남은 미달의 상당수가 「액자가 비어 있다」 하나로 수렴하고, 그것을 스크린샷 없이 해결하려는 시도를 두 번 해서 두 번 실패했다(작게=깨진 이미지 실루엣, 크게=빈 슬래브). 세 번째 시도는 같은 실패의 세 번째 형태가 될 가능성이 높다. 필요한 것: docs/portfolio/CAPTURE_SHOTS.md 의 프롬프트를 네트워크 열린 로컬에서 실행. 이 컨테이너는 *.vercel.app 이 막혀 있고(vercel.com 포함) YORR 은 배포 URL 자체가 없다. 스크린샷이 오면 먼저 볼 것 둘: (1) 같은 사진이 한 화면에 두 번 보이는지 — 회랑 밀도가 중복 배치에 의존한다, 51프레임 전부에 겹침이 있다. (2) 깊이 안개가 스크린샷을 뭉개는지 — 안개 강도가 빈 액자 기준으로 맞춰져 있다. 스크린샷과 무관하게 남은 판단 항목: MOTION_LANGUAGE §5.1 과 배포된 회랑의 충돌, §12 시그니처 셋이 하나도 존재하지 않음, --ease-spine/--duration-spine 소비자 0개, 점프의 스크롤 소유권(§5.3)."
 }
