@@ -1,0 +1,203 @@
+/*
+  첫 화면. 막대(56px)를 뺀 나머지를 꽉 채웁니다. `dvh` 가 아니라 `svh` 를 쓰는 이유는
+  모바일 브라우저의 주소창이 접혔다 펴질 때 높이가 바뀌면서 레이아웃이 흔들리기
+  때문입니다 — `svh` 는 주소창이 펴진 상태를 기준으로 하므로 값이 스크롤 중에 변하지
+  않습니다.
+
+  방의 빛은 `--ground-2` 를 아주 낮게 섞은 타원 하나입니다. `filter: blur` 를 쓰지
+  않으므로(모션 소유권 게이트) 흐림은 그러데이션의 정지점으로만 만듭니다.
+*/
+.hero {
+  position: relative;
+  min-height: calc(100svh - 56px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+  padding: 56px 20px;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .hero {
+    gap: 40px;
+    padding: 84px 40px;
+  }
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -20% -10% auto -10%;
+  height: 90%;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    60% 55% at 30% 25%,
+    color-mix(in srgb, var(--ground-2) 90%, transparent) 0%,
+    color-mix(in srgb, var(--ground-2) 40%, transparent) 45%,
+    transparent 72%
+  );
+}
+
+.hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 20px;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+}
+
+.role {
+  margin: 0;
+  color: var(--ink-2);
+  letter-spacing: 0.02em;
+}
+
+.role::before {
+  content: "";
+  display: inline-block;
+  width: 28px;
+  height: 1px;
+  margin-right: 12px;
+  vertical-align: middle;
+  background: var(--rule);
+}
+
+.handle {
+  margin: 0;
+  color: var(--ink-3);
+  letter-spacing: 0.06em;
+}
+
+.nameWrap {
+  min-width: 0;
+}
+
+/*
+  이름은 화면에서 가장 큰 물체입니다. clamp() 를 쓰지 않고 이산 계단으로 올립니다
+  (DESIGN_SYSTEM.md §4). 한글 세 글자이므로 자간을 음수로 조여야 덩어리로 읽힙니다.
+*/
+.name {
+  margin: 0;
+  font-size: 88px;
+  font-weight: 600;
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+}
+
+@media (min-width: 480px) {
+  .name {
+    font-size: 128px;
+  }
+}
+
+@media (min-width: 768px) {
+  .name {
+    font-size: 200px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .name {
+    font-size: 264px;
+  }
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 46rem;
+}
+
+.line {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+
+@media (min-width: 768px) {
+  .line {
+    font-size: 20px;
+  }
+}
+
+/* 두 번째 문장은 첫 문장의 결과이므로 한 단계 물러납니다. */
+.line + .line {
+  color: var(--ink-3);
+}
+
+.figuresWrap {
+  margin-top: 12px;
+}
+
+.figures {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin: 0;
+  border-top: 1px solid var(--rule);
+}
+
+@media (min-width: 640px) {
+  .figures {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.figure {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 4px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+@media (min-width: 640px) {
+  .figure {
+    padding: 20px 20px 20px 0;
+    border-bottom: 0;
+  }
+
+  .figure + .figure {
+    padding-left: 20px;
+    border-left: 1px solid var(--rule);
+  }
+}
+
+.figureLabel {
+  margin: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+
+.figureValue {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.figureNumber {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-decision);
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.figureUnit {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+  color: var(--ink-3);
+}

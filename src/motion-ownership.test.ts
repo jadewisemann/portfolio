@@ -116,10 +116,13 @@ describe("모션 소유권", () => {
   test("Motion 애니메이션 props 가 허용 목록 밖에 없다", () => {
     // MOTION_LANGUAGE.md 12절 표에 따라 Motion 이 소유하던 C1(히어로)·S2(트리)·
     // SP1(척추 재배치)은 그 컴포넌트(`Hero`·`DirTree`·`spine/`·`bestof/`)와 함께
-    // 라우트 승격 라운드에서 삭제됐다 (2026-09-01, `/g1` → `/`). 남은 소스 트리에는
-    // Motion 을 쓰는 파일이 없으므로 허용 목록은 비어 있다 — 다시 쓰는 파일이
-    // 생기면 여기에 추가하고 12절 표도 함께 고친다.
-    const allowed: readonly string[] = [];
+    // 라우트 승격 라운드에서 삭제됐다 (2026-09-01, `/g1` → `/`).
+    //
+    // 2026-09-03 구성 교체(메인 · 스킬 · 프로젝트 · 이력)로 진입 전이 R1 이 들어왔고,
+    // 12절 표를 함께 고쳤다. **목록이 한 줄인 것 자체가 규칙이다** — 진입을 쓰는 곳은
+    // 전부 이 한 컴포넌트를 거치므로, 목록이 길어지면 "진입 장치는 사이트 전체에서
+    // 하나"(9절)가 무너졌다는 뜻이다. 늘리기 전에 9절을 먼저 읽는다.
+    const allowed: readonly string[] = ["src/components/site/Reveal.tsx"];
     const offenders = hits(/<motion\.|\blayout\b\s*(=|\/?>)|initial=\{/).filter(
       (h) => !allowed.some((a) => h.startsWith(a)),
     );

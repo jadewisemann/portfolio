@@ -1,0 +1,117 @@
+/*
+  상단 고정 막대. 높이는 56px 로 두어 globals.css 의 `[id] { scroll-margin-top: 56px }`
+  와 정확히 맞춥니다 — 앵커로 이동했을 때 절 머리말이 막대 뒤로 숨지 않습니다.
+
+  배경은 불투명한 지면색입니다. `backdrop-filter` 를 쓰지 않으므로(모션 소유권 게이트)
+  반투명 유리로 만들지 않습니다.
+*/
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--ground);
+  border-bottom: 1px solid var(--rule);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 56px;
+  padding: 0 12px;
+}
+
+@media (min-width: 768px) {
+  .nav {
+    padding: 0 40px;
+  }
+}
+
+/*
+  좁은 화면에서는 숨깁니다 — 바로 아래 히어로가 같은 이름을 200px 로 조판하므로,
+  320px 폭에서는 같은 글자가 두 번 보이고 절 링크의 자리만 뺏습니다.
+*/
+.brand {
+  display: none;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  letter-spacing: 0.08em;
+  color: var(--ink-2);
+  text-decoration-line: none;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 4px;
+}
+
+@media (min-width: 480px) {
+  .brand {
+    display: inline-flex;
+  }
+}
+
+.brand:hover {
+  color: var(--ink);
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 480px) {
+  .list {
+    gap: 8px;
+  }
+}
+
+/*
+  터치 목표 44×44px (DESIGN_SYSTEM.md §7). 활자 급수는 그대로 두고 히트 영역만 키웁니다.
+*/
+.link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  min-height: 44px;
+  padding: 14px 8px;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  color: var(--ink-3);
+  text-decoration-line: none;
+  border-bottom: 1px solid transparent;
+  transition-property: color, border-color;
+  transition-duration: var(--duration-state);
+  transition-timing-function: var(--ease-settle);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .link:hover {
+    color: var(--ink);
+  }
+}
+
+.link[aria-current="true"] {
+  color: var(--ink);
+  border-bottom-color: var(--nav-current-border);
+}
+
+/* 번호는 좁은 화면에서 라벨에 자리를 내줍니다. */
+.index {
+  display: none;
+  color: var(--ink-3);
+  font-size: 11px;
+}
+
+@media (min-width: 480px) {
+  .index {
+    display: inline;
+  }
+}
+
+.label {
+  white-space: nowrap;
+}

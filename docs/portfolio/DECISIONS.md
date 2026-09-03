@@ -361,3 +361,50 @@ clears its floor, including the 1.6:1 rule floor the old `--rule` never met at 1
 **The site is the landing.** `/` renders it; nineteen candidate routes and the entire seam
 page are deleted. The rendered evidence stays under `review/` as the record of what was
 rejected and why.
+
+## 구성 교체 — 절 넷을 세로로 쌓는다 (2026-09-03, 소유자 지시)
+
+**지시.** 소유자가 참조 사이트 `https://www.aarab.me/` 를 제시하고 "이 사이트같은
+모양으로 변경하고 싶어. 메인 · 스킬 · 프로젝트 · 이력 이 순서로" 라고 지시했다.
+절의 이름과 순서는 소유자가 직접 지정한 것이므로 이 저장소가 다시 판단하지 않는다.
+
+**교체된 것.** 3D 회랑 구성 전체 — `HeroDiorama` · `HeroScene` · `HeroPoster` ·
+`CorridorCanvas` · `CorridorGallery` · `MobileFilmstrip` · `ShotPlane` · `DepthFog` ·
+`texture.ts` · `StaticFallback` · `ProjectMeta` · `FirstFrameSignal` ·
+`useEnhancementGate` · `useIsWide` · `landing/layout.ts` 와 그 기하 테스트,
+`e2e/lazy-mount.spec.ts`. 회랑이 없으므로 그것을 지키던 게이트도 함께 지웠다.
+`PlaceholderFrame` 은 남긴다 — `/projects/yorr` 의 `BannerFrame` 이 계속 쓴다.
+
+**새 구성.** `src/content/site.ts` 의 `SECTIONS` 배열 하나가 절의 순서를 소유하고,
+`src/app/page.tsx` 와 `SiteNav` 가 그 배열만 읽는다. 순서를 바꾸는 일은 배열 한 곳을
+고치는 일이다.
+
+| 절 | 무엇이 있는가 | 출처 |
+|---|---|---|
+| 메인 | 이름 · 포지셔닝 두 문장 · 실측 숫자 셋 | `CONTENT.md` §1 · §2.1 · §2.5 · §4.1 |
+| 스킬 | 영역 6개 · 등급 A/B/C. 등급 D 는 뺐고 뺀 사실을 화면에 적는다 | `CONTENT.md` §6 |
+| 프로젝트 | 본류 3개(기간 · 팀 · 역할 · 스택 · 사실 셋 · 링크) + 2군 3개 | `CONTENT.md` §2 ~ §5 |
+| 이력 | 교육 · 과정 · 프로젝트 · 자격 · 활동을 최근순 한 줄로 | `CONTENT.md` §7 |
+
+**스크린샷은 여전히 없다.** 액자를 놓지 않는 쪽을 골랐다 — `HANDOFF.md` §2 가 기록한
+두 번의 실패(작은 액자 = 깨진 이미지 실루엣, 큰 액자 = 빈 슬래브)를 세 번째 형태로
+반복하지 않기 위해서다. 자산이 오면 프로젝트 카드의 `키워드`와 `columns` 사이가 그
+자리다. `shots.ts` 의 `PROJECTS` 는 그대로 남겨 두었으므로 `src` 한 줄씩만 채우면 된다.
+
+**모션 언어를 고쳤다** (`MOTION_LANGUAGE.md` §5.1 · §9 · §12 · §12.1 · §13). 이전
+문서는 「뷰포트 진입 시 절 페이드인」을 반려 목록에 두고 있었고, 그 논거는 "문서는
+처음부터 읽히는 것이 정직하다"였다. 그 논거는 한 편의 글이던 이전 구성에 대한 것이다.
+절 넷을 쌓는 구성에서 진입 전이는 절과 절을 가르는 구조 신호이므로 허용으로 옮기되,
+조건 넷(요소당 1회 · `opacity`+`translateY` 20px 이하 · 스크롤 오프셋의 함수가 아닐 것 ·
+축소 모션에서 첫 페인트부터 최종 상태)을 붙였다. 게이트는 느슨해지지 않았다 —
+`src/motion-ownership.test.ts` 의 Motion 허용 목록은 `Reveal.tsx` **한 줄**이고, 그
+한 줄이 "진입 장치는 사이트 전체에서 하나"를 기계로 지킨다.
+
+§12 의 소유권 표도 다시 썼다. 이전 표의 `SP1` · `S2` · `SP2` · `G1` · `M1` 은 2026-09-01
+라우트 승격 때 컴포넌트가 삭제되어 표에만 남아 있었다. 없는 것을 선언된 소유권으로 세지
+않는다. **시그니처 인터랙션은 지금 0개이고, 그 사실을 표에 그대로 적었다.**
+
+**검증.** lint 0 error (기존 경고 1건은 `PlaceholderFrame` 의 `<img>`) · typecheck 통과 ·
+vitest 104개 통과 · `next build` 통과 · playwright 8개 통과. 렌더 증거는
+`review/redesign-2026-09-03/` 에 있다 (1920 · 1440 · 320 첫 화면과 전체, 절별 근접
+캡처 포함).

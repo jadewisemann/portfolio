@@ -1,0 +1,70 @@
+/*
+  절의 세로 리듬. 위아래 여백은 28px 격자의 배수입니다 (globals.css 의 괘선 기판과
+  같은 피치이므로 절의 경계가 괘선 위에 앉습니다).
+*/
+.section {
+  padding: 84px 20px;
+  border-top: 1px solid var(--rule);
+}
+
+@media (min-width: 768px) {
+  .section {
+    padding: 140px 40px;
+  }
+}
+
+/*
+  머리말과 본문은 넓은 화면에서 두 단이 됩니다 — 왼쪽 단이 제목을 붙들고 있는 동안
+  오른쪽 단이 흐릅니다. `position: sticky` 로 붙들되 스크롤 좌표를 읽지 않으므로
+  자바스크립트 작업이 없습니다.
+*/
+@media (min-width: 1024px) {
+  .section {
+    display: grid;
+    grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+    gap: 56px;
+    align-items: start;
+  }
+}
+
+.head {
+  margin-bottom: 56px;
+}
+
+@media (min-width: 1024px) {
+  .head {
+    position: sticky;
+    top: 112px;
+    margin-bottom: 0;
+  }
+}
+
+.index {
+  margin: 0 0 12px;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.note {
+  margin: 16px 0 0;
+  max-width: var(--spacing-measure);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink-3);
+}
+
+.body {
+  min-width: 0;
+}

@@ -1,0 +1,158 @@
+.legend {
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.legendList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 900px) {
+  .legendList {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px 32px;
+  }
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  color: var(--ink-3);
+}
+
+.legendText {
+  min-width: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+@media (min-width: 700px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 40px;
+  }
+}
+
+.group {
+  padding: 28px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.area {
+  margin: 0 0 16px;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+  항목 한 줄은 이름과 등급 사이를 점선으로 잇습니다 — 목차의 조판법입니다. 선은
+  `border-bottom` 이 아니라 가운데 늘어나는 요소로 만들어야 이름이 길어져도 끊기지
+  않으므로, 여기서는 `flex: 1` 인 가짜 요소 대신 배경 그러데이션을 씁니다.
+*/
+.item {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 7px 0;
+  font-size: 15px;
+  color: var(--ink-2);
+}
+
+.itemName {
+  min-width: 0;
+}
+
+/*
+  이름과 등급 사이를 채우는 점선. `flex-grow` 로 늘어나고 배경으로만 그리므로 활자의
+  기준선에 영향을 주지 않습니다.
+*/
+.item::after {
+  content: "";
+  order: 1;
+  flex: 1 1 auto;
+  min-width: 16px;
+  height: 1px;
+  transform: translateY(-4px);
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--rule) 0 2px,
+    transparent 2px 6px
+  );
+}
+
+.meter {
+  order: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex: 0 0 auto;
+}
+
+.pipOn,
+.pipOff {
+  display: block;
+  width: 7px;
+  height: 7px;
+}
+
+.pipOn {
+  background: var(--ink-2);
+}
+
+.pipOff {
+  border: 1px solid var(--rule);
+}
+
+.disclosure {
+  margin-top: 40px;
+}
+
+.disclosureList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-width: var(--spacing-measure);
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  line-height: 1.65;
+  color: var(--ink-3);
+}
+
+.disclosureList li {
+  padding-left: 18px;
+  text-indent: -18px;
+}
+
+.disclosureList li::before {
+  content: "— ";
+  color: var(--rule);
+}

@@ -1,0 +1,298 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  padding: 40px 0 48px;
+  border-top: 1px solid var(--rule);
+}
+
+.list > li:first-child .card {
+  border-top: 0;
+  padding-top: 0;
+}
+
+@media (min-width: 768px) {
+  .card {
+    padding: 56px 0 64px;
+  }
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 20px;
+}
+
+.index {
+  margin: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+}
+
+/*
+  프로젝트 이름은 절 제목(--text-title)과 같은 계단에 둡니다 — 절 안에서 가장 큰
+  물체가 프로젝트 이름이어야 목록이 목록으로 읽힙니다.
+*/
+.name {
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+/*
+  넓은 화면에서만 오른쪽 끝으로 밀어냅니다. 좁은 화면에서는 머리말이 두 줄로 접히는데,
+  그때도 밀어내면 기간만 홀로 오른쪽에 떠서 이름과의 관계가 끊깁니다.
+*/
+.period {
+  margin: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .period {
+    margin-left: auto;
+  }
+}
+
+.blurb {
+  margin: 20px 0 0;
+  max-width: 44rem;
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+
+@media (min-width: 768px) {
+  .blurb {
+    font-size: 19px;
+  }
+}
+
+.keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.keyword {
+  padding: 5px 10px;
+  border: 1px solid var(--chip-border);
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid var(--rule);
+}
+
+@media (min-width: 900px) {
+  .columns {
+    grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+    gap: 40px;
+  }
+}
+
+.meta {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.metaRow {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: 12px;
+  align-items: baseline;
+}
+
+.metaKey {
+  margin: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  color: var(--ink-3);
+}
+
+.metaValue {
+  margin: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fact {
+  position: relative;
+  padding-left: 20px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+
+.fact::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 11px;
+  width: 8px;
+  height: 1px;
+  background: var(--signal-built);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin-top: 28px;
+}
+
+/*
+  터치 목표 44×44px (DESIGN_SYSTEM.md §7).
+*/
+.deep,
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 4px 12px;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+}
+
+/* 깊이로 들어가는 링크 하나만 테두리를 갖습니다 — 나머지는 바깥으로 나가는 링크입니다. */
+.deep {
+  border: 1px solid var(--ink-3);
+  text-decoration-line: none;
+  transition-property: border-color, color;
+  transition-duration: var(--duration-state);
+  transition-timing-function: var(--ease-settle);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .deep:hover {
+    border-color: var(--ink);
+  }
+}
+
+.deep::after {
+  content: "→";
+  margin-left: 8px;
+  color: var(--ink-3);
+}
+
+.minor {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--rule);
+}
+
+.minorTitle {
+  margin: 0 0 20px;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+}
+
+.minorList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.minorItem {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px 16px;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+@media (min-width: 768px) {
+  .minorItem {
+    grid-template-columns: 9rem 6rem minmax(0, 1fr);
+    align-items: baseline;
+    gap: 16px;
+  }
+}
+
+.minorName {
+  color: var(--ink);
+}
+
+.minorPeriod {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  color: var(--ink-3);
+}
+
+.minorLine {
+  color: var(--ink-2);
+}
+
+.disclosure {
+  margin-top: 40px;
+}
+
+.disclosureList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-width: var(--spacing-measure);
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  line-height: 1.65;
+  color: var(--ink-3);
+}
+
+.disclosureList li {
+  padding-left: 18px;
+  text-indent: -18px;
+}
+
+.disclosureList li::before {
+  content: "— ";
+  color: var(--rule);
+}
