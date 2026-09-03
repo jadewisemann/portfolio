@@ -1,8 +1,13 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, test } from "vitest";
-import { hero, s1, s2, treeCells } from "@/content/golden";
+import { profile, projectDetails, skillGroups, timeline } from "@/content/site";
 
-// CONTENT.md 9절의 게이트입니다 (COMPONENT_REGISTRY.md B5).
+// CONTENT.md 9절의 게이트입니다.
+//
+// 워크플로 하네스를 걷어낼 때(2026-09-03) 함께 지우지 않고 남긴 유일한 게이트입니다.
+// 나머지 게이트는 「어떻게 만들 것인가」를 강제했지만 이것은 **무엇을 적어도 되는가**를
+// 강제합니다. 이 저장소는 공개이고, 여기 걸리는 문장의 절반은 실제로 이전 이력서에
+// 적혀 있던 것입니다.
 //
 // 왜 기계로 막나: 금지 목록은 12항목이고, 그중 절반은 **이전 이력서에 실제로 적혀 있던
 // 문장**입니다. 사람의 주의력으로 막는 규칙은 문구를 고칠 때마다 다시 무너집니다.
@@ -87,43 +92,49 @@ describe("금지 문구", () => {
 });
 
 describe("화면에 올리는 값의 규율", () => {
-  test("모든 이음선 절에 근거 링크와 등급이 있다", () => {
-    for (const scene of [s1, s2]) {
-      expect(scene.links.length).toBeGreaterThan(0);
-      expect(["A", "B"]).toContain(scene.grade);
-      // 분모 없는 수치를 만들 수 없게 라벨을 필수로 둡니다.
-      expect(scene.ratio.aLabel.length).toBeGreaterThan(0);
-      expect(scene.ratio.bLabel.length).toBeGreaterThan(0);
+  test("프로젝트마다 근거 링크가 있다", () => {
+    for (const project of projectDetails) {
+      expect(project.links.length).toBeGreaterThan(0);
     }
   });
 
   test("모든 근거 링크가 절대 URL 이고 금지 대상이 아니다", () => {
-    for (const link of [...s1.links, ...s2.links]) {
+    const links = projectDetails.flatMap((project) => project.links);
+    expect(links.length).toBeGreaterThan(0);
+    for (const link of links) {
       expect(link.href).toMatch(/^https:\/\//);
-      // 2026-08-31 확인 시 404. DESIGN.md 2절이 금지했습니다.
+      // 2026-08-31 확인 시 404. 없는 곳으로 링크를 만들지 않는다.
       expect(link.href).not.toContain("s15-Yorr");
       // 커밋 중복 집계를 만드는 개인 포크.
       expect(link.href).not.toContain("ff_frontend__jade");
     }
   });
 
-  test("히어로는 두 문장이다", () => {
-    expect(hero.lines).toHaveLength(2);
+  test("히어로는 포지셔닝 두 문장이다", () => {
+    expect(profile.lines).toHaveLength(2);
   });
 
-  test("트리 칸이 근거 문서의 도메인 목록 안에 있다", () => {
-    // 도메인 이름을 지어내지 않았는지 확인합니다 (CONTENT.md 2.5).
-    const known = new Set([
-      "landing",
-      "room",
-      "yacht",
-      "pingpong",
-      "duel",
-      "auth",
-      "realtime",
-      "shared",
-    ]);
-    for (const cell of treeCells) expect(known).toContain(cell.domain);
-    expect(treeCells).toHaveLength(31);
+  test("히어로의 숫자에는 분모 라벨이 붙는다", () => {
+    // 분모 없는 수치를 만들 수 없게 라벨을 필수로 둔다 (CONTENT.md 9절 5번).
+    for (const figure of profile.figures) {
+      expect(figure.label.length).toBeGreaterThan(0);
+      expect(figure.unit.length).toBeGreaterThan(0);
+    }
+  });
+
+  test("스킬 등급이 A · B · C 뿐이다", () => {
+    // 등급 D 는 근거가 없다는 뜻이므로 화면에 올라오면 안 된다 (CONTENT.md 6절).
+    for (const group of skillGroups) {
+      for (const item of group.items) {
+        expect(["A", "B", "C"]).toContain(item.level);
+      }
+    }
+  });
+
+  test("이력의 날짜가 YYYY.MM 이다", () => {
+    // 화면의 정렬이 이 형식에 의존한다 (사전순 역순 = 시간순 역순).
+    for (const entry of timeline) {
+      expect(entry.when).toMatch(/^\d{4}\.\d{2}$/);
+    }
   });
 });

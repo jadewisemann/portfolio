@@ -1,7 +1,7 @@
 // `/projects/yorr` 의 문구와 값입니다. 정본은 `docs/portfolio/CONTENT.md` §2 이고,
-// 여기서는 화면에 올릴 것만 가져옵니다 — `src/content/golden.ts` 와 같은 방식입니다.
+// 여기서는 화면에 올릴 것만 가져옵니다.
 //
-// 규칙 (golden.ts 와 동일):
+// 규칙 (`src/content/site.ts` 와 동일):
 //   - 모든 항목에 `source`(형제 저장소 기준 경로)와 `grade` 가 붙습니다.
 //   - CONTENT.md 9절의 금지 문구는 src/forbidden-claims.test.ts 가 기계로 막습니다
 //     (그 테스트는 src 전체를 재귀로 훑으므로 이 파일도 자동으로 검사 대상입니다).

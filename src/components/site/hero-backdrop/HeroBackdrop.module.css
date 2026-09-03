@@ -1,0 +1,21 @@
+/*
+  히어로를 덮되 글자 뒤에 깔립니다. 히어로가 `overflow: hidden` 이므로 캔버스가
+  뷰포트를 넘어도 새지 않습니다.
+
+  `pointer-events: none` — 물체는 포인터의 **위치**만 읽고 클릭을 가로채지 않습니다.
+  이름과 링크가 캔버스 위에 있으므로 이것이 없으면 첫 화면 전체가 먹통이 됩니다.
+*/
+.canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 관측용 앵커. 캔버스와 같은 자리를 차지하므로 히어로가 화면을 벗어나는 순간이 곧
+   프레임 루프를 멈출 순간입니다. */
+:global(.hero-backdrop-anchor) {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}

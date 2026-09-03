@@ -17,13 +17,20 @@ export interface SectionProps {
 export function Section({ meta, index, children }: SectionProps) {
   return (
     <section className={styles.section} id={meta.id} aria-labelledby={`${meta.id}-title`}>
-      <Reveal className={styles.head}>
-        <p className={styles.index}>{String(index + 1).padStart(2, "0")}</p>
-        <h2 className={styles.title} id={`${meta.id}-title`}>
-          {meta.title}
-        </h2>
-        <p className={styles.note}>{meta.note}</p>
-      </Reveal>
+      <div className={styles.head}>
+        <Reveal>
+          <p className={styles.index}>{String(index + 1).padStart(2, "0")}</p>
+        </Reveal>
+        {/* 제목만 닦아 올립니다 — 한 낱말이므로 한 덩어리로 드러나는 것이 맞습니다. */}
+        <Reveal delay={0.05} mask>
+          <h2 className={styles.title} id={`${meta.id}-title`}>
+            {meta.title}
+          </h2>
+        </Reveal>
+        <Reveal delay={0.13}>
+          <p className={styles.note}>{meta.note}</p>
+        </Reveal>
+      </div>
 
       <div className={styles.body}>{children}</div>
     </section>

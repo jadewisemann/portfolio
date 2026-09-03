@@ -4,7 +4,7 @@
  * 구성은 소유자 지시(2026-09-03)를 따릅니다 — **main · skills · project · 이력**
  * 네 절을 이 순서로 세로로 쌓습니다. 참고한 형태는 aarab.me 입니다.
  *
- * 규칙은 `src/content/golden.ts` 와 같습니다:
+ * 규칙:
  *   - 모든 사실은 `docs/portfolio/CONTENT.md` 에서만 가져옵니다. 여기에 없는 사실은
  *     화면에도 없습니다.
  *   - 각 항목에 출처 절 번호를 주석으로 남깁니다.
@@ -186,6 +186,15 @@ export const skillsDisclosure = [
   "근거 등급 D 인 기술은 목록에서 뺐다 — Redux/RTK · Styled-Components · Storybook · TanStack Form · Firebase Realtime.",
   "실시간 통신(WebSocket · STOMP · SSE)은 기술 이름으로 쓰지 않는다. YORR 안의 구현 사실로만 적는다.",
 ] as const;
+
+/**
+ * 스킬과 프로젝트 사이를 잇는 띠의 항목. 등급 A 인 것만 뽑습니다 — 띠에는 등급 표시를
+ * 붙일 자리가 없으므로, 등급이 붙지 않아도 되는 것만 올립니다.
+ */
+export const marqueeItems: readonly string[] = skillGroups
+  .flatMap((group) => group.items)
+  .filter((item) => item.level === "A")
+  .map((item) => item.name);
 
 /* -------------------------------------------------------------- 프로젝트 */
 

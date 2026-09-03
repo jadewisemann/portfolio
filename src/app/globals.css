@@ -270,6 +270,8 @@ body > * {
 [data-motion-reduce] [data-enter] {
   opacity: 1 !important;
   transform: none !important;
+  /* 제목의 닦아 올리기(`Reveal` 의 mask)도 서버 HTML 단계에서 풀어 줍니다. */
+  clip-path: none !important;
 }
 
 /*

@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import { fontVariables } from "@/fonts";
+import { profile } from "@/content/site";
 import { BOOT_SCRIPT } from "@/lib/preferences";
-import { hero } from "@/content/golden";
 import "./globals.css";
 
 /*
-  메타데이터도 콘텐츠입니다. 문구는 src/content/golden.ts 의 히어로와 같은 출처를
-  씁니다 (DESIGN.md 1절 포지셔닝 v2, 근거 등급 A). PII 는 넣지 않습니다.
+  메타데이터도 콘텐츠입니다. 문구는 히어로와 같은 출처(`src/content/site.ts`)를 씁니다.
+  PII 는 넣지 않습니다.
 */
 export const metadata: Metadata = {
   title: "jadewisemann — 프론트엔드",
-  description: hero.lines[0],
+  description: profile.lines[0],
 };
 
 export default function RootLayout({
@@ -51,7 +51,7 @@ export default function RootLayout({
           변경이므로 MOTION_LANGUAGE.md 를 고쳐야 합니다.
         */}
         <noscript>
-          <style>{`[data-enter]{opacity:1!important;transform:none!important}`}</style>
+          <style>{`[data-enter]{opacity:1!important;transform:none!important;clip-path:none!important}`}</style>
         </noscript>
       </head>
       <body className="min-h-full">

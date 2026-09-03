@@ -1,225 +1,105 @@
-# Portfolio Project
+# jadewisemann — 포트폴리오
 
-This repository uses an agent-driven portfolio development workflow.
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind 4 · Motion · Three.js (R3F) ·
+Lenis. 배포는 Vercel 이 GitHub 연동으로 처리한다.
 
-## Source of truth
+## 무엇을 만들고 있나
 
-Always read:
+한 장짜리 사이트 `/` 와 프로젝트 페이지 `/projects/yorr`.
 
-- docs/portfolio/state.json
-- docs/portfolio/ART_DIRECTION.md
-- docs/portfolio/DESIGN_SYSTEM.md
-- docs/portfolio/MOTION_LANGUAGE.md
+랜딩은 네 절을 세로로 쌓는다 — **main · skills · project · 이력**. 순서의 정본은
+`src/content/site.ts` 의 `SECTIONS` 배열 하나이고, 페이지와 상단 내비게이션이 그 배열만
+읽는다. 순서를 바꾸는 일은 배열 한 곳을 고치는 일이다.
 
-before making substantial portfolio changes.
+목표하는 반응은 순서까지 포함해서 이것이다: **"뭐야 이거 예쁘다"** 가 먼저, 그다음
+**"엔지니어링을 할 줄 아는구나"**. 아름다움이 먼저 도착한다.
 
-## Content source
+포트폴리오는 프로젝트를 **설명하지 않는다.** 키워드 · 짧은 블러브 · (자산이 오면)
+스크린샷을 아름답게 보여주고, 아키텍처와 코드 리딩은 프로젝트 페이지 한 번 클릭
+뒤에 둔다.
 
-All portfolio content facts come from the sibling repository of this repo:
+## 콘텐츠 — 사실을 지어내지 않는다
 
-`../_jadewisemann` (always resolved relative to this repo's root)
+화면의 모든 사실은 `docs/portfolio/CONTENT.md` 에서 온다. 그 문서에는 항목마다 출처
+경로와 근거 등급(A · B)이 붙어 있고, 등급 C · D 는 애초에 들어오지 못한다.
+**거기 없는 사실은 화면에도 없다.**
 
-That repository has its own SSOT discipline — follow it:
+원장의 원본은 형제 저장소 `../_jadewisemann/ref/` 다 (이 저장소 루트 기준 상대 경로).
+숫자와 강한 주장은 그 저장소의 `ref/20_evidence.md` 에서 등급 A · B 여야 한다.
 
-- Facts: `../_jadewisemann/ref/` — start at `ref/README.md` (purpose-based
-  routing table). Numbers and strong claims require evidence grade A or B in
-  `ref/20_evidence.md`; grade D is forbidden.
-- Judgment (positioning, what to feature, what to omit):
-  `../_jadewisemann/DESIGN.md`.
-- Read each project page's "과장하면 안 되는 것" / "본인 관여 없음" sections
-  before using it.
-- Cite `ref/` documents, not raw document dumps in that repo.
+`CONTENT.md` 9절의 금지 문구와 PII 는 `src/forbidden-claims.test.ts` 가 기계로 막는다.
+**이 게이트는 지우지 않는다** — 이 저장소는 공개이고, 거기 걸리는 문장의 절반은 실제로
+이전 이력서에 적혀 있던 것이다.
 
-CONTENT_INVENTORY extracts from there into docs/portfolio/BRIEF.md and
-docs/portfolio/CONTENT.md, recording the source path for every fact. A fact
-not present in `ref/` does not go into the portfolio.
+프로젝트 페이지의 「과장하면 안 되는 것」 · 「본인 관여 없음」 절을 읽고 쓴다. 뺀 것은
+조용히 자르지 않고 화면에 함께 적는다 (각 절의 `disclosure`).
 
-Explicit override (owner decision, 2026-08-31): `../_jadewisemann/DESIGN.md`
-§3 says "포트폴리오 사이트를 만들지 않는다" — this repo ignores that judgment
-and builds the site anyway. Do not treat §3 as a blocker or re-raise it. All
-other judgments in that DESIGN.md (positioning v2, project order, forbidden
-claims) remain binding.
+## 연출
 
-## What the owner actually wants
+3D 와 스크롤 연출은 **표현 수단**이지 설명 수단이 아니다. 아키텍처 다이어그램을
+움직이게 만드는 데 쓰지 않는다 — 그건 프로젝트 페이지에서 산문과 정적 다이어그램이
+할 일이다.
 
-The target reaction, in order: **"What the fuck, this is beautiful"** first, then
-**"and this person clearly knows how to engineer interfaces."** The order is the
-whole brief. Beauty arrives first.
-
-The owner rejected the 2026-08-31 output in one word: **"이력서냐"** (is this a
-résumé?). Learn the register it names:
-
-| Résumé register (rejected) | Portfolio register (wanted) |
+| 무엇 | 누가 |
 |---|---|
-| One column of text | Designed scenes |
-| Facts with evidence grades as footnotes | Facts as part of a scene |
-| Explains the work in prose | Shows the work |
-| 36px heading, centered band | Typography that dominates the viewport |
+| 스크롤 이송 (관성 · 감속) | Lenis |
+| 스크롤에 묶인 값 (패럴랙스 · 진입 · 스크럽) | Motion (`useScroll` · `useTransform`) |
+| 컴포넌트 진입 · 전이 | Motion |
+| 호버 · 포커스 · 상태 | CSS |
+| 3D 장면 | React Three Fiber |
 
-### A portfolio shows; it does not explain (owner, 2026-08-31)
+- 축소 모션(`prefers-reduced-motion: reduce`)에서 **기능은 하나도 사라지지 않는다.**
+  사라지는 것은 이동뿐이다. Lenis 를 끄고, 스크럽을 상수로 고정하고, 진입을 최종
+  상태로 즉시 렌더한다.
+- R3F 캔버스는 히어로가 화면 밖으로 나가면 프레임 루프를 멈춘다.
 
-Three rounds of candidates were built and rejected before this was written down,
-so take it literally:
+## 테마와 서체
 
-> 포트폴리오는 내 프로젝트를 설명하는 게 아니야. 그냥 뭘 했는지 미적으로 보여주는
-> 거지. 뭘 했는지를 아름답게 설명할 필요가 전혀 없어. 키워드랑 프로젝트 설명이랑
-> 스크린샷 같은 것만 두고, 거기서 별도 페이지에서 아키텍처나 코드 리딩을 보고 하는
-> 구조야.
+보는 사람이 오른쪽 위 설정에서 고른다. 선택값의 소재지는 리액트가 아니라 `<html>` 의
+데이터 속성이고, 첫 페인트 전에 도는 인라인 스크립트가 `localStorage` 에서 읽어 세운다
+(`src/lib/preferences.ts` · `preferences-store.ts`).
 
-**The structure**, and it is not negotiable without the owner:
+**리액트를 값의 주인으로 되돌리지 마라.** 저장된 값이 라이트인 사람이 첫 프레임에
+다크를 보고 하이드레이션 뒤에 흰 화면으로 뒤집힌다. `e2e/settings.spec.ts` 가 그
+회귀를 막는다.
 
-- **Landing** — keywords, a short project blurb, screenshots. Presented
-  aesthetically, in 3D. **The first viewport carries the name and nothing else**
-  (owner, same day: 첫 페이지에서는 글자가 거의 없어야 해).
-- **Per-project pages** — architecture and code reading live here, reached from
-  the landing page. This is where depth goes.
+다크가 정본이고 기본값이다. 팔레트 · 대비 실측값은 `docs/portfolio/DESIGN_SYSTEM.md` §3.
 
-So: **screenshots and keywords on the surface, depth one click away.**
-
-### Two failure modes this repo has actually produced
-
-1. **The document.** Sentences explaining the work, evidence grades as footnotes,
-   a centred column of prose. A README wearing a portfolio's clothes.
-2. **Rendering the mechanisms.** An earlier version of this file said the
-   engineering mechanisms were the visual material — the coverage ratchet, the
-   payment FSM, the two-tier cache, drawn as things that operate. It followed from
-   `CONTENT.md` §8 recording zero images, and it was a detour around a constraint
-   that no longer holds: **the owner supplies screenshots.** The owner's verdict
-   on that line of work was 과하게 어려운 일을 하려고 노력 중이었구나. Do not
-   restart it. A mechanism belongs on a project page, in prose and diagrams, where
-   someone who clicked through actually wants it.
-
-3D is presentation, not explanation — it is how the screenshots and keywords are
-shown, not a way to animate an architecture diagram. `MOTION_LANGUAGE.md` §1.4
-and §6 carry the conditions and the scene-versus-ornament test.
-
-## Core rules
-
-- Never hand-edit docs/portfolio/state.json — all transitions go through
-  `node scripts/graph.mjs` (status / start / advance / block / doctor).
-- Do not invent portfolio facts.
-- Search existing components before creating complex visual components.
-- Do not mix animation ownership.
-- Update state.json and DECISIONS.md after major graph transitions.
-
-### The browser is the truth — and this applies to the coordinator
-
-Never judge visual work from source code, from a subagent's report, or from a
-locked spec document. **Open the page and look at it.** This rule binds whoever
-is coordinating, not only the builder.
-
-The 2026-08-31 run failed on exactly this. The coordinator spent an hour
-relaying the director's text reports — tuning thresholds, scorecards, iteration
-order, gate integrity — all of it correct and all of it beside the point. It was
-excellent project management for a project that was building the wrong thing.
-The first screenshot it finally rendered showed the problem instantly. Reading
-`CONTENT.md` — learning what the material even was — happened *after* an hour of
-orchestration.
-
-Concretely, before endorsing any visual claim:
+서체는 조합 셋이고 전부 Google Fonts (OFL-1.1) 이지만 `next/font/google` 로 싣지 않는다
+— 그 경로에 korean 서브셋을 지원하는 서체가 0종이다. 원본 ttf 를 받아 이 사이트가
+실제로 출력하는 글자만 남긴 woff2 를 굽는다:
 
 ```bash
-# .claude/launch.json 의 portfolio-dev 로 preview 를 띄우고 실제로 본다
-node scripts/capture.mjs review/<scope>        # 재캡처 없이는 판정 금지
-node scripts/capture-states.mjs review/<scope>
+npm run fonts:fetch   # 원본 ttf (약 40MB, .gitignore 로 제외)
+npm run fonts         # 서브셋 woff2 + OFL 고지
 ```
 
-Stale screenshots are worse than none. That run nearly judged a page that no
-longer existed. **Recapture immediately before every judgement.**
+## 브라우저가 진실이다
 
-### When a diagnosis is a stop signal, stop
+시각 작업을 소스 코드나 보고서로 판정하지 마라. **페이지를 열어서 봐라.**
 
-The director wrote "the page is a well-made document, not an authored scene" in
-its *first* report. That was the answer. It was approved, written into
-instructions — and then the same loop kept running for another hour, treating it
-as a category to score rather than a reason to halt.
-
-If a finding invalidates the concept, do not route it to a fix node. Halt the
-graph and re-pick the direction. `GOLDEN_FIX` polishes execution; it cannot
-rescue a concept. A visual-impact score below ~5 means the concept is wrong, not
-that the spacing is wrong.
-
-### Why the graph now requires pixels
-
-`ART_DIRECTION_BRANCH` used to gate on three `.md` files, so `DIRECTION_JUDGE`
-picked a direction by reading prose. A direction that only works on paper passed,
-and the golden slice scored **2.8 / 9.0** on visual impact — a critic called it
-indistinguishable from a reader-mode tech blog.
-
-The path is now:
-
-```
-ART_DIRECTION_BRANCH → DIRECTION_RENDER → DIRECTION_JUDGE
+```bash
+npm run dev                                  # localhost:3000
+node scripts/capture.mjs review/<이름>        # 프로덕션 빌드로 1920 · 1440 · 320 캡처
 ```
 
-`DIRECTION_RENDER` requires ≥9 PNGs in `review/directions/` (3 directions × 3
-viewports) and ≥3 of them at 320px, because that run's three "structurally
-different" candidates turned out **byte-identical on mobile**.
-`DIRECTION_JUDGE` cannot advance without those PNGs and must cite
-`review/directions/` in its `DECISIONS.md` lock entry.
+낡은 스크린샷은 없는 것보다 나쁘다. **판정 직전에 다시 찍는다.**
 
-`scripts/graph.test.mjs` locks this shut. If someone loosens the gate back to
-prose, those tests fail. Do not loosen them.
+## 검증
 
-Note that documents did **not** prevent this failure the first time — the full
-mandate was in context the whole run. Gates are mechanical; instructions are
-only a reminder. Prefer adding a gate over adding a paragraph.
+```bash
+npm run lint && npm run typecheck && npm test && npm run build && npm run e2e
+```
 
-### Handoff
+CI(`.github/workflows/ci.yml`)가 PR 마다 같은 것을 돌린다.
 
-`docs/portfolio/HANDOFF.md` records where the run stopped and the live traps.
-Read it before resuming. In particular, `state.json`'s `failedCategories` can be
-a stale snapshot — derive the work list from `scorecard.json` scores against
-`graph.json`'s current thresholds instead.
+## 시각 자료를 찾을 때
 
-Delegate with blocking calls. Background subagents died silently three times in
-that run, producing 62 minutes with zero graph transitions.
-
-## Workflow
-
-The primary coordinator is:
-
-portfolio-director
-
-The complete workflow is defined by:
-
-/portfolio-build
-
-## Visual sources
-
-Prefer researching:
-
-- React Bits
-- 21st.dev
-- Aceternity UI
-- Magic UI
-- Codrops
-
-before implementing complex interaction from scratch.
-
-## Motion ownership
-
-GSAP:
-scroll choreography
-
-Motion:
-component and shared layout transitions
-
-CSS:
-minor interactions
-
-Three.js / R3F:
-explicit 3D scenes only
-
-Lenis:
-scroll transport only
-
-<!-- BEGIN:nextjs-agent-rules -->
+직접 구현하기 전에 먼저 본다: React Bits · 21st.dev · Aceternity UI · Magic UI ·
+Codrops.
 
 # This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
-
-<!-- END:nextjs-agent-rules -->

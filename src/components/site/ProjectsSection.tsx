@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Parallax } from "@/components/motion/Parallax";
 import { PROJECTS } from "@/components/showcase/shots";
 import {
   SECTIONS,
@@ -19,8 +20,9 @@ import styles from "./ProjectsSection.module.css";
  * 화면에 나오지 않습니다.
  *
  * 스크린샷은 아직 없습니다 (`CONTENT.md` §8 — 프로젝트 이미지 · 영상 없음). 빈 액자를
- * 놓아 「준비 중」으로 보이게 하는 시도를 두 번 했고 두 번 실패했으므로
- * (`HANDOFF.md` §2), 자산이 올 때까지는 액자를 놓지 않고 활자가 지면을 지탱합니다.
+ * 놓아 「준비 중」으로 보이게 하는 시도를 두 번 했고 두 번 실패했으므로, 자산이 올
+ * 때까지는 액자를 놓지 않고 활자가 지면을 지탱합니다. 자리는 키워드와 아래 두 단
+ * 사이이고, `shots.ts` 의 `src` 한 줄씩만 채우면 됩니다.
  */
 export function ProjectsSection() {
   const meta = SECTIONS[2];
@@ -42,7 +44,9 @@ export function ProjectsSection() {
               <article className={styles.card} id={`project-${project.id}`}>
                 <header className={styles.head}>
                   <p className={styles.index}>{String(index + 1).padStart(2, "0")}</p>
-                  <h3 className={styles.name}>{project.name}</h3>
+                  <Reveal delay={0.04} mask>
+                    <h3 className={styles.name}>{project.name}</h3>
+                  </Reveal>
                   <p className={styles.period}>{detail.period}</p>
                 </header>
 
@@ -57,20 +61,24 @@ export function ProjectsSection() {
                 </ul>
 
                 <div className={styles.columns}>
-                  <dl className={styles.meta}>
-                    <div className={styles.metaRow}>
-                      <dt className={styles.metaKey}>팀</dt>
-                      <dd className={styles.metaValue}>{detail.team}</dd>
-                    </div>
-                    <div className={styles.metaRow}>
-                      <dt className={styles.metaKey}>역할</dt>
-                      <dd className={styles.metaValue}>{detail.role}</dd>
-                    </div>
-                    <div className={styles.metaRow}>
-                      <dt className={styles.metaKey}>스택</dt>
-                      <dd className={styles.metaValue}>{detail.stack.join(" · ")}</dd>
-                    </div>
-                  </dl>
+                  {/* 메타 단은 사실 목록보다 느리게 지납니다 — 두 단이 한 판이 아니라
+                      두 층으로 읽히게 하는 유일한 장치입니다. */}
+                  <Parallax distance={26}>
+                    <dl className={styles.meta}>
+                      <div className={styles.metaRow}>
+                        <dt className={styles.metaKey}>팀</dt>
+                        <dd className={styles.metaValue}>{detail.team}</dd>
+                      </div>
+                      <div className={styles.metaRow}>
+                        <dt className={styles.metaKey}>역할</dt>
+                        <dd className={styles.metaValue}>{detail.role}</dd>
+                      </div>
+                      <div className={styles.metaRow}>
+                        <dt className={styles.metaKey}>스택</dt>
+                        <dd className={styles.metaValue}>{detail.stack.join(" · ")}</dd>
+                      </div>
+                    </dl>
+                  </Parallax>
 
                   <ul className={styles.facts}>
                     {detail.facts.map((fact) => (
