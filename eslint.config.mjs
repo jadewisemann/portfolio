@@ -1,10 +1,24 @@
+import { createRequire } from "node:module";
+
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 
+const require = createRequire(import.meta.url);
+const reactVersion = require("react/package.json").version;
+
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    // eslint-config-next sets `settings.react.version: "detect"`, and
+    // eslint-plugin-react's detection path calls the `context.getFilename()`
+    // API that ESLint 10 removed, so every rule in that plugin throws.
+    // Pinning the version to the installed react package skips detection
+    // entirely and is the configuration eslint-plugin-react recommends anyway.
+    // Remove this block once eslint-plugin-react ships ESLint 10 support.
+    settings: { react: { version: reactVersion } },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
