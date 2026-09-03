@@ -1,0 +1,89 @@
+/*
+  절의 세로 리듬. 위아래 여백은 28px 격자의 배수입니다 (globals.css 의 괘선 기판과
+  같은 피치이므로 절의 경계가 괘선 위에 앉습니다).
+*/
+.section {
+  padding: 84px 20px;
+  border-top: 1px solid var(--rule);
+}
+
+@media (min-width: 768px) {
+  .section {
+    padding: 140px 40px;
+  }
+}
+
+/*
+  머리말과 본문은 넓은 화면에서 두 단이 됩니다 — 왼쪽 단이 제목을 붙들고 있는 동안
+  오른쪽 단이 흐릅니다. `position: sticky` 로 붙들되 스크롤 좌표를 읽지 않으므로
+  자바스크립트 작업이 없습니다.
+*/
+@media (min-width: 1024px) {
+  .section {
+    display: grid;
+    grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+    gap: 56px;
+    align-items: start;
+  }
+}
+
+.head {
+  margin-bottom: 56px;
+}
+
+@media (min-width: 1024px) {
+  .head {
+    position: sticky;
+    top: 112px;
+    margin-bottom: 0;
+  }
+}
+
+.index {
+  margin: 0 0 12px;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+}
+
+/*
+  절 제목은 이제 낱말 하나입니다 (`main` · `skills` · `project` · `이력`).
+
+  `--text-title` 을 그대로 쓰지 않는 사유: 그 급수는 프로젝트 이름(YORR ·
+  FestiFriends · Pookjayo)이 쓰고 있습니다. 절 제목이 같은 급수면 「project」와
+  「YORR」이 같은 층으로 읽혀 목록의 머리와 항목이 구분되지 않습니다. 한 계단 위에
+  둡니다 — 넓은 화면에서 머리말 단 폭(20rem)을 넘지 않는 값입니다.
+*/
+.title {
+  margin: 0;
+  font-size: 44px;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+@media (min-width: 640px) {
+  .title {
+    font-size: 56px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .title {
+    font-size: 80px;
+  }
+}
+
+.note {
+  margin: 16px 0 0;
+  max-width: var(--spacing-measure);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink-3);
+}
+
+.body {
+  min-width: 0;
+}

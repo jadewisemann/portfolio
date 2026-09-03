@@ -5,7 +5,7 @@ import { EvidenceNote, type Citation, type EvidenceLink } from "@/components/Evi
 import { PROJECTS } from "@/components/showcase/shots";
 import { BannerFrame } from "@/components/showcase/yorr/BannerFrame";
 import { E2EDiagram, PrinciplesDiagram, RestructureDiagram } from "@/components/showcase/yorr/Diagrams";
-import { Footer } from "@/components/showcase/landing/Footer";
+import { Footer } from "@/components/site/Footer";
 import type { Grade } from "@/lib/reading";
 import {
   coverage,

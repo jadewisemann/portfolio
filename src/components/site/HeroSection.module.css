@@ -1,0 +1,242 @@
+/*
+  첫 화면. 막대(56px)를 뺀 나머지를 꽉 채웁니다. `dvh` 가 아니라 `svh` 를 쓰는 이유는
+  모바일 브라우저의 주소창이 접혔다 펴질 때 높이가 바뀌면서 레이아웃이 흔들리기
+  때문입니다 — `svh` 는 주소창이 펴진 상태를 기준으로 하므로 값이 스크롤 중에 변하지
+  않습니다.
+
+  방의 빛은 `--ground-2` 를 아주 낮게 섞은 타원 하나입니다. `filter: blur` 를 쓰지
+  않으므로(모션 소유권 게이트) 흐림은 그러데이션의 정지점으로만 만듭니다.
+*/
+.hero {
+  position: relative;
+  min-height: calc(100svh - 56px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+  padding: 56px 20px;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .hero {
+    gap: 40px;
+    padding: 84px 40px;
+  }
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -20% -10% auto -10%;
+  height: 90%;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    60% 55% at 30% 25%,
+    color-mix(in srgb, var(--ground-2) 90%, transparent) 0%,
+    color-mix(in srgb, var(--ground-2) 40%, transparent) 45%,
+    transparent 72%
+  );
+}
+
+.hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 20px;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+}
+
+.role {
+  margin: 0;
+  color: var(--ink-2);
+  letter-spacing: 0.02em;
+}
+
+.role::before {
+  content: "";
+  display: inline-block;
+  width: 28px;
+  height: 1px;
+  margin-right: 12px;
+  vertical-align: middle;
+  background: var(--rule);
+}
+
+.nameWrap {
+  min-width: 0;
+}
+
+/*
+  이름은 화면에서 가장 큰 물체입니다. clamp() 를 쓰지 않고 이산 계단으로 올립니다
+  (DESIGN_SYSTEM.md §4).
+
+  계단을 다시 잡은 사유 (2026-09-03): 이름이 한글 세 글자에서 라틴 열두 글자로
+  바뀌었습니다. 글자 수가 네 배가 되었으므로 이전 계단(88 ~ 264px)을 그대로 두면
+  모든 뷰포트에서 가로로 넘칩니다. `jadewisemann` 은 끊을 자리가 없는 한 낱말이므로
+  줄바꿈으로 도망칠 수도 없습니다.
+
+  값을 고른 방법 — 눈이 아니라 실측입니다. 이 조판에서 낱말의 폭은 급수에 비례하고,
+  비율은 서체 조합마다 다릅니다 (자간 -0.03em 포함, 브라우저 실측):
+
+      Grotesk 6.502  ·  Plex 6.403  ·  Serif 5.322
+
+  **계단은 셋 중 가장 넓은 6.502 를 기준으로 잡습니다.** 서체는 화면에서 바뀌므로
+  기본값에만 맞추면 다른 조합에서 넘칩니다. 각 단계의 급수는 그 단계가 시작되는 폭에서
+  좌우 여백을 뺀 자리를 6.502 로 나눈 값이고, 거기서 3% 를 더 뺐습니다 — 웹폰트가
+  스왑되기 전 대체 글꼴이 더 넓을 수 있기 때문입니다. 넘침 자체는
+  `e2e/geometry.spec.ts` 가 세 조합 모두에서 기계로 막습니다.
+
+  Serif 는 이 계단에서 자리를 다 채우지 않습니다. 의도한 결과입니다 — 세리프는 같은
+  급수에서 시각적으로 더 커 보이므로 여백이 남는 편이 낫습니다.
+
+  자간은 -0.03em 입니다. 한글에 쓰던 -0.045em 은 라틴에서 글자를 서로 먹습니다.
+*/
+.name {
+  margin: 0;
+  font-size: 41px;
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+@media (min-width: 480px) {
+  .name {
+    font-size: 64px;
+  }
+}
+
+@media (min-width: 768px) {
+  .name {
+    font-size: 102px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .name {
+    font-size: 140px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .name {
+    font-size: 178px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .name {
+    font-size: 202px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .name {
+    font-size: 226px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .name {
+    font-size: 274px;
+  }
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 46rem;
+}
+
+.line {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+
+@media (min-width: 768px) {
+  .line {
+    font-size: 20px;
+  }
+}
+
+/* 두 번째 문장은 첫 문장의 결과이므로 한 단계 물러납니다. */
+.line + .line {
+  color: var(--ink-3);
+}
+
+.figuresWrap {
+  margin-top: 12px;
+}
+
+.figures {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin: 0;
+  border-top: 1px solid var(--rule);
+}
+
+@media (min-width: 640px) {
+  .figures {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.figure {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 4px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+@media (min-width: 640px) {
+  .figure {
+    padding: 20px 20px 20px 0;
+    border-bottom: 0;
+  }
+
+  .figure + .figure {
+    padding-left: 20px;
+    border-left: 1px solid var(--rule);
+  }
+}
+
+.figureLabel {
+  margin: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+
+.figureValue {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.figureNumber {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-decision);
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.figureUnit {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+  color: var(--ink-3);
+}

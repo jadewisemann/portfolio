@@ -1,0 +1,90 @@
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.entry {
+  border-top: 1px solid var(--rule);
+}
+
+.entry:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+/*
+  한 항목은 두 단입니다 — 왼쪽에 날짜, 오른쪽에 내용. 좁은 화면에서는 날짜가 위로
+  올라가 한 단이 됩니다. 세로 선을 따로 그리지 않고 항목 사이의 괘선이 그 역할을
+  합니다 (배경 괘선 기판과 같은 값이므로 지면과 어긋나지 않습니다).
+*/
+.row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  padding: 20px 0;
+}
+
+@media (min-width: 640px) {
+  .row {
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: 24px;
+    padding: 24px 0;
+  }
+}
+
+.when {
+  margin: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-mono);
+  line-height: 1.6;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.body {
+  min-width: 0;
+}
+
+.kind {
+  margin: 0 0 4px;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+}
+
+.title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 19px;
+  }
+}
+
+/*
+  터치 목표 44×44px (DESIGN_SYSTEM.md §7). 히트 영역만 키우고 음수 마진으로 되돌려,
+  링크가 있는 항목과 없는 항목의 세로 리듬이 어긋나지 않게 합니다.
+*/
+.titleLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin: -8px 0;
+}
+
+.detail {
+  margin: 6px 0 0;
+  max-width: var(--spacing-measure);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink-3);
+}
