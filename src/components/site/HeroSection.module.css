@@ -83,17 +83,25 @@
   모든 뷰포트에서 가로로 넘칩니다. `jadewisemann` 은 끊을 자리가 없는 한 낱말이므로
   줄바꿈으로 도망칠 수도 없습니다.
 
-  값을 고른 방법 — 눈이 아니라 실측입니다. 이 조판에서 낱말의 폭은 급수의 **6.40배**로
-  일정합니다(자간 -0.03em 포함, 브라우저에서 19개 폭을 재어 확인). 각 단계의 급수는
-  그 단계가 시작되는 폭에서 좌우 여백을 뺀 자리를 6.40 으로 나눈 값이고, 거기서 3% 를
-  더 뺐습니다 — 웹폰트가 스왑되기 전 대체 글꼴이 더 넓을 수 있기 때문입니다. 넘침 자체는
-  `e2e/geometry.spec.ts` 가 기계로 막습니다.
+  값을 고른 방법 — 눈이 아니라 실측입니다. 이 조판에서 낱말의 폭은 급수에 비례하고,
+  비율은 서체 조합마다 다릅니다 (자간 -0.03em 포함, 브라우저 실측):
+
+      Grotesk 6.502  ·  Plex 6.403  ·  Serif 5.322
+
+  **계단은 셋 중 가장 넓은 6.502 를 기준으로 잡습니다.** 서체는 화면에서 바뀌므로
+  기본값에만 맞추면 다른 조합에서 넘칩니다. 각 단계의 급수는 그 단계가 시작되는 폭에서
+  좌우 여백을 뺀 자리를 6.502 로 나눈 값이고, 거기서 3% 를 더 뺐습니다 — 웹폰트가
+  스왑되기 전 대체 글꼴이 더 넓을 수 있기 때문입니다. 넘침 자체는
+  `e2e/geometry.spec.ts` 가 세 조합 모두에서 기계로 막습니다.
+
+  Serif 는 이 계단에서 자리를 다 채우지 않습니다. 의도한 결과입니다 — 세리프는 같은
+  급수에서 시각적으로 더 커 보이므로 여백이 남는 편이 낫습니다.
 
   자간은 -0.03em 입니다. 한글에 쓰던 -0.045em 은 라틴에서 글자를 서로 먹습니다.
 */
 .name {
   margin: 0;
-  font-size: 42px;
+  font-size: 41px;
   font-weight: 600;
   line-height: 0.95;
   letter-spacing: -0.03em;
@@ -102,43 +110,43 @@
 
 @media (min-width: 480px) {
   .name {
-    font-size: 66px;
+    font-size: 64px;
   }
 }
 
 @media (min-width: 768px) {
   .name {
-    font-size: 104px;
+    font-size: 102px;
   }
 }
 
 @media (min-width: 1024px) {
   .name {
-    font-size: 142px;
+    font-size: 140px;
   }
 }
 
 @media (min-width: 1280px) {
   .name {
-    font-size: 180px;
+    font-size: 178px;
   }
 }
 
 @media (min-width: 1440px) {
   .name {
-    font-size: 204px;
+    font-size: 202px;
   }
 }
 
 @media (min-width: 1600px) {
   .name {
-    font-size: 228px;
+    font-size: 226px;
   }
 }
 
 @media (min-width: 1920px) {
   .name {
-    font-size: 276px;
+    font-size: 274px;
   }
 }
 

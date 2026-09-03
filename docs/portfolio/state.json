@@ -52,5 +52,5 @@
     }
   },
   "nextAction": "[GOLDEN_FIX] 실패 카테고리 패치 — 위임: frontend-builder",
-  "blocker": "구성 교체 (2026-09-03, 소유자 지시). 참조: aarab.me. 절 넷 — 메인 · 스킬 · 프로젝트 · 이력 — 을 세로로 쌓는 한 장짜리 사이트로 바꿨고, 3D 회랑 구성 전체를 삭제했다. 따라서 이전 블로커(회랑용 스크린샷 대기)는 소멸했다. 지금 필요한 것은 둘: (1) 새 구성에 대한 GOLDEN_REVIEW 재채점 — scorecard.json 과 state.json 의 failedCategories 는 전부 삭제된 회랑을 채점한 값이므로 판정에 쓰면 안 된다. (2) 프로젝트 스크린샷 — 이번에는 액자를 아예 놓지 않았으므로 게이트가 아니라 개선 항목이다. 자산이 오면 프로젝트 카드의 키워드와 columns 사이가 자리이고 shots.ts 의 src 한 줄씩만 채우면 된다. 모션 언어 §5.1/§9/§12/§12.1/§13 을 이 구성에 맞게 개정했다 (DECISIONS.md 2026-09-03 항목). 시그니처 인터랙션은 현재 0개이고 미결이다."
+  "blocker": "구성 교체 + 서체 · 테마 선택 (2026-09-03, 소유자 지시 3회). 상태: (1) 랜딩이 main · skills · project · 이력 네 절이고 3D 회랑은 삭제됐다. (2) 화면에 찍는 이름은 jadewisemann 이다. (3) 서체 조합 셋(Grotesk · Serif · Plex)과 테마 둘(라이트 · 다크)을 오른쪽 위 설정에서 고를 수 있고, 기본은 grotesk + 다크다. 지금 필요한 것: 새 구성에 대한 GOLDEN_REVIEW 재채점 — scorecard.json 과 state.json 의 failedCategories 는 전부 삭제된 회랑을 채점한 값이므로 판정에 쓰면 안 된다. 채점은 테마 2 × 서체 3 조합을 함께 봐야 한다 (증거: review/redesign-2026-09-03/combos/). 스크린샷은 여전히 없고 액자를 놓지 않았으므로 게이트가 아니라 개선 항목이다. 문서는 DESIGN_SYSTEM §3 · §4, MOTION_LANGUAGE §5.1 · §9 · §12 · §13, DECISIONS 2026-09-03 세 항목이 현행이다. 시그니처 인터랙션은 0개이고 미결이다."
 }

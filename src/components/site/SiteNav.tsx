@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { SECTIONS } from "@/content/site";
+import { SettingsMenu } from "./SettingsMenu";
 import styles from "./SiteNav.module.css";
 
 /**
@@ -44,6 +45,7 @@ export function SiteNav() {
         <a className={styles.brand} href="#main">
           jadewisemann
         </a>
+
         <ol className={styles.list}>
           {SECTIONS.map((section, index) => (
             <li key={section.id}>
@@ -61,6 +63,8 @@ export function SiteNav() {
           ))}
         </ol>
       </nav>
+
+      <SettingsMenu />
     </header>
   );
 }

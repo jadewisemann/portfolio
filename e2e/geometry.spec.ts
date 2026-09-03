@@ -78,3 +78,25 @@ test("프로젝트 페이지(YORR) — 랜딩으로 돌아가는 링크가 있�
   const back = page.getByRole("link", { name: "← 처음으로" }).first();
   await expect(back).toHaveAttribute("href", "/");
 });
+
+/*
+  서체 조합 × 넘침.
+
+  히어로 이름(`jadewisemann`)의 급수 계단은 세 조합 중 가장 넓은 것(Grotesk, 급수의
+  6.502배)을 기준으로 잡혀 있다(`HeroSection.module.css`). 그 계산이 맞는지는 산술이
+  아니라 렌더된 폭으로 판정해야 한다 — 조합을 바꾸면 폭이 바뀌고, 끊을 자리가 없는 한
+  낱말이라 줄바꿈으로 도망칠 수도 없다.
+
+  `data-font` 를 직접 세우는 이유: 설정 패널을 여는 것은 이 테스트의 관심사가 아니고,
+  그 경로는 아래 settings.spec.ts 가 따로 판정한다.
+*/
+for (const font of ["grotesk", "serif", "plex"] as const) {
+  test(`랜딩 — 서체 ${font} 에서 넘치는 요소가 없다`, async ({ page }) => {
+    await page.goto("/");
+    await page.evaluate((value) => {
+      document.documentElement.dataset.font = value;
+    }, font);
+    await page.evaluate(() => document.fonts.ready);
+    await assertNoHorizontalOverflow(page);
+  });
+}

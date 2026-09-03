@@ -9,23 +9,33 @@
   position: sticky;
   top: 0;
   z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 56px;
+  padding: 0 12px;
   background: var(--ground);
   border-bottom: 1px solid var(--rule);
 }
 
+@media (min-width: 768px) {
+  .header {
+    gap: 16px;
+    padding: 0 40px;
+  }
+}
+
+/*
+  막대의 오른쪽 끝은 설정입니다(`SettingsMenu`). 그래서 내비게이션이 남은 자리를 다
+  차지하고, 그 안에서 이름은 왼쪽 · 절 링크는 오른쪽으로 갈립니다.
+*/
 .nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  min-height: 56px;
-  padding: 0 12px;
-}
-
-@media (min-width: 768px) {
-  .nav {
-    padding: 0 40px;
-  }
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 /*

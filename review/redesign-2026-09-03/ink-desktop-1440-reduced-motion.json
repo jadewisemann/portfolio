@@ -4,66 +4,66 @@
     "h": 900
   },
   "ground": "rgb(23,19,16)",
-  "strongInkSharePct": 6.96,
-  "detailSharePct": 3.27,
+  "strongInkSharePct": 6.52,
+  "detailSharePct": 3.28,
   "flatBandSharePct": 0,
-  "paintedSharePct": 24.65,
+  "paintedSharePct": 24.23,
   "emptyBandSharePct": 0,
   "blankBandSharePct": 0,
   "bands": [
     {
       "x0": 0,
-      "strongPct": 7.869,
-      "faintPct": 33.501,
-      "detailPct": 5.236
+      "strongPct": 7.689,
+      "faintPct": 33.349,
+      "detailPct": 5.347
     },
     {
       "x0": 160,
-      "strongPct": 8.912,
-      "faintPct": 37.633,
-      "detailPct": 4.474
+      "strongPct": 8.193,
+      "faintPct": 37.005,
+      "detailPct": 4.599
     },
     {
       "x0": 320,
-      "strongPct": 7.396,
-      "faintPct": 36.913,
-      "detailPct": 3.688
+      "strongPct": 6.951,
+      "faintPct": 36.399,
+      "detailPct": 3.631
     },
     {
       "x0": 480,
-      "strongPct": 7.966,
-      "faintPct": 36.359,
-      "detailPct": 4.808
+      "strongPct": 7.903,
+      "faintPct": 36.212,
+      "detailPct": 4.893
     },
     {
       "x0": 640,
-      "strongPct": 7.623,
-      "faintPct": 31.443,
-      "detailPct": 3.078
+      "strongPct": 7.019,
+      "faintPct": 30.71,
+      "detailPct": 2.822
     },
     {
       "x0": 800,
-      "strongPct": 6.192,
-      "faintPct": 18.256,
-      "detailPct": 1.687
+      "strongPct": 5.642,
+      "faintPct": 17.715,
+      "detailPct": 1.648
     },
     {
       "x0": 960,
-      "strongPct": 7.333,
-      "faintPct": 11.116,
-      "detailPct": 2.853
+      "strongPct": 7.003,
+      "faintPct": 10.9,
+      "detailPct": 3.207
     },
     {
       "x0": 1120,
-      "strongPct": 6.849,
-      "faintPct": 10.486,
-      "detailPct": 2.408
+      "strongPct": 5.951,
+      "faintPct": 9.765,
+      "detailPct": 2.201
     },
     {
       "x0": 1280,
-      "strongPct": 2.542,
-      "faintPct": 6.174,
-      "detailPct": 1.233
+      "strongPct": 2.331,
+      "faintPct": 6.023,
+      "detailPct": 1.177
     }
   ],
   "screens": 7.79

@@ -40,7 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# 폰트 원본 (5.7MB, OFL-1.1). npm run fonts:fetch 로 다시 받는다.
+# 폰트 원본 (합계 약 40MB, OFL-1.1). npm run fonts:fetch 로 다시 받는다.
+# 라이선스 고지는 src/fonts/licenses/ 에 커밋된다 (OFL-1.1 요구).
 /src/fonts/_src/
 
 # Playwright 산출물

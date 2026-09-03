@@ -4,84 +4,84 @@
     "h": 1080
   },
   "ground": "rgb(23,19,16)",
-  "strongInkSharePct": 7.47,
-  "detailSharePct": 2.34,
+  "strongInkSharePct": 6.97,
+  "detailSharePct": 2.41,
   "flatBandSharePct": 0,
-  "paintedSharePct": 25.07,
+  "paintedSharePct": 24.64,
   "emptyBandSharePct": 0,
   "blankBandSharePct": 0,
   "bands": [
     {
       "x0": 0,
-      "strongPct": 8.876,
-      "faintPct": 33.897,
-      "detailPct": 4.378
+      "strongPct": 8.428,
+      "faintPct": 33.72,
+      "detailPct": 4.438
     },
     {
       "x0": 160,
-      "strongPct": 8.927,
-      "faintPct": 37.034,
-      "detailPct": 3.688
+      "strongPct": 8.271,
+      "faintPct": 36.379,
+      "detailPct": 3.852
     },
     {
       "x0": 320,
-      "strongPct": 9.433,
-      "faintPct": 38.974,
-      "detailPct": 3.047
+      "strongPct": 8.634,
+      "faintPct": 37.982,
+      "detailPct": 3.11
     },
     {
       "x0": 480,
-      "strongPct": 7.561,
-      "faintPct": 37.073,
-      "detailPct": 2.976
+      "strongPct": 7.469,
+      "faintPct": 37.021,
+      "detailPct": 3.153
     },
     {
       "x0": 640,
-      "strongPct": 7.438,
-      "faintPct": 36.023,
-      "detailPct": 3.171
+      "strongPct": 7.514,
+      "faintPct": 36.024,
+      "detailPct": 3.111
     },
     {
       "x0": 800,
-      "strongPct": 8.985,
-      "faintPct": 34.655,
-      "detailPct": 1.628
+      "strongPct": 8.245,
+      "faintPct": 33.921,
+      "detailPct": 1.773
     },
     {
       "x0": 960,
-      "strongPct": 7.056,
-      "faintPct": 28.102,
-      "detailPct": 1.342
+      "strongPct": 6.917,
+      "faintPct": 27.981,
+      "detailPct": 1.441
     },
     {
       "x0": 1120,
-      "strongPct": 6.879,
-      "faintPct": 16.73,
-      "detailPct": 1.348
+      "strongPct": 5.957,
+      "faintPct": 15.773,
+      "detailPct": 1.292
     },
     {
       "x0": 1280,
-      "strongPct": 7.357,
-      "faintPct": 10.942,
-      "detailPct": 2.12
+      "strongPct": 6.918,
+      "faintPct": 10.592,
+      "detailPct": 2.252
     },
     {
       "x0": 1440,
-      "strongPct": 7.129,
-      "faintPct": 10.557,
-      "detailPct": 1.678
+      "strongPct": 6.537,
+      "faintPct": 10.264,
+      "detailPct": 1.853
     },
     {
       "x0": 1600,
-      "strongPct": 6.991,
-      "faintPct": 10.396,
-      "detailPct": 1.7
+      "strongPct": 6.013,
+      "faintPct": 9.594,
+      "detailPct": 1.616
     },
     {
       "x0": 1760,
-      "strongPct": 2.986,
-      "faintPct": 6.499,
-      "detailPct": 1.028
+      "strongPct": 2.788,
+      "faintPct": 6.431,
+      "detailPct": 1.009
     }
   ],
   "screens": 6.58

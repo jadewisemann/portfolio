@@ -3,20 +3,20 @@
     "w": 1920,
     "h": 1080
   },
-  "docHeight": 7108,
+  "docHeight": 7107,
   "screens": 6.58,
   "hero": {
     "top": 338,
-    "height": 262,
+    "height": 260,
     "width": 1840,
-    "fontSize": "276px",
-    "vhShare": 24.3
+    "fontSize": "274px",
+    "vhShare": 24.1
   },
-  "railWidthShare": 100,
-  "railAreaShare": 5.185,
+  "railWidthShare": 91.56,
+  "railAreaShare": 4.332,
   "seamBandWidth": null,
   "biggestType": null,
-  "bodyMeasure": 163,
+  "bodyMeasure": 159,
   "inkSpan": {
     "left": 0,
     "right": 1920,
