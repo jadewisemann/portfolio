@@ -47,14 +47,33 @@
   color: var(--ink-3);
 }
 
+/*
+  절 제목은 이제 낱말 하나입니다 (`main` · `skills` · `project` · `이력`).
+
+  `--text-title` 을 그대로 쓰지 않는 사유: 그 급수는 프로젝트 이름(YORR ·
+  FestiFriends · Pookjayo)이 쓰고 있습니다. 절 제목이 같은 급수면 「project」와
+  「YORR」이 같은 층으로 읽혀 목록의 머리와 항목이 구분되지 않습니다. 한 계단 위에
+  둡니다 — 넓은 화면에서 머리말 단 폭(20rem)을 넘지 않는 값입니다.
+*/
 .title {
   margin: 0;
-  font-size: var(--text-title);
+  font-size: 44px;
   font-weight: 600;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
   color: var(--ink);
-  text-wrap: balance;
+}
+
+@media (min-width: 640px) {
+  .title {
+    font-size: 56px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .title {
+    font-size: 80px;
+  }
 }
 
 .note {

@@ -8,7 +8,7 @@ import "./globals.css";
   씁니다 (DESIGN.md 1절 포지셔닝 v2, 근거 등급 A). PII 는 넣지 않습니다.
 */
 export const metadata: Metadata = {
-  title: "정유진 — 프론트엔드",
+  title: "jadewisemann — 프론트엔드",
   description: hero.lines[0],
 };
 

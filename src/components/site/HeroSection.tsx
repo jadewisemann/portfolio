@@ -16,7 +16,6 @@ export function HeroSection() {
     <section className={styles.hero} id={meta.id} aria-labelledby={`${meta.id}-title`}>
       <Reveal className={styles.eyebrow}>
         <p className={styles.role}>{profile.role}</p>
-        <p className={styles.handle}>{profile.handle}</p>
       </Reveal>
 
       <Reveal className={styles.nameWrap} delay={0.06}>

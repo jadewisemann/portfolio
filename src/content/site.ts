@@ -1,7 +1,7 @@
 /**
  * 한 장짜리 사이트(`/`)의 문구와 값입니다.
  *
- * 구성은 소유자 지시(2026-09-03)를 따릅니다 — **메인 · 스킬 · 프로젝트 · 이력**
+ * 구성은 소유자 지시(2026-09-03)를 따릅니다 — **main · skills · project · 이력**
  * 네 절을 이 순서로 세로로 쌓습니다. 참고한 형태는 aarab.me 입니다.
  *
  * 규칙은 `src/content/golden.ts` 와 같습니다:
@@ -32,30 +32,37 @@ export interface SectionMeta {
   note: string;
 }
 
-/** 소유자 지시의 순서 그대로입니다. 내비게이션도 이 배열 하나만 읽습니다. */
+/**
+ * 소유자 지시의 순서 그대로입니다. 내비게이션도 이 배열 하나만 읽습니다.
+ *
+ * 라벨 표기 (소유자 지시, 2026-09-03): `main` · `skills` · `project` · `이력`.
+ * 영문 셋은 소문자 단수형이고 넷째만 한국어입니다 — 소유자가 그 조합을 직접
+ * 지정했으므로 통일하지 않습니다. 이전의 긴 한국어 제목 문장(「무엇을 쓸 수 있는가」
+ * 따위)은 이 라벨로 대체됐습니다. 설명 한 문장(`note`)은 한국어로 남습니다.
+ */
 export const SECTIONS: readonly SectionMeta[] = [
   {
     id: "intro",
-    nav: "메인",
-    title: "정유진",
+    nav: "main",
+    title: "main",
     note: "프론트엔드 개발자",
   },
   {
     id: "skills",
-    nav: "스킬",
-    title: "무엇을 쓸 수 있는가",
+    nav: "skills",
+    title: "skills",
     note: "숙련도 등급을 함께 적는다. 근거가 없는 기술은 목록에서 뺐다.",
   },
   {
     id: "projects",
-    nav: "프로젝트",
-    title: "무엇을 만들었는가",
+    nav: "project",
+    title: "project",
     note: "세 개가 본류다. 자세한 구조와 코드 리딩은 각 프로젝트 페이지에 있다.",
   },
   {
     id: "experience",
     nav: "이력",
-    title: "어디를 지나왔는가",
+    title: "이력",
     note: "최근이 위다. 과정 · 프로젝트 · 자격을 한 줄로 세운다.",
   },
 ];
@@ -69,10 +76,13 @@ export const SECTIONS: readonly SectionMeta[] = [
  * 두 문장은 `CONTENT.md` §1 의 헤드라인 두 줄이고 등급 A 입니다.
  */
 export const profile = {
-  /** 화면에 크게 조판할 이름. */
-  name: "정유진",
-  /** 이름 옆의 라틴 표기. 등폭으로 작게 찍습니다. */
-  handle: "jadewisemann",
+  /**
+   * 화면에 크게 조판할 이름. 소유자 지시(2026-09-03)로 한글 이름 대신 라틴 표기를
+   * 씁니다. 글자 수가 3에서 12로 늘었으므로 급수 계단도 함께 다시 잡았습니다
+   * (`HeroSection.module.css`) — 한글 세 글자에 맞춘 264px 를 그대로 두면 어떤
+   * 뷰포트에서도 가로로 넘칩니다.
+   */
+  name: "jadewisemann",
   role: "프론트엔드 개발자",
   /** CONTENT.md §1 (등급 A) */
   lines: [

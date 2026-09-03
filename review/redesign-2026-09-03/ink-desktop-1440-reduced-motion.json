@@ -4,66 +4,66 @@
     "h": 900
   },
   "ground": "rgb(23,19,16)",
-  "strongInkSharePct": 5.98,
-  "detailSharePct": 2.94,
+  "strongInkSharePct": 6.96,
+  "detailSharePct": 3.27,
   "flatBandSharePct": 0,
-  "paintedSharePct": 23.38,
-  "emptyBandSharePct": 11.1,
+  "paintedSharePct": 24.65,
+  "emptyBandSharePct": 0,
   "blankBandSharePct": 0,
   "bands": [
     {
       "x0": 0,
-      "strongPct": 9.087,
-      "faintPct": 34.599,
-      "detailPct": 4.81
+      "strongPct": 7.869,
+      "faintPct": 33.501,
+      "detailPct": 5.236
     },
     {
       "x0": 160,
-      "strongPct": 11.231,
-      "faintPct": 39.226,
-      "detailPct": 5.245
+      "strongPct": 8.912,
+      "faintPct": 37.633,
+      "detailPct": 4.474
     },
     {
       "x0": 320,
-      "strongPct": 12.686,
-      "faintPct": 40.321,
-      "detailPct": 4.062
+      "strongPct": 7.396,
+      "faintPct": 36.913,
+      "detailPct": 3.688
     },
     {
       "x0": 480,
-      "strongPct": 9.471,
-      "faintPct": 37.69,
-      "detailPct": 4.815
+      "strongPct": 7.966,
+      "faintPct": 36.359,
+      "detailPct": 4.808
     },
     {
       "x0": 640,
-      "strongPct": 10.227,
-      "faintPct": 34.017,
-      "detailPct": 3.248
+      "strongPct": 7.623,
+      "faintPct": 31.443,
+      "detailPct": 3.078
     },
     {
       "x0": 800,
-      "strongPct": 0,
-      "faintPct": 12.169,
-      "detailPct": 0.578
+      "strongPct": 6.192,
+      "faintPct": 18.256,
+      "detailPct": 1.687
     },
     {
       "x0": 960,
-      "strongPct": 0.498,
-      "faintPct": 4.301,
-      "detailPct": 1.497
+      "strongPct": 7.333,
+      "faintPct": 11.116,
+      "detailPct": 2.853
     },
     {
       "x0": 1120,
-      "strongPct": 0.401,
-      "faintPct": 4.184,
-      "detailPct": 1.358
+      "strongPct": 6.849,
+      "faintPct": 10.486,
+      "detailPct": 2.408
     },
     {
       "x0": 1280,
-      "strongPct": 0.201,
-      "faintPct": 3.869,
-      "detailPct": 0.875
+      "strongPct": 2.542,
+      "faintPct": 6.174,
+      "detailPct": 1.233
     }
   ],
   "screens": 7.79

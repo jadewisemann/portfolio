@@ -42,7 +42,7 @@ export function SiteNav() {
     <header className={styles.header}>
       <nav className={styles.nav} aria-label="절로 이동">
         <a className={styles.brand} href="#main">
-          정유진
+          jadewisemann
         </a>
         <ol className={styles.list}>
           {SECTIONS.map((section, index) => (

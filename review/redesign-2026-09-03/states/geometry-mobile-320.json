@@ -3,14 +3,14 @@
     "w": 320,
     "h": 640
   },
-  "docHeight": 10277,
-  "screens": 16.06,
+  "docHeight": 10232,
+  "screens": 15.99,
   "hero": {
-    "top": 197,
-    "height": 81,
+    "top": 165,
+    "height": 40,
     "width": 280,
-    "fontSize": "88px",
-    "vhShare": 12.6
+    "fontSize": "42px",
+    "vhShare": 6.2
   },
   "railWidthShare": 100,
   "railAreaShare": 8.75,

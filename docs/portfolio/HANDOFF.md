@@ -12,7 +12,7 @@
 |---|---|
 | 노드 | `GOLDEN_FIX` (BLOCKED — 사유는 아래 §2) |
 | 사이트 | `/` 한 장 + `/projects/yorr` |
-| 구성 | **메인 · 스킬 · 프로젝트 · 이력** 네 절을 세로로 쌓는다 |
+| 구성 | **main · skills · project · 이력** 네 절을 세로로 쌓는다 |
 | 배포 | 안 됨. Vercel 임포트만 하면 된다 (`DEPLOY.md`) |
 | 검증 | lint · typecheck · 104 테스트 · build · e2e 8 전부 통과 |
 
@@ -21,6 +21,9 @@
 
 - 3D 회랑 구성 전체를 삭제했다 — 히어로 다이오라마 · 회랑 캔버스 · 갤러리 · 필름스트립 ·
   평면 · 안개 · 텍스처 · 정적 대안 · 기하 테스트 · `e2e/lazy-mount.spec.ts`.
+- **화면에 찍는 이름은 `jadewisemann` 이다.** 히어로 급수 계단은 그 열두 글자에
+  맞춰 실측으로 잡혀 있다 (낱말 폭 = 급수 × 6.40). 이름을 다시 바꾸면 계단도 다시
+  재야 한다 — `HeroSection.module.css` 의 주석에 방법이 있다.
 - 절의 순서는 `src/content/site.ts` 의 `SECTIONS` 배열 하나가 소유한다.
 - 진입 전이는 `src/components/site/Reveal.tsx` **하나뿐**이고, Motion 허용 목록도
   그 한 줄이다.

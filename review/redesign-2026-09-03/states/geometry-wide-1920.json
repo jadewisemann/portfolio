@@ -6,11 +6,11 @@
   "docHeight": 7108,
   "screens": 6.58,
   "hero": {
-    "top": 348,
-    "height": 243,
+    "top": 338,
+    "height": 262,
     "width": 1840,
-    "fontSize": "264px",
-    "vhShare": 22.5
+    "fontSize": "276px",
+    "vhShare": 24.3
   },
   "railWidthShare": 100,
   "railAreaShare": 5.185,

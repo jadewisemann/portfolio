@@ -70,44 +70,75 @@
   background: var(--rule);
 }
 
-.handle {
-  margin: 0;
-  color: var(--ink-3);
-  letter-spacing: 0.06em;
-}
-
 .nameWrap {
   min-width: 0;
 }
 
 /*
   이름은 화면에서 가장 큰 물체입니다. clamp() 를 쓰지 않고 이산 계단으로 올립니다
-  (DESIGN_SYSTEM.md §4). 한글 세 글자이므로 자간을 음수로 조여야 덩어리로 읽힙니다.
+  (DESIGN_SYSTEM.md §4).
+
+  계단을 다시 잡은 사유 (2026-09-03): 이름이 한글 세 글자에서 라틴 열두 글자로
+  바뀌었습니다. 글자 수가 네 배가 되었으므로 이전 계단(88 ~ 264px)을 그대로 두면
+  모든 뷰포트에서 가로로 넘칩니다. `jadewisemann` 은 끊을 자리가 없는 한 낱말이므로
+  줄바꿈으로 도망칠 수도 없습니다.
+
+  값을 고른 방법 — 눈이 아니라 실측입니다. 이 조판에서 낱말의 폭은 급수의 **6.40배**로
+  일정합니다(자간 -0.03em 포함, 브라우저에서 19개 폭을 재어 확인). 각 단계의 급수는
+  그 단계가 시작되는 폭에서 좌우 여백을 뺀 자리를 6.40 으로 나눈 값이고, 거기서 3% 를
+  더 뺐습니다 — 웹폰트가 스왑되기 전 대체 글꼴이 더 넓을 수 있기 때문입니다. 넘침 자체는
+  `e2e/geometry.spec.ts` 가 기계로 막습니다.
+
+  자간은 -0.03em 입니다. 한글에 쓰던 -0.045em 은 라틴에서 글자를 서로 먹습니다.
 */
 .name {
   margin: 0;
-  font-size: 88px;
+  font-size: 42px;
   font-weight: 600;
-  line-height: 0.92;
-  letter-spacing: -0.045em;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
   color: var(--ink);
 }
 
 @media (min-width: 480px) {
   .name {
-    font-size: 128px;
+    font-size: 66px;
   }
 }
 
 @media (min-width: 768px) {
   .name {
-    font-size: 200px;
+    font-size: 104px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .name {
+    font-size: 142px;
   }
 }
 
 @media (min-width: 1280px) {
   .name {
-    font-size: 264px;
+    font-size: 180px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .name {
+    font-size: 204px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .name {
+    font-size: 228px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .name {
+    font-size: 276px;
   }
 }
 
