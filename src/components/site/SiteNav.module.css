@@ -1,27 +1,131 @@
 /*
-  상단 고정 막대. 높이는 56px 로 두어 globals.css 의 `[id] { scroll-margin-top: 56px }`
-  와 정확히 맞춥니다 — 앵커로 이동했을 때 절 머리말이 막대 뒤로 숨지 않습니다.
+  떠 있는 유리 알약 (2026-09-03, 소유자 지시 — "애플의 리퀴드 글라스 같은 내비").
+  폭은 내용만큼이고 가운데에 뜬다 (09-04, "전체 페이지를 먹어버리는 게 별로" — 좌우로
+  꽉 채우던 것을 줄였다). 숨김의 `translate` 도 가운데 정렬의 -50% 를 유지해야 한다.
 
-  배경은 불투명한 지면색입니다. `backdrop-filter` 를 쓰지 않으므로(모션 소유권 게이트)
-  반투명 유리로 만들지 않습니다.
+  참조 화면의 내비는 지면에 붙은 막대가 아니라 위에 떠 있는 반투명 알약이고, 뒤의
+  배경장이 유리를 통해 흐릿하게 비친다. 그래서 `position: fixed` 이고 사방에 여백이 있다.
+
+  재질은 globals.css 의 `glass` 유틸리티다 (`SiteNav.tsx` 가 클래스를 단다). 여기는
+  모양(알약)과 자리만 정한다.
+
+  높이 56px 은 그대로다 — `[id] { scroll-margin-top }` 이 이 값 + 여백으로 계산된다.
 */
 .header {
-  position: sticky;
-  top: 0;
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  translate: -50% 0;
   z-index: 3;
   display: flex;
   align-items: center;
-  gap: 4px;
-  min-height: 56px;
+  gap: 8px;
+  width: max-content;
+  max-width: calc(100vw - 24px);
+  min-height: 52px;
   padding: 0 12px;
-  background: var(--ground);
-  border-bottom: 1px solid var(--rule);
+  border-radius: 999px;
+  /*
+    숨김/표시 전이. 두 상태만 있고 값은 CSS 가 소유한다 (`SiteNav.tsx` 주석).
+    `translate` 와 `opacity` 만 움직인다.
+  */
+  transition-property: translate, opacity;
+  transition-duration: var(--duration-sort);
+  transition-timing-function: var(--ease-settle);
+}
+
+.header[data-hidden] {
+  translate: -50% -140%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ───────────────────────────────────────────────────── 페이지 표시 */
+
+.pager {
+  position: fixed;
+  right: 14px;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 3;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+/* 좁은 화면에서는 본문 여백이 없어 점이 글자를 덮는다. 768px 부터 내보낸다. */
+@media (min-width: 768px) {
+  .pager {
+    display: flex;
+    right: 22px;
+  }
+}
+
+.counter {
+  margin: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  writing-mode: vertical-rl;
+}
+
+.counterOf {
+  color: var(--ink-3);
+}
+
+.dots {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+  점 하나. 터치 목표 44px 를 위해 히트 영역은 크고 보이는 점은 작다 (DESIGN_SYSTEM.md §7).
+  현재 절은 강조색이고 길어진다 — 색만으로 구별하지 않는다 (§3).
+*/
+.dot {
+  display: block;
+  width: 24px;
+  height: 24px;
+  position: relative;
+}
+
+.dot::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ink-3);
+  transition-property: height, background-color;
+  transition-duration: var(--duration-state);
+  transition-timing-function: var(--ease-settle);
+}
+
+.dot[aria-current="true"]::before {
+  height: 22px;
+  background: var(--accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dot:hover::before {
+    background: var(--ink);
+  }
 }
 
 @media (min-width: 768px) {
   .header {
-    gap: 16px;
-    padding: 0 40px;
+    top: 16px;
+    gap: 20px;
+    padding: 0 24px;
   }
 }
 
@@ -32,9 +136,7 @@
 .nav {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex: 1 1 auto;
+  gap: 20px;
   min-width: 0;
 }
 
@@ -45,9 +147,9 @@
 */
 .brand {
   display: none;
-  font-family: var(--font-mono), monospace;
-  font-size: var(--text-note);
-  letter-spacing: 0.08em;
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0;
   color: var(--ink-2);
   text-decoration-line: none;
   align-items: center;
@@ -89,8 +191,9 @@
   gap: 6px;
   min-height: 44px;
   padding: 14px 8px;
-  font-family: var(--font-mono), monospace;
-  font-size: var(--text-note);
+  font-family: var(--font-display);
+  font-size: 17px;
+  letter-spacing: 0;
   color: var(--ink-3);
   text-decoration-line: none;
   border-bottom: 1px solid transparent;
@@ -101,7 +204,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .link:hover {
-    color: var(--ink);
+    color: var(--accent);
   }
 }
 

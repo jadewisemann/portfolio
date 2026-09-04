@@ -6,7 +6,7 @@ import localFont from "next/font/local";
 
   | 조합 | 라틴 | 한글 | 등폭 |
   |---|---|---|---|
-  | `grotesk` (기본) | Space Grotesk | Gothic A1 | JetBrains Mono |
+  | `grotesk` (기본) | Space Grotesk | Pretendard | Pretendard (등폭 없음) |
   | `serif` | Fraunces | Noto Serif KR | JetBrains Mono |
   | `plex` | IBM Plex Sans KR (겸용) | IBM Plex Sans KR | IBM Plex Mono |
 
@@ -16,13 +16,37 @@ import localFont from "next/font/local";
   글자만 남긴 woff2 를 `npm run fonts` 로 굽고, 그것을 `next/font/local` 로 싣습니다.
   한글 한 웨이트가 원본 2.2 ~ 23MB 에서 53 ~ 109KB 가 됩니다.
 
+  **등폭은 없습니다** (소유자 지시, 2026-09-04: "모노폰트도 그냥 프리텐다드로 덮어서").
+  `--font-mono` 는 세 조합 모두 Pretendard 를 가리킵니다 — 라벨 · 숫자 · 캡션이 본문과
+  같은 서체로 조판되고, 등폭 ↔ 한글의 x-height 불일치가 사라집니다. JetBrains Mono 와
+  IBM Plex Mono 파일은 서브셋 파이프라인에 남아 있지만 스택에서는 읽히지 않습니다.
+
   **라틴 서체에는 한글이 없습니다.** 스택이 `라틴, 한글, 대체` 순이므로 한글 글리프는
   둘째 자리에서 그려집니다. 이것이 의도된 조판입니다 — 라틴은 성격을, 한글은 가독성을
   맡습니다.
 
-  `preload` 는 기본 조합에만 켭니다. 나머지 여섯 파일은 그 조합을 고른 사용자만
-  내려받습니다 — 켜 두면 아무도 안 쓰는 서체를 첫 화면에서 여섯 개 받습니다.
+  이 셋과 별개로 **디스플레이 서체가 하나** 더 있습니다 — Instrument Serif 입니다.
+  조합에 딸리지 않고 세 조합 모두에서 같이 실리며, 이름 · 절 제목 · 큰 부름말만
+  맡습니다 (`ART_DIRECTION.md` 3절). 라틴 전용이므로 스택은 언제나
+  `Instrument Serif, <조합의 본문 스택>` 이고 한글은 둘째 자리에서 그려집니다.
+
+  `preload` 는 기본 조합과 디스플레이에만 켭니다. 나머지 여섯 파일은 그 조합을 고른
+  사용자만 내려받습니다 — 켜 두면 아무도 안 쓰는 서체를 첫 화면에서 여섯 개 받습니다.
+  디스플레이를 preload 하는 이유는 그것이 첫 화면에서 가장 큰 물체이기 때문입니다.
+  늦게 스왑되면 화면의 절반이 다시 그려집니다.
 */
+
+/* ──────────────────────────────────────────── display (조합과 무관) */
+
+export const instrumentSerif = localFont({
+  src: [
+    { path: "./instrument-serif-400.woff2", weight: "400", style: "normal" },
+    { path: "./instrument-serif-400-italic.woff2", weight: "400", style: "italic" },
+  ],
+  variable: "--font-instrument-serif",
+  display: "swap",
+  adjustFontFallback: false,
+});
 
 /* ─────────────────────────────────────────────────── grotesk (기본) */
 
@@ -36,12 +60,12 @@ export const spaceGrotesk = localFont({
   adjustFontFallback: false,
 });
 
-export const gothicA1 = localFont({
+export const pretendard = localFont({
   src: [
-    { path: "./gothic-a1-400.woff2", weight: "400", style: "normal" },
-    { path: "./gothic-a1-600.woff2", weight: "600", style: "normal" },
+    { path: "./pretendard-400.woff2", weight: "400", style: "normal" },
+    { path: "./pretendard-600.woff2", weight: "600", style: "normal" },
   ],
-  variable: "--font-gothic-a1",
+  variable: "--font-pretendard",
   display: "swap",
   fallback: ["Apple SD Gothic Neo", "Malgun Gothic", "system-ui", "sans-serif"],
   adjustFontFallback: false,
@@ -108,8 +132,9 @@ export const plexMono = localFont({
 
 /** `<html>` 에 한 번에 붙일 CSS 변수 클래스들. 순서는 의미가 없습니다. */
 export const fontVariables = [
+  instrumentSerif.variable,
   spaceGrotesk.variable,
-  gothicA1.variable,
+  pretendard.variable,
   jetbrainsMono.variable,
   fraunces.variable,
   notoSerifKR.variable,

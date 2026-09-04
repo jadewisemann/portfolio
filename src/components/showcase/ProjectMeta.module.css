@@ -52,9 +52,11 @@
     "28px 다음이 곧장 히어로"). 복도 캡션의 프로젝트 이름이 이 계단에서
     무게를 받는 첫 자리다.
   */
+  font-family: var(--font-display);
   font-size: var(--text-title);
-  font-weight: 600;
-  line-height: 1.1;
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
   color: var(--ink);
 }
 

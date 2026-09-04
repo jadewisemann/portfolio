@@ -7,9 +7,12 @@
 //
 // 서체 조합 세 벌 (화면에서 고를 수 있다 — `src/components/site/SettingsMenu.tsx`):
 //
-//   grotesk — Space Grotesk · Gothic A1    · JetBrains Mono   (기본)
+//   grotesk — Space Grotesk · Pretendard   · Pretendard(등폭 자리)   (기본)
 //   serif   — Fraunces      · Noto Serif KR · JetBrains Mono
 //   plex    — IBM Plex Sans KR (라틴 · 한글 겸용) · IBM Plex Mono
+//
+// 디스플레이 서체 Instrument Serif 는 조합에 딸리지 않는다 — 세 조합 모두에서 이름과
+// 절 제목을 맡는다. 라틴 전용이라 한글 글리프는 굽지 않는다.
 //
 // 라틴 서체에는 한글이 없다. 글꼴 스택이 `라틴, 한글, 대체` 순이므로 한글 글리프는
 // 둘째 자리에서 그려진다 — 그래서 라틴 서체의 필수 문자 가드는 ASCII 만 요구한다.
@@ -92,9 +95,16 @@ const targets = [
   // ── grotesk (기본) ──
   { file: "SpaceGrotesk.ttf", out: "space-grotesk-400.woff2", korean: false, required: ASCII, axes: { wght: 400 } },
   { file: "SpaceGrotesk.ttf", out: "space-grotesk-600.woff2", korean: false, required: ASCII, axes: { wght: 600 } },
-  { file: "GothicA1-Regular.ttf", out: "gothic-a1-400.woff2", korean: true, required: ALWAYS_TEXT },
-  { file: "GothicA1-SemiBold.ttf", out: "gothic-a1-600.woff2", korean: true, required: ALWAYS_TEXT },
+  // Pretendard 는 한글 본문이자 등폭 자리도 겸한다 (소유자, 2026-09-04). 그래서 한글과
+  // 등폭 전용 기호(ALWAYS_MONO)를 둘 다 담는다.
+  { file: "Pretendard-Regular.otf", out: "pretendard-400.woff2", korean: true, required: ALWAYS_TEXT + ALWAYS_MONO },
+  { file: "Pretendard-SemiBold.otf", out: "pretendard-600.woff2", korean: true, required: ALWAYS_TEXT },
   { file: "JetBrainsMono.ttf", out: "jetbrains-mono-400.woff2", korean: false, required: ASCII, axes: { wght: 400 } },
+
+  // ── display (조합과 무관하게 항상 실린다) ──
+  { file: "InstrumentSerif-Regular.ttf", out: "instrument-serif-400.woff2", korean: false, required: ASCII },
+  // 이탤릭은 절 번호(유령 숫자)와 눈썹줄이 쓴다. 합성 기울임은 세리프를 망가뜨린다.
+  { file: "InstrumentSerif-Italic.ttf", out: "instrument-serif-400-italic.woff2", korean: false, required: ASCII },
 
   // ── serif ──
   { file: "Fraunces.ttf", out: "fraunces-400.woff2", korean: false, required: ASCII, axes: { wght: 400, opsz: 144, SOFT: 0, WONK: 1 } },

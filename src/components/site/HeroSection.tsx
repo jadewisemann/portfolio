@@ -3,47 +3,23 @@ import { Reveal } from "./Reveal";
 import styles from "./HeroSection.module.css";
 
 /**
- * 첫 절(메인). 뷰포트를 이름 하나가 지배하고, 나머지는 두 문장과 숫자 세 개입니다.
+ * 첫 절(메인) — 이름 하나. 뷰포트를 이름이 지배하고 다른 글자는 없다
+ * (`CLAUDE.md` — "첫 페이지에서는 글자가 거의 없어야 해").
  *
- * 왜 이만큼만 두는가: 첫 화면에서 글자가 거의 없어야 한다는 소유자 지시
- * (`CLAUDE.md` — "첫 페이지에서는 글자가 거의 없어야 해") 때문입니다. 설명은 아래
- * 절들이 맡고, 여기서는 이름과 포지셔닝 두 문장만 세웁니다.
+ * 역할 · 포지셔닝 두 문장 · 실측 숫자는 여기 없다 (소유자 지시, 2026-09-04). 하루 전에
+ * 「2장 유리 카드」로 두었던 것을 "너무 어색하다"고 걷어냈다. 그 사실들은
+ * `src/content/site.ts` 의 `profile` 에 그대로 있고, 깊이가 필요한 사람은 프로젝트
+ * 페이지로 간다 — "screenshots and keywords on the surface, depth one click away".
  */
 export function HeroSection() {
   const meta = SECTIONS[0];
 
   return (
     <section className={styles.hero} id={meta.id} aria-labelledby={`${meta.id}-title`}>
-      <Reveal className={styles.eyebrow}>
-        <p className={styles.role}>{profile.role}</p>
-      </Reveal>
-
-      <Reveal className={styles.nameWrap} delay={0.06}>
+      <Reveal className={styles.nameWrap}>
         <h1 className={styles.name} id={`${meta.id}-title`}>
           {profile.name}
         </h1>
-      </Reveal>
-
-      <Reveal className={styles.lines} delay={0.12}>
-        {profile.lines.map((line) => (
-          <p className={styles.line} key={line}>
-            {line}
-          </p>
-        ))}
-      </Reveal>
-
-      <Reveal className={styles.figuresWrap} delay={0.18}>
-        <dl className={styles.figures}>
-          {profile.figures.map((figure) => (
-            <div className={styles.figure} key={figure.label}>
-              <dt className={styles.figureLabel}>{figure.label}</dt>
-              <dd className={styles.figureValue}>
-                <span className={styles.figureNumber}>{figure.value}</span>
-                <span className={styles.figureUnit}>{figure.unit}</span>
-              </dd>
-            </div>
-          ))}
-        </dl>
       </Reveal>
     </section>
   );

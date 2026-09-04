@@ -48,25 +48,31 @@
   min-width: 0;
 }
 
+/*
+  항목의 갈래. 라벨이므로 사이트의 라벨 조판(등폭 · 대문자 · 넓은 자간)을 씁니다.
+  한글에는 대문자가 없으므로 자간만 적용됩니다 — 「프로젝트」·「자격」은 그대로입니다.
+*/
 .kind {
   margin: 0 0 4px;
   font-family: var(--font-mono), monospace;
   font-size: 11px;
-  letter-spacing: 0.14em;
-  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
 }
 
 .title {
   margin: 0;
-  font-size: 17px;
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 400;
   line-height: 1.5;
   color: var(--ink);
 }
 
 @media (min-width: 768px) {
   .title {
-    font-size: 19px;
+    font-size: 26px;
   }
 }
 

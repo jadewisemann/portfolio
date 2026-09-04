@@ -4,96 +4,114 @@
 
 :root {
   /*
-    다크가 정본이고, 라이트는 **설계된 두 번째 상태**입니다 (소유자 지시, 2026-09-03).
+    팔레트 교체 (소유자 지시, 2026-09-03): 참조는 aarab.me 이고, 추출한 값과 구조는
+    `docs/portfolio/REF_AARAB.md` 에 있습니다. 이전 팔레트(따뜻한 갈색 지면 #171310 ·
+    강조색 없음)는 이 라운드에서 통째로 갈렸습니다.
 
-    2026-09-01 결정은 「다크가 유일한 테마이고 두 번째 상태는 없다」였습니다. 그 결정의
-    근거는 "아무도 보지 않는 반쯤 유지되는 테마는 없는 것보다 나쁘다"였고, 그 근거는
-    지금도 유효합니다 — 그래서 라이트를 되살리되 **다크의 반전으로 만들지 않고** 값마다
-    대비를 다시 계산했습니다 (아래 `[data-theme="light"]` 블록의 각 줄).
+    바뀐 것은 값과 **강조색의 존재**입니다. 이전 체계에는 강조색이 없었고 신호색 둘만
+    있었습니다. 지금은 시안 하나가 강조색이고, 신호 `built` 가 그 색을 겸합니다 —
+    화면에 채도 있는 색이 하나뿐이어야 그 하나가 신호로 읽힙니다.
 
-    분기는 `prefers-color-scheme` 미디어 쿼리가 아니라 `<html>` 의 `data-theme` 입니다.
-    사용자가 화면에서 고를 수 있어야 하므로 OS 설정이 최종 권위자가 될 수 없습니다.
-    「시스템」을 고르면 `layout.tsx` 의 인라인 스크립트가 첫 페인트 전에
-    `prefers-color-scheme` 을 읽어 그 결과를 `data-theme` 에 씁니다 — 미디어 쿼리를
-    CSS 에 두 벌로 두지 않는 이유입니다.
+    지면은 순검정이 아니라 청색으로 기운 #050507 입니다. 순검정은 OLED 에서 스크롤 중
+    검은 뭉침이 생기고, 이 사이트의 배경장(아래 `body::before`)이 시안 계열이므로
+    지면도 같은 쪽으로 아주 조금 기울어야 배경장의 가장자리가 띠로 보이지 않습니다.
 
-    값은 이전 `/t1` 톤 실험(어두운 지면)에서 그대로 승격했습니다. 대비는 WCAG
-    상대 휘도로 재계산했고 값은 아래 각 줄의 것과 일치합니다.
+    면은 넷뿐입니다 — 지면 · `--ground-2` · `--ground-sub` · 액자. 밝기 차가 1.07 ·
+    1.18 로 매우 작습니다. 면을 가르는 일은 밝기가 아니라 괘선(`--rule`)이 합니다.
+    이것이 참조 사이트의 구조이고, 그 구조를 그대로 가져왔습니다.
   */
   color-scheme: dark;
-  --ground: #171310;
-  --ground-sub: #eee9df; /* 대비 15.26 */
-  --ink: #f5f2ec; /* 대비 16.53 */
-  --ink-2: #cdc6b8; /* 대비 10.88 */
-  --ink-3: #8f887a; /* 대비 5.25 */
-  --rule: #4a443b; /* 대비 1.92 */
-  --signal-built: #7fbcc6; /* 대비 8.72 */
-  --signal-reverted: #dfa55c; /* 대비 8.51 */
+
+  --ground: #050507;
+  --ground-2: #0f0f16; /* 대비(대 --ground) 1.07 — 카드 · 히어로의 빛 웅덩이 */
+  --ground-sub: #1a1a24; /* 대비 1.18 — 카드 호버 · 한 단 위의 면 */
+
+  --ink: #f1f2f3; /* 대비 18.17 */
+  --ink-2: #c9d1da; /* 대비 13.20 */
+  --ink-3: #98a4b3; /* 대비 8.04 */
+
+  /*
+    괘선. 참조 사이트의 값은 #181825 이고 이 지면에서 대비가 1.16 입니다 —
+    DESIGN_SYSTEM.md §3 의 괘선 하한 1.6 을 넘지 못합니다. 그 사이트는 카드의 반투명
+    면이 경계를 대신 만들지만(그리고 그 면은 backdrop-filter 로 만듭니다), 이 저장소는
+    블러를 쓰지 않으므로(MOTION_LANGUAGE.md 8절) 괘선이 유일한 경계입니다.
+    그래서 값만 하한 위로 올렸습니다.
+  */
+  --rule: #3a3a52; /* 대비 1.85 */
+  --rule-strong: #4a4a68; /* 대비 2.40 — 호버 · 현재 위치 */
+
+  /*
+    강조색 하나. 참조 사이트의 `--accent` 와 같은 값입니다. 대비 11.62 이므로 본문
+    급수에서도 텍스트로 쓸 수 있습니다 — 그래도 텍스트로는 링크와 현재 위치에만
+    씁니다. 채도가 있는 색이 문장 안에 흩어지면 신호가 아니라 장식이 됩니다.
+  */
+  --accent: #5fd2f2; /* 대비 11.62 */
+
+  --signal-built: #5fd2f2; /* 대비 11.62 — 강조색을 겸한다 */
+  --signal-reverted: #dfa55c; /* 대비 9.38 */
 
   /*
     구조는 유지하고 값만 정본을 가리키는 간접 토큰 세 개.
 
-    - `--frame-mat`: PlaceholderFrame 의 마운트(바깥 면) 색. 대비 12.27 —
-      지면 위의 밝은 물체로 보이도록 지면보다 뚜렷이 밝다.
-    - `--chip-border`, `--nav-current-border`: 키워드 칩 테두리 · 복도 내비 현재
-      위치 테두리. 기본은 각각 --rule · --ink 를 가리킨다 — 표시선이지 글자색이
-      아니므로 DESIGN_SYSTEM.md §3 의 "신호색을 텍스트로 쓰지 않는다"를 지킨다.
+    - `--frame-mat`: PlaceholderFrame 의 마운트(바깥 면) 색. 지면 위의 밝은 물체로
+      보이도록 지면보다 뚜렷이 밝다.
+    - `--chip-border`, `--nav-current-border`: 키워드 칩 테두리 · 내비 현재 위치
+      테두리. 후자는 강조색을 가리킨다 — 표시선이지 글자색이 아니므로
+      DESIGN_SYSTEM.md §3 의 "신호색을 텍스트로 쓰지 않는다"를 지킨다.
   */
-  --frame-mat: #d9d2c2; /* 대비 12.27 */
+  --frame-mat: #d7dbe2; /* 대비 14.66 */
   --chip-border: var(--rule);
-  --nav-current-border: var(--ink);
+  --nav-current-border: var(--accent);
 
   /*
-    씬에 빛을 준다 (GOLDEN_FIX 2 — "the scene has no light"). 셋 다 장식 전용이고
-    텍스트 색으로 쓰지 않는다 (DESIGN_SYSTEM.md §3 의 신호색 규칙과 같은 이유).
-
-    - `--ground-2`: 방(--ground)과 액자 매트(--frame-mat) 사이의 세 번째 값.
-      히어로 · 복도의 배경에 아주 낮은 불투명도로만 섞어(색이 아니라 값의 웅덩이)
-      "빛이 도는 방"을 만든다. 대비 1.30:1 — 큰 밝은 사각형으로 보이면 안 되므로
-      의도적으로 낮다.
-    - `--frame-edge-lit` / `--frame-edge-shadow`: 액자 매트의 경사(bevel) 두 면.
-      좌상단에서 오는 빛 하나를 사이트 전체 액자에 일관되게 적용한다 — 방향이
-      있는 빛의 유일한 증거다. `--frame-mat` 기준 대비 1.11:1 / 2.75:1(둘 다
-      본문이 아니라 1px 안팎의 장식선이므로 §3 의 4.5:1 하한 대상이 아니다).
+    액자 매트의 경사(bevel) 두 면. 좌상단에서 오는 빛 하나를 사이트 전체 액자에
+    일관되게 적용한다 — 방향이 있는 빛의 유일한 증거다. 본문이 아니라 1px 안팎의
+    장식선이므로 §3 의 4.5:1 하한 대상이 아니다.
   */
-  --ground-2: #2e2a25; /* 대비(대 --ground) 1.30 */
-  --frame-edge-lit: #e6e0d5; /* 대비(대 --frame-mat) 1.15 */
-  --frame-edge-shadow: #655f57; /* 대비(대 --frame-mat) 4.19 — 안개(DepthFog) 아래에서도
-    경사가 살아남도록 처음 값(#827c72, 2.75:1)보다 더 어둡게 다시 잡았다. */
+  --frame-edge-lit: #eef1f5; /* 대비(대 --frame-mat) 1.23 */
+  --frame-edge-shadow: #6b7280; /* 대비(대 --frame-mat) 3.48 */
+
+  /* 카드의 모서리. 참조 사이트의 `--radius` 와 같은 값이다. */
+  --radius: 12px;
+  --radius-card: 20px;
 }
 
 /*
   라이트 — 설계된 두 번째 상태 (소유자 지시, 2026-09-03).
 
-  다크의 반전이 아닙니다. 역할은 같게 두고 값은 새로 잡았습니다. 대비는 전부
-  `--ground`(#faf7f1) 기준 WCAG 상대 휘도 실측값이고, `DESIGN_SYSTEM.md` §3 의 하한
-  (본문 7.0 · 주석 4.5 · 괘선 1.6)을 전부 넘깁니다.
+  참조 사이트에는 라이트가 없습니다. 그러므로 이 상태는 **가져온 것이 아니라 파생한
+  것**입니다: 역할(지면 · 면 넷 · 괘선 · 강조 하나)은 다크와 같게 두고 값만 새로
+  잡았습니다. 다크의 반전이 아닙니다.
 
-  지면은 순백이 아니라 따뜻한 종이입니다 — 다크 지면이 따뜻한 갈색이므로 두 상태가
-  같은 방의 낮과 밤으로 읽혀야 합니다. 순백은 이 팔레트에서 액자의 안쪽 면 하나에만
-  씁니다(지면에서 가장 밝은 물체라는 §3 의 역할 정의를 라이트에서도 지키려면 지면보다
-  밝은 값이 하나 필요합니다).
+  대비는 전부 `--ground`(#faf8f5) 기준 WCAG 상대 휘도 실측값이고, DESIGN_SYSTEM.md §3
+  의 하한(본문 7.0 · 주석 4.5 · 괘선 1.6)을 전부 넘깁니다.
 
-  괘선 기판의 세기는 다크와 같은 24% 입니다. 우연이 아니라 계산입니다 — 24% 로 섞은
-  결과의 대비가 다크에서 1.128, 라이트에서 1.122 로 사실상 같습니다.
+  강조색은 시안 그대로 쓸 수 없습니다 — #5fd2f2 는 흰 지면에서 대비 1.5 라 글자로도
+  선으로도 읽히지 않습니다. 같은 색상각을 유지한 채 명도만 낮춰 #0b6079 로 잡았습니다.
 */
 :root[data-theme="light"] {
   color-scheme: light;
 
-  --ground: #faf7f1;
-  --ground-sub: #ffffff; /* 액자의 안쪽 면 — 지면보다 밝은 유일한 값 */
-  --ink: #17130f; /* 대비 17.28 */
-  --ink-2: #46403a; /* 대비 9.56 */
-  --ink-3: #6b6458; /* 대비 5.47 */
-  --rule: #c8c1b2; /* 대비 1.67 */
-  --signal-built: #2a7583; /* 대비 4.95 */
+  --ground: #faf8f5;
+  --ground-2: #f2f1ee; /* 대비 1.07 */
+  --ground-sub: #ffffff; /* 대비 1.06 — 지면보다 밝은 유일한 값 */
+
+  --ink: #0b0b14; /* 대비 18.48 */
+  --ink-2: #3f4650; /* 대비 8.99 */
+  --ink-3: #5f6874; /* 대비 5.33 */
+
+  --rule: #bcc1cb; /* 대비 1.70 */
+  --rule-strong: #8f97a3; /* 대비 2.78 */
+
+  --accent: #0b6079; /* 대비 6.68 */
+
+  --signal-built: #0b6079; /* 대비 6.68 */
   --signal-reverted: #8f5410; /* 대비 5.70 */
 
-  --frame-mat: #e8e2d5; /* 대비 1.21 — 지면보다 어둡다. 라이트에서 액자는 종이에
-    눌러 앉은 매트이고, 그 안쪽 면(--ground-sub)이 1.29 더 밝다 */
-  --ground-2: #f0eadd; /* 대비 1.12 — 히어로의 빛 웅덩이. 다크의 1.30 과 같은 역할 */
-  --frame-edge-lit: #f4efe4; /* 대비(대 --frame-mat) 1.13 */
-  --frame-edge-shadow: #b3aa99; /* 대비(대 --frame-mat) 1.78 */
+  --frame-mat: #e9ebef; /* 대비 1.13 — 라이트에서 액자는 종이에 눌러 앉은 매트이고,
+    그 안쪽 면(--ground-sub)이 1.19 더 밝다 */
+  --frame-edge-lit: #ffffff; /* 대비(대 --frame-mat) 1.19 */
+  --frame-edge-shadow: #8b93a0; /* 대비(대 --frame-mat) 2.60 */
 }
 
 /*
@@ -106,27 +124,31 @@
 */
 :root,
 :root[data-font="grotesk"] {
-  --face-sans: var(--font-space-grotesk), var(--font-gothic-a1);
-  --face-mono: var(--font-jetbrains-mono), var(--font-gothic-a1);
+  --face-sans: var(--font-space-grotesk), var(--font-pretendard);
 }
 
 :root[data-font="serif"] {
   --face-sans: var(--font-fraunces), var(--font-noto-serif-kr);
-  --face-mono: var(--font-jetbrains-mono), var(--font-noto-serif-kr);
 }
 
 /* IBM Plex Sans KR 하나가 라틴과 한글을 겸합니다 — 이 조합만 둘째 자리가 없습니다. */
 :root[data-font="plex"] {
   --face-sans: var(--font-plex-sans);
-  --face-mono: var(--font-plex-mono), var(--font-plex-sans);
 }
 
 /*
-  급수 계단의 중간층. 기존 계단은 --text-note(13) · --text-mono/--text-mark(14) ·
-  본문(17) · --text-decision(28) 다음이 곧장 히어로 이름(56~160)으로 뛰어 132px
-  가까운 절벽이 있었다 — 복도 캡션 제목과 프로젝트 페이지의 여는 제목이 이 계단
-  중간층에 있어야 무게가 실린다. clamp() 를 쓰지 않는다(DESIGN_SYSTEM.md §4) —
-  이산 브레이크포인트 계단이다.
+  등폭 자리는 조합과 무관하게 **Pretendard** 다 (소유자 지시, 2026-09-04 — "모노폰트도
+  그냥 프리텐다드로 덮어서"). 라벨 · 숫자 · 캡션 · 칩이 이 스택을 읽는다. 등폭이 아니므로
+  숫자 열 정렬은 `font-feature-settings: "tnum"`(아래)이 대신 맡는다 — Pretendard 는
+  tnum 을 지원한다.
+*/
+:root {
+  --face-mono: var(--font-pretendard);
+}
+
+/*
+  급수 계단의 중간층. `clamp()` 를 쓰지 않습니다 (DESIGN_SYSTEM.md §4) — 이산
+  브레이크포인트 계단입니다.
 */
 :root {
   --text-title: 32px;
@@ -146,25 +168,35 @@
 
 @theme inline {
   --color-ground: var(--ground);
+  --color-ground-2: var(--ground-2);
   --color-ground-sub: var(--ground-sub);
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
   --color-ink-3: var(--ink-3);
   --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-accent: var(--accent);
   --color-signal-built: var(--signal-built);
   --color-signal-reverted: var(--signal-reverted);
 
   /*
-    두 스택 모두 `--face-*` 를 거칩니다 — 조합을 바꾸는 일은 `data-font` 하나를 바꾸는
-    일이고, 여기서는 대체 글꼴만 이어 붙입니다.
+    스택 셋. 본문과 등폭은 `--face-*` 를 거치므로 조합을 바꾸는 일은 `data-font` 하나를
+    바꾸는 일입니다.
+
+    **디스플레이는 조합을 거치지 않습니다.** Instrument Serif 한 벌이 세 조합 모두에서
+    이름 · 절 제목 · 프로젝트 이름 · 이력 항목 제목 · 내비 링크를 맡습니다 (소유자, 09-04:
+    "헤딩은 1페이지 jadewisemann 에 쓰는 예쁜 폰트로"). 라틴
+    전용이므로 스택의 둘째 자리는 **Noto Serif KR** 입니다 (개정 09-04). 처음에는 조합의
+    본문 스택을 이어 붙였는데, 그러면 「이력」이 세리프 이름 옆에서 고딕으로 그려져
+    한 줄 안에서 서체가 갈렸습니다 (소유자: "한글이 이상하다"). 세리프는 세리프로
+    받습니다 — Noto Serif KR 은 `serif` 조합용으로 이미 서브셋되어 있습니다.
 
     등폭 스택에도 한글 서체가 들어 있습니다. 없으면 등폭으로 조판된 모든 한글이 OS
-    대체 글꼴로 떨어집니다 — 시각 비평이 CDP getPlatformFontsForNode 로 확인했습니다
-    (Windows 에서 Malgun Gothic, 다른 OS 에서는 또 다른 것). 주석 트랙과 분모와 캡션과
-    코드가 전부 등폭이므로 지면 절반이 영향을 받습니다.
-    대가: 한글은 등폭이 아니므로 그 줄의 격자 정렬이 깨집니다. 등폭을 라틴·숫자·경로·
-    기호로 좁히는 것이 더 정직한 대안이고, 아직 판단하지 않았습니다.
+    대체 글꼴로 떨어집니다 — 시각 비평이 CDP getPlatformFontsForNode 로 확인했습니다.
+    주석 트랙과 분모와 캡션과 코드가 전부 등폭이므로 지면 절반이 영향을 받습니다.
   */
+  --font-display: var(--font-instrument-serif), var(--font-noto-serif-kr),
+    "Apple SD Gothic Neo", "Malgun Gothic", serif;
   --font-sans: var(--face-sans), "Apple SD Gothic Neo", "Malgun Gothic",
     system-ui, sans-serif;
   --font-mono: var(--face-mono), ui-monospace, monospace;
@@ -179,28 +211,36 @@
     이징 셋, 지속 시간 다섯. MOTION_LANGUAGE.md 3·4절이 값의 정본이고
     `src/motion-tokens.test.ts` 가 두 곳이 어긋나면 실패한다.
 
-    `--ease-spine` · `--duration-spine` · `--duration-hold` 는 2026-08-31
-    GOLDEN_FIX 1 에서 문서에 신설됐지만 CSS 에는 들어오지 않았다. 그 셋을 인용한 곳은
-    컴포넌트 주석 두 줄뿐이어서 시간적 위계 전체가 산문으로만 존재했다.
+    2026-09-04 소유자 지시("너무 빠르다, 느리게, 끈적하게")로 한 단씩 늘리고 spine 곡선을
+    in-out 으로 바꿨다 — 문서 §3 · §4 와 함께. 팔레트 교체(2026-09-03)로는 바뀌지 않았다. 참조 사이트의 카드 전이 300ms 는
+    기존 `--duration-sort`(320ms) 가 이미 담당하는 층이므로 토큰을 늘리지 않는다 —
+    「네 번째 이징은 추가하지 않는다」(§3) 와 같은 규율이다.
   */
   --ease-settle: cubic-bezier(0.2, 0, 0, 1);
   --ease-travel: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-spine: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spine: cubic-bezier(0.7, 0, 0.15, 1);
   --duration-contrast: 90ms;
-  --duration-state: 120ms;
-  --duration-sort: 320ms;
-  --duration-spine: 620ms;
-  --duration-hold: 200ms;
+  --duration-state: 180ms;
+  --duration-sort: 440ms;
+  --duration-spine: 900ms;
+  --duration-hold: 260ms;
 }
 
 html {
   background: var(--ground);
   color: var(--ink);
+  /*
+    절 단위 스냅 (소유자 지시, 2026-09-04). 스냅 지점은 각 절의 시작(`Section.module.css` ·
+    `HeroSection.module.css`)과 푸터의 끝이다. `mandatory` 라 임계를 넘으면 한 번에 넘어간다.
+    `scroll-behavior` 가 아니다 — 이송 시간은 브라우저가 정하고 사이트는 값을 갖지 않는다.
+  */
+  scroll-snap-type: y mandatory;
 }
 
 body {
   font-family: var(--font-sans);
   font-size: 17px;
+  letter-spacing: 0.01em;
   /* 한글이 어절 중간에서 끊기는 것을 막습니다. 한국어 웹 조판의 가장 흔한 결함입니다. */
   word-break: keep-all;
   overflow-wrap: break-word;
@@ -222,34 +262,47 @@ pre {
 }
 
 /*
-  배경 괘선 기판. 28px 간격이고 position: fixed 이므로 스크롤 중 리페인트가 없습니다.
-  장식이 아니라 수직 리듬이 실재한다는 증거입니다 (ART_DIRECTION.md 3.11).
-  will-change 를 쓰지 않고 정수 픽셀 피치를 유지합니다.
-*/
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--rule) var(--rule-strength), transparent) 0 1px,
-    transparent 1px 28px
-  );
-}
-
-/*
-  괘선 세기. ART_DIRECTION.md 3.10 의 요구입니다 — 어두운 바탕 위의 밝은 1px 선은
-  번져 보이므로 낮춥니다. 다크가 유일한 테마이므로 값도 하나입니다.
+  배경장은 `src/components/site/Field.tsx` 다 (2026-09-03, 2차). 처음에는 여기
+  `body::before` 에 정적 그러데이션 + 입자 타일로 두었는데, 소유자가 참조 화면처럼
+  **천천히 움직이고 겹치면 합쳐지는** 덩어리를 요구했다. 그것은 요소 셋과 SVG 필터가
+  필요하므로 컴포넌트로 옮겼다. 세기만 여기 토큰으로 둔다 — 다크와 라이트가 다르다.
+  같은 값을 쓰면 라이트에서 시안이 종이 위의 물감처럼 뜬다.
 */
 :root {
-  --rule-strength: 24%;
+  --field-opacity: 0.85;
+}
+
+:root[data-theme="light"] {
+  --field-opacity: 0.4;
 }
 
 body > * {
   position: relative;
   z-index: 1;
+}
+
+/*
+  유리 면 — 사이트에서 `backdrop-filter` 가 존재하는 유일한 자리다 (소유자 지시,
+  2026-09-03: "뒤에 유리가 있는 것처럼"). 떠 있는 내비 · 2장의 소개 카드 · 프로젝트
+  카드가 이 클래스를 쓴다. `src/motion-ownership.test.ts` 가 이 파일 밖의 backdrop 을
+  막으므로, 유리가 필요한 곳은 재질을 새로 만들지 않고 이 클래스를 단다.
+
+  세 겹이다:
+    1. 면      — 지면색 68%. 52% 였는데 글자가 덩어리 위에서 흐려져 68% 로 올렸다
+                 (소유자, 09-04: "약간 검은 유리")
+    2. 흐림    — 뒤의 배경장을 16px 흐린다. 22px 이었던 것을 낮췄다 — 블러 비용은
+                 반경의 제곱에 비례하고, 배경장이 움직이므로 유리 면적은 매 프레임
+                 다시 흐려진다. 흐르는 알약(스킬)에는 그래서 유리를 쓰지 않는다
+    3. 테두리  — 1px 바깥선 + 위쪽 안쪽 하이라이트 + 아래쪽 안쪽 그늘. 좌상단에서 오는
+                 빛 하나(DESIGN_SYSTEM.md §3 의 액자 경사와 같은 빛)가 유리의 두께를
+                 만든다. 그림자는 전부 inset 이다 (§2)
+*/
+@utility glass {
+  background: color-mix(in srgb, var(--ground) 68%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ink) 13%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ink) 15%, transparent), inset 0 -1px 0 color-mix(in srgb, var(--ground) 70%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  backdrop-filter: blur(16px) saturate(1.5);
 }
 
 /*
@@ -261,7 +314,7 @@ body > * {
 }
 
 /*
-  축소 모션은 하이드레이션을 기다리지 않습니다 (MOTION_LANGUAGE.md 13.1, GOLDEN_FIX 1).
+  축소 모션은 하이드레이션을 기다리지 않습니다 (MOTION_LANGUAGE.md 13.1).
   layout.tsx 의 인라인 스크립트가 첫 페인트 전에 [data-motion-reduce] 를 세우므로,
   이 규칙은 Motion 이 서버 HTML 에 내보낸 인라인 opacity:0 스타일보다 먼저 페인트됩니다.
   !important 가 필요한 이유는 아래 <noscript> 방어와 같습니다 — 인라인 스타일은
@@ -273,12 +326,16 @@ body > * {
 }
 
 /*
-  링크는 평상시 밑줄이 있고 hover·focus 에서 굵어집니다. 대비만 올립니다.
+  링크는 평상시 밑줄이 있고 hover·focus 에서 강조색으로 바뀝니다.
+
+  참조 사이트는 본문 링크에 밑줄을 두지 않습니다. 그것은 따라가지 않습니다 — 밑줄을
+  뺀 링크는 색 하나에 기대게 되고, 이 저장소에서는 이미 한 번 실제 결함이 되었습니다
+  (시각 비평이 6배 확대로 찾은 판단 인덱스 기호 결함). 대신 참조에서 가져온 것은
+  **호버가 색을 바꾼다**는 점이고, 그 색이 강조색입니다.
 
   **@layer base 안에 두어야 합니다.** 레이어 밖에 두었을 때 Tailwind 의
-  `@layer utilities` 안에 있는 `.no-underline` 을 이겨서, 판단 인덱스의 기호 칸까지
-  밑줄이 칠해졌습니다. 그 결과 `−`(막았다)가 2획이 되어 어휘상 다른 기호인
-  `=`(확인했다)로 읽혔습니다. 시각 비평이 6배 확대로 찾은 결함입니다.
+  `@layer utilities` 안에 있는 `.no-underline` 을 이겨서, 밑줄이 칠리지 않아야 할
+  곳까지 칠해졌습니다.
 */
 @layer base {
   a {
@@ -293,6 +350,7 @@ body > * {
 
   @media (hover: hover) and (pointer: fine) {
     a:hover {
+      color: var(--accent);
       text-decoration-thickness: 2px;
     }
   }
@@ -301,7 +359,7 @@ body > * {
 a:focus-visible,
 button:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid var(--ink);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -311,9 +369,12 @@ button:focus-visible,
   overscroll-behavior-x: contain;
 }
 
-/* 앵커 착지가 28px 리듬에 앉게 합니다. scroll-behavior 는 쓰지 않습니다. */
+/*
+  앵커 착지. 내비가 떠 있는 유리 알약(12 + 56 + 12 = 80px)이므로 그 아래 28px 리듬에
+  앉힙니다. scroll-behavior 는 쓰지 않습니다.
+*/
 [id] {
-  scroll-margin-top: 56px;
+  scroll-margin-top: 108px;
 }
 
 /*
@@ -328,7 +389,7 @@ button:focus-visible,
   padding: 8px 16px;
   background: var(--ground);
   border: 1px solid var(--ink);
-  font-family: var(--font-plex-mono), monospace;
+  font-family: var(--font-mono), monospace;
   font-size: 13px;
   text-decoration-line: none;
 }
@@ -337,4 +398,3 @@ button:focus-visible,
   left: 8px;
   top: 8px;
 }
-

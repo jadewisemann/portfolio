@@ -1,0 +1,28 @@
+{
+  "viewport": {
+    "w": 320,
+    "h": 640
+  },
+  "ground": "rgb(5,5,7)",
+  "strongInkSharePct": 7.49,
+  "detailSharePct": 10.74,
+  "flatBandSharePct": 0,
+  "paintedSharePct": 90.08,
+  "emptyBandSharePct": 0,
+  "blankBandSharePct": 0,
+  "bands": [
+    {
+      "x0": 0,
+      "strongPct": 9.589,
+      "faintPct": 90.127,
+      "detailPct": 14.415
+    },
+    {
+      "x0": 160,
+      "strongPct": 5.396,
+      "faintPct": 90.024,
+      "detailPct": 7.064
+    }
+  ],
+  "screens": 16.8
+}

@@ -33,6 +33,10 @@ function requireProject(id: string) {
 
 const project = requireProject("yorr");
 
+const desktopShot = project.shots.find((shot) => shot.kind === "desktop");
+
+const mobileShot = project.shots.find((shot) => shot.kind === "mobile");
+
 export const metadata: Metadata = {
   title: "YORR — 아키텍처 · 코드 리딩",
   description: project.blurb,
@@ -185,19 +189,22 @@ export default function YorrProjectPage() {
 
         <header className="mt-7">
           {/*
-            급수 계단의 중간층을 쓴다(globals.css `--text-title`) — 랜딩 복도
-            캡션의 제목과 같은 토큰이라 "이 사이트에 진짜 계단이 있다"는 사실이
-            페이지를 넘어가도 유지된다. 이전에는 이 페이지만의 임의값(32/44/56)
-            이었다.
+            급수 계단의 중간층을 쓴다(globals.css `--text-title`) — 랜딩의 프로젝트
+            카드와 같은 토큰이라 "이 사이트에 진짜 계단이 있다"는 사실이 페이지를
+            넘어가도 유지된다. 이전에는 이 페이지만의 임의값(32/44/56)이었다.
+
+            서체는 디스플레이(Instrument Serif)다 (2026-09-03). 랜딩의 절 제목과 같은
+            서체이므로, 페이지를 넘어와도 "가장 큰 글자는 세리프"라는 규칙이 깨지지
+            않는다. 무게 400 은 이 서체의 유일한 웨이트다.
           */}
-          <h1 className="text-[length:var(--text-title)] font-semibold leading-tight text-ink">
+          <h1 className="font-display text-[length:var(--text-title)] font-normal leading-tight tracking-[-0.03em] text-ink">
             {project.name}
           </h1>
           <p className="mt-4 max-w-[var(--spacing-measure)] text-ink-2">{project.blurb}</p>
           <ul className="mt-4 flex flex-wrap gap-2">
             {project.keywords.map((keyword) => (
               <li
-                className="border border-rule px-[10px] py-1 font-mono text-mono text-ink-2"
+                className="rounded-[var(--radius)] border border-rule px-[10px] py-1 font-mono text-mono text-ink-2"
                 key={keyword}
               >
                 {keyword}
@@ -213,7 +220,13 @@ export default function YorrProjectPage() {
         쪼그라들지 않게 한다.
       */}
       <div className="mt-10">
-        <BannerFrame desktopShot={project.shots[3]} mobileShot={project.shots[0]} />
+        {/*
+          배너는 화면이 있을 때만 놓는다. YORR 은 2026-09-04 기준 화면이 0장이라
+          (`shots.ts` 주석) 배너 없이 글로 시작한다 — 빈 액자는 놓지 않는다.
+        */}
+        {desktopShot && mobileShot ? (
+          <BannerFrame desktopShot={desktopShot} mobileShot={mobileShot} />
+        ) : null}
       </div>
 
       <div className="mx-auto max-w-[1680px] px-5 pb-14 md:px-10 lg:px-14">

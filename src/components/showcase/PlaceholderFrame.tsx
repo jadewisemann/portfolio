@@ -18,11 +18,33 @@ export function PlaceholderFrame({
 }) {
   return (
     <figure
-      aria-hidden={shot.src ? undefined : "true"}
+      aria-hidden={shot.src || shot.video ? undefined : "true"}
       className={className ? `${styles.frame} ${className}` : styles.frame}
       style={{ aspectRatio: `${shot.width} / ${shot.height}`, ...style }}
     >
-      {shot.src ? <img alt={shot.alt} src={shot.src} /> : null}
+      {shot.video ? (
+        /*
+          gif 처럼: 소리 없이 자동 반복, 조작 없음 (MOTION_LANGUAGE.md 2절의 「프로젝트 매체」
+          예외). 축소 모션에서는 CSS 가 영상을 숨기고 옆의 포스터 이미지를 보인다 —
+          `[data-motion-reduce]` 는 첫 페인트 전에 서므로 영상이 한 프레임도 돌지 않는다.
+        */
+        <>
+          <video
+            className={styles.loop}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            poster={shot.src || undefined}
+            src={shot.video}
+            aria-label={shot.alt}
+          />
+          {shot.src ? <img className={styles.still} alt={shot.alt} src={shot.src} /> : null}
+        </>
+      ) : shot.src ? (
+        <img alt={shot.alt} src={shot.src} />
+      ) : null}
     </figure>
   );
 }

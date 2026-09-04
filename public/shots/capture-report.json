@@ -1,0 +1,76 @@
+{
+  "capturedAt": "2026-09-04T01:06:34.026Z",
+  "results": [
+    {
+      "file": "public\\shots\\festifriends\\desktop-landing.png",
+      "url": "https://ff-frontend-rust.vercel.app/",
+      "kind": "desktop",
+      "px": "1440x900@2",
+      "text": 145,
+      "media": 13,
+      "height": 900,
+      "suspect": false
+    },
+    {
+      "file": "public\\shots\\festifriends\\mobile-landing.png",
+      "url": "https://ff-frontend-rust.vercel.app/",
+      "kind": "mobile",
+      "px": "390x844@3",
+      "text": 82,
+      "media": 11,
+      "height": 844,
+      "suspect": false
+    },
+    {
+      "file": "public\\shots\\festifriends\\desktop-calendar.png",
+      "url": "https://ff-frontend-rust.vercel.app/calendar",
+      "kind": "desktop",
+      "px": "1440x900@2",
+      "text": 208,
+      "media": 8,
+      "height": 900,
+      "suspect": false
+    },
+    {
+      "file": "public\\shots\\festifriends\\mobile-performance.png",
+      "url": "https://ff-frontend-rust.vercel.app/performances/32",
+      "kind": "mobile",
+      "px": "390x844@3",
+      "text": 41,
+      "media": 8,
+      "height": 844,
+      "suspect": false
+    },
+    {
+      "file": "public\\shots\\pookjayo\\mobile-landing.png",
+      "url": "https://pookjayo.vercel.app/",
+      "kind": "mobile",
+      "px": "390x844@3",
+      "text": 98,
+      "media": 11,
+      "height": 860,
+      "suspect": false
+    },
+    {
+      "file": "public\\shots\\pookjayo\\desktop-landing.png",
+      "url": "https://pookjayo.vercel.app/",
+      "kind": "desktop",
+      "px": "1440x900@2",
+      "text": 98,
+      "media": 11,
+      "height": 1015,
+      "suspect": false
+    },
+    {
+      "file": "public\\shots\\pookjayo\\mobile-search.png",
+      "url": "https://pookjayo.vercel.app/search-result?keyword=%EC%84%9C%EC%9A%B8",
+      "kind": "mobile",
+      "px": "390x844@3",
+      "text": 63,
+      "media": 5,
+      "height": 1170,
+      "suspect": false
+    }
+  ],
+  "failures": []
+}

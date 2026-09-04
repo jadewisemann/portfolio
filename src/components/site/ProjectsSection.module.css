@@ -1,77 +1,292 @@
-.list {
+/*
+  프로젝트 무대. 구조와 근거는 `ProjectStage.tsx` 의 주석에 있다.
+
+  절의 높이 = 슬롯 수 × 100svh. `--slots` 는 컴포넌트가 인라인으로 넘긴다.
+  다른 절과 같은 어두운 막을 깔고(`Section.module.css`), 패딩은 없다 — 안의 무대가
+  뷰포트 전체다.
+*/
+.section {
+  position: relative;
+  height: calc(var(--slots) * 100svh);
+  border-top: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--ground) 45%, transparent);
+  scroll-margin-top: 0;
+}
+
+/* ─────────────────────────────────────────────────────────── 슬롯 */
+
+.slots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.slot {
+  height: 100svh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* ─────────────────────────────────────────────────────────── 무대 */
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+
+/*
+  제목. 기준 자리는 **위에 붙은 자리**(내비 아래)다. 표지(0번 장)에서만 `translate` 로
+  뷰포트 가운데로 내려간다 — 자기 크기의 절반을 빼는 calc 라 급수가 달라도 가운데다.
+  급수는 바꾸지 않는다 (§8 의 허용 속성에 `font-size` · `scale` 이 없다). 큰 제목이
+  그대로 위로 올라가 붙는다.
+*/
+.head {
+  position: absolute;
+  left: 20px;
+  top: 96px;
+  z-index: 1;
+  margin: 0;
+  pointer-events: none;
+  transition-property: translate;
+  transition-duration: var(--duration-spine);
+  transition-timing-function: var(--ease-spine);
+}
+
+@media (min-width: 768px) {
+  .head {
+    left: 40px;
+  }
+}
+
+.stage[data-row="0"] .head {
+  translate: calc(50vw - 20px - 50%) calc(50svh - 96px - 50%);
+}
+
+@media (min-width: 768px) {
+  .stage[data-row="0"] .head {
+    translate: calc(50vw - 40px - 50%) calc(50svh - 96px - 50%);
+  }
+}
+
+/*
+  제목 옆에 붙는 프로젝트 이름. 제목의 기준선에 맞춰 오른쪽에 앉고, 화면 장(`data-on`)에서만
+  옆에서 들어온다. 등폭 자리(Pretendard) 대문자 — 글 장의 `.name` 과 같은 조판이라 같은
+  물체가 옮겨 온 것으로 읽힌다.
+*/
+.headName {
+  position: absolute;
+  left: 100%;
+  bottom: 0.18em;
+  margin: 0 0 0 28px;
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: var(--ink-2);
+  opacity: 0;
+  translate: -24px 0;
+  transition-property: translate, opacity;
+  transition-duration: var(--duration-spine);
+  transition-timing-function: var(--ease-spine);
+}
+
+@media (min-width: 768px) {
+  .headName {
+    font-size: 40px;
+  }
+}
+
+.headName[data-on] {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* 표지의 안내 한 줄. 표지가 아니면 사라진다. */
+.hint {
+  position: absolute;
+  left: 50%;
+  bottom: 40px;
+  translate: -50% 0;
+  margin: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-note);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  white-space: nowrap;
+  transition-property: opacity;
+  transition-duration: var(--duration-sort);
+  transition-timing-function: var(--ease-settle);
+}
+
+.stage:not([data-row="0"]) .hint {
+  opacity: 0;
+}
+
+/*
+  줄 묶음. 프로젝트 하나가 한 줄이고, `--row` 만큼 **위로** 옮긴다 (프로젝트 사이는 세로).
+  줄 안의 레일은 `--col` 만큼 **왼쪽으로** 옮긴다 (한 프로젝트 안은 가로).
+  둘 다 `translate` 하나가 움직이므로 컴포지터가 그린다.
+*/
+.rows {
+  height: 100%;
+  translate: 0 calc(var(--row) * -100%);
+  transition-property: translate;
+  transition-duration: var(--duration-spine);
+  transition-timing-function: var(--ease-spine);
+}
+
+.row {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+.rail {
   display: flex;
-  flex-direction: column;
-  gap: 0;
+  height: 100%;
+  translate: calc(var(--col, 0) * -100%) 0;
+  transition-property: translate;
+  transition-duration: var(--duration-spine);
+  transition-timing-function: var(--ease-spine);
+}
+
+/*
+  장 하나. 뷰포트 한 장이고, 위는 제목이 붙은 자리를 비운다. 글 장은 왼쪽 정렬, 화면 장은
+  가운데 정렬 — 액자가 뷰포트 높이에서 역산한 폭으로 가운데에 놓인다.
+*/
+.panel {
+  flex: 0 0 100%;
+  height: 100%;
+  padding: 200px 20px 64px;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  /* 넘칠 때만 스크롤되되 막대는 그리지 않는다 — 장 사이 경계선으로 보인다. */
+  scrollbar-width: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .panel {
+    padding: 220px 40px 72px;
+  }
+}
+
+/*
+  줄이 바뀌는 동안 장의 구성요소가 **흩어진다** (소유자 지시, 2026-09-04 — "블러보다는
+  구성요소가 흩어지게, 깔롱"). 글 장의 조각(번호 · 이름 · 블러브 · 키워드 · 링크)과 액자
+  하나하나가 제각각 다른 방향으로 밀려나며 사라지고, 새 줄에 도착하면 같은 경로로 돌아와
+  모인다. 속성은 `translate` · `opacity` 둘뿐이고(§8 허용 목록), 시간은 spine 토큰이다.
+  방향은 nth-child 로 정해 두어 같은 조각은 언제나 같은 쪽으로 흩어진다 — 무작위는 두 번
+  보면 싸구려로 읽힌다.
+*/
+.text > *,
+.desktop,
+.mobile {
+  transition-property: translate, opacity;
+  transition-duration: var(--duration-spine);
+  transition-timing-function: var(--ease-spine);
+}
+
+.stage[data-moving] .text > *,
+.stage[data-moving] .desktop,
+.stage[data-moving] .mobile {
+  opacity: 0;
+}
+
+.stage[data-moving] .text > :nth-child(1) { translate: -72px -40px; }
+.stage[data-moving] .text > :nth-child(2) { translate: 64px -24px; }
+.stage[data-moving] .text > :nth-child(3) { translate: -48px 56px; }
+.stage[data-moving] .text > :nth-child(4) { translate: 56px 72px; }
+.stage[data-moving] .text > :nth-child(5) { translate: -40px 96px; }
+.stage[data-moving] .desktop { translate: 0 80px; }
+.stage[data-moving] .mobile:nth-child(1) { translate: -64px 56px; }
+.stage[data-moving] .mobile:nth-child(2) { translate: 0 96px; }
+.stage[data-moving] .mobile:nth-child(3) { translate: 64px 56px; }
+
+/* 이 프로젝트의 가로 장 표시 — 줄의 아래 가운데. */
+.slideDots {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  translate: -50% 0;
+  display: flex;
+  gap: 6px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.card {
-  padding: 40px 0 48px;
-  border-top: 1px solid var(--rule);
+.slideDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ink-3);
+  transition-property: width, background-color;
+  transition-duration: var(--duration-state);
+  transition-timing-function: var(--ease-settle);
 }
 
-.list > li:first-child .card {
-  border-top: 0;
-  padding-top: 0;
+.slideDot[data-on] {
+  width: 22px;
+  background: var(--accent);
 }
 
-@media (min-width: 768px) {
-  .card {
-    padding: 56px 0 64px;
-  }
+.text {
+  min-width: 0;
+  width: 100%;
+  max-width: 40rem;
+  align-self: start;
 }
 
-.head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 8px 20px;
-}
-
-.index {
-  margin: 0;
+.count {
+  margin: 0 0 12px;
   font-family: var(--font-mono), monospace;
   font-size: var(--text-note);
-  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+}
+
+.countOf {
   color: var(--ink-3);
 }
 
+/* 프로젝트 이름. 등폭 대문자 — 절 제목(세리프)과 맞선다. */
 /*
-  프로젝트 이름은 절 제목(--text-title)과 같은 계단에 둡니다 — 절 안에서 가장 큰
-  물체가 프로젝트 이름이어야 목록이 목록으로 읽힙니다.
+  프로젝트 이름. 디스플레이 세리프 — 이름(jadewisemann)과 같은 서체다 (소유자, 09-04).
+  웨이트가 하나뿐이라 무게 대신 급수로 위계를 낸다.
 */
 .name {
   margin: 0;
-  font-size: var(--text-title);
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 400;
   line-height: 1.05;
   letter-spacing: -0.02em;
   color: var(--ink);
 }
 
-/*
-  넓은 화면에서만 오른쪽 끝으로 밀어냅니다. 좁은 화면에서는 머리말이 두 줄로 접히는데,
-  그때도 밀어내면 기간만 홀로 오른쪽에 떠서 이름과의 관계가 끊깁니다.
-*/
-.period {
-  margin: 0;
-  font-family: var(--font-mono), monospace;
-  font-size: var(--text-mono);
-  color: var(--ink-3);
-  white-space: nowrap;
-}
-
 @media (min-width: 768px) {
-  .period {
-    margin-left: auto;
+  .name {
+    font-size: 56px;
   }
 }
 
+
 .blurb {
   margin: 20px 0 0;
-  max-width: 44rem;
+  max-width: 32rem;
   font-size: 17px;
   line-height: 1.7;
   color: var(--ink-2);
@@ -92,85 +307,22 @@
   list-style: none;
 }
 
+/*
+  키워드 칩 (개정 2026-09-04 — "가시성이 너무 떨어진다"). 괘선 하나였던 것을 강조색으로
+  옅게 물들인 면 + 강조색 괘선 + 잉크색 글자로 바꿨다. 면의 강조색은 14% 라 배경장 위에서도
+  칩이 칩으로 읽히고, 글자는 `--ink` 그대로라 대비는 본문과 같다.
+*/
 .keyword {
-  padding: 5px 10px;
-  border: 1px solid var(--chip-border);
+  padding: 7px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
   font-family: var(--font-mono), monospace;
-  font-size: var(--text-note);
-  line-height: 1.5;
-  color: var(--ink-2);
-}
-
-.columns {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 28px;
-  margin-top: 32px;
-  padding-top: 28px;
-  border-top: 1px solid var(--rule);
-}
-
-@media (min-width: 900px) {
-  .columns {
-    grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
-    gap: 40px;
-  }
-}
-
-.meta {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.metaRow {
-  display: grid;
-  grid-template-columns: 3.5rem minmax(0, 1fr);
-  gap: 12px;
-  align-items: baseline;
-}
-
-.metaKey {
-  margin: 0;
-  font-family: var(--font-mono), monospace;
-  font-size: var(--text-note);
-  color: var(--ink-3);
-}
-
-.metaValue {
-  margin: 0;
-  font-family: var(--font-mono), monospace;
-  font-size: var(--text-note);
-  line-height: 1.6;
-  color: var(--ink-2);
-}
-
-.facts {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.fact {
-  position: relative;
-  padding-left: 20px;
-  font-size: 15px;
-  line-height: 1.7;
-  color: var(--ink-2);
-}
-
-.fact::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 11px;
-  width: 8px;
-  height: 1px;
-  background: var(--signal-built);
+  font-size: var(--text-mono);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  color: var(--ink);
 }
 
 .links {
@@ -181,9 +333,7 @@
   margin-top: 28px;
 }
 
-/*
-  터치 목표 44×44px (DESIGN_SYSTEM.md §7).
-*/
+/* 터치 목표 44×44px (DESIGN_SYSTEM.md §7). */
 .deep,
 .link {
   display: inline-flex;
@@ -194,9 +344,10 @@
   font-size: var(--text-mono);
 }
 
-/* 깊이로 들어가는 링크 하나만 테두리를 갖습니다 — 나머지는 바깥으로 나가는 링크입니다. */
+/* 깊이로 들어가는 링크 하나만 테두리를 갖는다 — 나머지는 바깥으로 나가는 링크다. */
 .deep {
-  border: 1px solid var(--ink-3);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
   text-decoration-line: none;
   transition-property: border-color, color;
   transition-duration: var(--duration-state);
@@ -205,30 +356,39 @@
 
 @media (hover: hover) and (pointer: fine) {
   .deep:hover {
-    border-color: var(--ink);
+    border-color: var(--accent);
+    color: var(--accent);
   }
 }
 
 .deep::after {
   content: "→";
   margin-left: 8px;
-  color: var(--ink-3);
+  color: var(--accent);
 }
 
-.minor {
-  margin-top: 48px;
-  padding-top: 32px;
-  border-top: 1px solid var(--rule);
+/* ─────────────────────────────────────────────────────────── 매체 */
+
+/*
+  화면 장. 액자 폭은 뷰포트 높이에서 역산한다 — 위 제목 자리(200px)와 아래 여백을 뺀
+  높이에 맞추되 가로로 넘치지 않게 한다. 16:10 은 높이 × 1.6, 9:19.5 는 높이 × 0.46.
+*/
+.desktop {
+  width: min(100%, calc((100svh - 290px) * 1.6));
 }
 
-.minorTitle {
-  margin: 0 0 20px;
-  font-family: var(--font-mono), monospace;
-  font-size: var(--text-mono);
-  font-weight: 400;
-  letter-spacing: 0.08em;
-  color: var(--ink-3);
+.mobiles {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
 }
+
+.mobile {
+  width: min(28%, calc((100svh - 290px) * 0.46));
+}
+
+/* ─────────────────────────────────────────────────────────── 그 외 */
 
 .minorList {
   display: flex;
@@ -256,6 +416,9 @@
 }
 
 .minorName {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.2;
   color: var(--ink);
 }
 
@@ -269,30 +432,11 @@
   color: var(--ink-2);
 }
 
-.disclosure {
-  margin-top: 40px;
-}
-
-.disclosureList {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  max-width: var(--spacing-measure);
-  font-family: var(--font-mono), monospace;
-  font-size: var(--text-note);
-  line-height: 1.65;
-  color: var(--ink-3);
-}
-
-.disclosureList li {
-  padding-left: 18px;
-  text-indent: -18px;
-}
-
-.disclosureList li::before {
-  content: "— ";
-  color: var(--rule);
+/* 축소 모션 — 장이 즉시 바뀐다. */
+[data-motion-reduce] .head,
+[data-motion-reduce] .headName,
+[data-motion-reduce] .rows,
+[data-motion-reduce] .rail,
+[data-motion-reduce] .hint {
+  transition: none;
 }

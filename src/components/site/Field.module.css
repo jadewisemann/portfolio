@@ -1,0 +1,170 @@
+/*
+  배경장. 근거와 구조는 `Field.tsx` 의 주석에 있다.
+
+  `position: fixed` 이고 `pointer-events: none` 이다. globals.css 의 `body > *` 가
+  `z-index: 1` 을 주지만 클래스 선택자가 그것을 이기므로 이 층은 항상 본문 아래에 있다.
+  `isolation: isolate` 로 블렌딩이 이 층 안에서만 일어나게 한다 — 없으면 `screen` 이
+  본문 글자와도 섞인다.
+*/
+.field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  isolation: isolate;
+  /*
+    지면색을 이 층이 직접 칠한다. 블렌딩(`screen` · `overlay`)은 **이 층 안에서** 일어나는데
+    (isolation), 층의 바닥이 투명이면 섞일 상대가 없어 입자가 회색 안개로 그대로
+    보인다 — 2026-09-03 실측. 바닥이 검정이면 overlay 는 검정에서 검정이고, 밝은
+    덩어리 위에서만 입자가 드러난다.
+  */
+  background: var(--ground);
+}
+
+.defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/*
+  필터가 걸리는 무대. 뷰포트의 4분의 1 크기로 그려 4배 확대한다 (`Field.tsx` 비용 절).
+  `transform-origin: 0 0` 이므로 좌상단이 뷰포트의 좌상단과 맞고, 안의 `%` 좌표는 확대
+  뒤에도 뷰포트의 같은 `%` 다.
+*/
+.stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 25%;
+  height: 25%;
+  transform-origin: 0 0;
+  transform: scale(4);
+  filter: url(#field-goo);
+  opacity: var(--field-opacity);
+}
+
+/*
+  덩어리 하나. 방사형 그러데이션 — 중심은 강조색을 흰색으로 띄운 값, 바깥은 투명.
+  흐림은 필터가 아니라 **정지점의 간격**이다: 26% → 72% 사이에서 서서히 사라지므로
+  가장자리가 부드럽다.
+
+  붙는 효과는 무대의 goo 필터가 만든다 (`Field.tsx`). 여기서는 블렌딩을 쓰지 않는다 —
+  필터가 알파를 합치므로 겹친 자리는 이미 한 면이다.
+
+  크기는 무대(뷰포트의 4분의 1) 기준 `vmax` 다 — 무대가 4배 확대되므로 뷰포트에서는
+  4배가 된다. 16vmax → 64vmax.
+*/
+.blob {
+  position: absolute;
+  width: 16vmax;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    color-mix(in srgb, var(--accent) 74%, white) 0%,
+    var(--accent) 20%,
+    color-mix(in srgb, var(--accent) 70%, transparent) 42%,
+    transparent 66%
+  );
+  animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+/*
+  세 궤도. 주기가 서로 소(22 · 28 · 34)라 같은 배치가 다시 오기까지 오래 걸린다 —
+  반복이 반복으로 읽히지 않게 하는 가장 값싼 방법이다. 궤도는 서로 가로지르게 잡아
+  주기마다 두 덩어리가 한 번은 겹친다.
+
+  이동은 `translate` 만 쓴다 (MOTION_LANGUAGE.md 8절의 허용 속성). 컴포지터 전용
+  속성이므로 애니메이션 중 메인 스레드 작업이 0이다. `will-change` 는 쓰지 않는다 —
+  움직이는 transform 은 브라우저가 스스로 층으로 올린다.
+*/
+.a {
+  left: 44%;
+  top: -46%;
+  animation-name: drift-a;
+  animation-duration: 22s;
+}
+
+.b {
+  left: -40%;
+  top: 34%;
+  animation-name: drift-b;
+  animation-duration: 28s;
+}
+
+.c {
+  left: 60%;
+  top: 52%;
+  width: 15vmax;
+  animation-name: drift-c;
+  animation-duration: 34s;
+}
+
+@keyframes drift-a {
+  from {
+    translate: 0 0;
+  }
+  50% {
+    translate: -26% 18%;
+  }
+  to {
+    translate: -8% 34%;
+  }
+}
+
+@keyframes drift-b {
+  from {
+    translate: 0 0;
+  }
+  50% {
+    translate: 30% -22%;
+  }
+  to {
+    translate: 46% 6%;
+  }
+}
+
+@keyframes drift-c {
+  from {
+    translate: 0 0;
+  }
+  50% {
+    translate: -34% -30%;
+  }
+  to {
+    translate: -10% -46%;
+  }
+}
+
+/*
+  입자. 200px 타일 하나를 반복한다 — 데이터 URI 라 요청이 없고, 정적이라 한 번만
+  래스터된다. `overlay` 는 검정 위에서 검정이므로 지면에는 나타나지 않고, 덩어리의
+  밝은 부분에서만 드러난다. 그래서 덩어리의 가장자리가 입자로 부서져 보인다.
+*/
+.grain {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: overlay;
+  opacity: 0.9;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/*
+  축소 모션 — 정지한다. 배경장 자체는 남는다 (MOTION_LANGUAGE.md 13절: 사라지는 것은
+  이동뿐이다). `[data-motion-reduce]` 는 layout.tsx 의 인라인 스크립트가 첫 페인트 전에
+  세우므로 하이드레이션을 기다리지 않는다 (13.1).
+*/
+[data-motion-reduce] .blob {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blob {
+    animation-play-state: paused;
+  }
+}

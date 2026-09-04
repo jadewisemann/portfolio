@@ -1,8 +1,18 @@
 {
   "_note": "스크린샷 캡처 대상. docs/portfolio/CAPTURE_SHOTS.md 가 사용법이고, 실행은 scripts/capture-shots.mjs 다. routes 는 출발점이지 정답이 아니다 — 실제로 열어 보고 좋은 화면으로 고쳐라.",
   "viewports": {
-    "desktop": { "width": 1440, "height": 900, "deviceScaleFactor": 2 },
-    "mobile": { "width": 390, "height": 844, "deviceScaleFactor": 3, "isMobile": true, "hasTouch": true }
+    "desktop": {
+      "width": 1440,
+      "height": 900,
+      "deviceScaleFactor": 2
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "deviceScaleFactor": 3,
+      "isMobile": true,
+      "hasTouch": true
+    }
   },
   "projects": [
     {
@@ -11,11 +21,23 @@
       "source": "CONTENT.md §3.1 — 데모 URL 등급 A",
       "auth": "unknown",
       "routes": [
-        { "path": "/", "kind": "desktop", "name": "landing" },
-        { "path": "/", "kind": "mobile", "name": "landing" },
-        { "path": "/groups", "kind": "desktop", "name": "groups" },
-        { "path": "/groups", "kind": "mobile", "name": "groups" }
-      ]
+        {
+          "path": "/",
+          "kind": "desktop",
+          "name": "landing"
+        },
+        {
+          "path": "/",
+          "kind": "mobile",
+          "name": "landing"
+        },
+        {
+          "path": "/calendar",
+          "kind": "desktop",
+          "name": "calendar"
+        }
+      ],
+      "_routesNote": "/groups 는 404, /performances 목록은 백엔드 응답이 없어 스켈레톤만 남는다 (2026-09-04 실측). 랜딩 · 캘린더 · 공연 상세로 바꿨다. 백엔드가 응답하지 않아 목록 · 상세는 20초를 기다려도 스켈레톤이다 — 상세는 뺐다."
     },
     {
       "id": "pookjayo",
@@ -23,18 +45,39 @@
       "source": "CONTENT.md §4.1 — 데모 URL 등급 A",
       "auth": "unknown",
       "routes": [
-        { "path": "/", "kind": "mobile", "name": "landing" },
-        { "path": "/", "kind": "desktop", "name": "landing" },
-        { "path": "/search", "kind": "mobile", "name": "search" }
-      ]
+        {
+          "path": "/",
+          "kind": "mobile",
+          "name": "landing",
+          "settle": 9000
+        },
+        {
+          "path": "/",
+          "kind": "desktop",
+          "name": "landing",
+          "settle": 9000
+        }
+      ],
+      "_routesNote": "/search 는 404. 실제 경로는 /search-result?keyword=… 다. 랜딩은 스플래시가 6초쯤 간다 (2026-09-04 실측). 검색 결과는 20초를 기다려도 스켈레톤이다 — 뺐다."
     },
     {
       "id": "yorr",
-      "baseUrl": null,
-      "source": "CONTENT.md §8 — 배포 URL 미확보. 미러 저장소만 있다: https://github.com/jadewisemann/yorr",
-      "auth": "n/a",
-      "routes": [],
-      "localOnly": "배포본이 없다. 미러를 클론해 frontend 를 로컬에서 띄우고 baseUrl 을 http://localhost:<포트> 로 채운 뒤 routes 를 적어라. 실시간 멀티플레이라 화면 하나를 띄우려면 방을 만들어야 할 수 있다 — 그러면 CAPTURE_SHOTS.md 의 판단 기준을 따르고, 못 찍으면 못 찍었다고 보고해라."
+      "baseUrl": "https://www.yorr.site",
+      "source": "소유자 구술 (2026-09-04): 배포는 yorr.site",
+      "auth": "unknown",
+      "routes": [
+        {
+          "path": "/",
+          "kind": "desktop",
+          "name": "landing"
+        },
+        {
+          "path": "/",
+          "kind": "mobile",
+          "name": "landing"
+        }
+      ],
+      "_routesNote": "랜딩은 아케이드 캐러셀(요트 다이스 · 라이어스 다이스 · 탁구). 게임 화면은 방을 만들어야 하므로 capture-shots 가 아니라 별도 스크립트로 찍는다 (scripts/capture-yorr-game.mjs)."
     }
   ]
 }

@@ -35,9 +35,9 @@ export interface SectionMeta {
 /**
  * 소유자 지시의 순서 그대로입니다. 내비게이션도 이 배열 하나만 읽습니다.
  *
- * 라벨 표기 (소유자 지시, 2026-09-03): `main` · `skills` · `project` · `이력`.
- * 영문 셋은 소문자 단수형이고 넷째만 한국어입니다 — 소유자가 그 조합을 직접
- * 지정했으므로 통일하지 않습니다. 이전의 긴 한국어 제목 문장(「무엇을 쓸 수 있는가」
+ * 라벨 표기 (소유자 지시, 2026-09-03 · 09-04): `main` · `skills` · `project` · `history`.
+ * 넷째는 「이력」이었다가 09-04 에 `history` 로 바뀌었습니다 — 넷 다 라틴 소문자라
+ * 절 제목이 전부 디스플레이 세리프 한 서체로 그려집니다. 이전의 긴 한국어 제목 문장(「무엇을 쓸 수 있는가」
  * 따위)은 이 라벨로 대체됐습니다. 설명 한 문장(`note`)은 한국어로 남습니다.
  */
 export const SECTIONS: readonly SectionMeta[] = [
@@ -61,8 +61,8 @@ export const SECTIONS: readonly SectionMeta[] = [
   },
   {
     id: "experience",
-    nav: "이력",
-    title: "이력",
+    nav: "history",
+    title: "history",
     note: "최근이 위다. 과정 · 프로젝트 · 자격을 한 줄로 세운다.",
   },
 ];
@@ -322,7 +322,7 @@ export const projectsDisclosure = [
 
 /* ------------------------------------------------------------------ 이력 */
 
-export type TimelineKind = "교육" | "과정" | "프로젝트" | "자격" | "활동";
+export type TimelineKind = "교육" | "과정" | "프로젝트" | "자격" | "수상" | "활동";
 
 export interface TimelineEntry {
   /** 정렬은 이 문자열의 사전순 역순으로 합니다 — `YYYY.MM` 로만 씁니다. */
@@ -338,13 +338,40 @@ export interface TimelineEntry {
 
 /** CONTENT.md §7 (교육 · 자격) 과 §2 ~ §5 (프로젝트 기간). 최근이 위입니다. */
 export const timeline: readonly TimelineEntry[] = [
+  /*
+    YORR 의 정렬 키는 끝난 달(2026.08)이다 — 최근이 위인 목록에서 항목의 자리는 끝난
+    시점이 정한다. 바로 아래 공통 PJT 발표회(2026.08)와 키가 같고, 정렬은 안정적이므로
+    배열 순서(YORR → 발표회)가 그대로 화면 순서다 (소유자, 2026-09-04: "발표회는 8월이고
+    YORR 다음에 와야").
+  */
   {
-    when: "2026.07",
+    when: "2026.08",
     span: "2026.07 — 2026.08",
     kind: "프로젝트",
     title: "YORR — 모바일 실시간 멀티플레이 게임 플랫폼",
     detail: "6인 팀의 프론트엔드 단독",
     href: "#project-yorr",
+  },
+  {
+    when: "2026.08",
+    kind: "수상",
+    title: "SSAFY 공통 PJT 발표회 (1위)",
+    detail: "발표자",
+  },
+  /*
+    SSAFY 수상 3건. 소유자가 직접 구술한 사실이다 (2026-09-04). `../_jadewisemann/ref/`
+    에는 아직 없으므로 근거 등급을 매길 수 없다 — 원장에 옮겨 적는 일이 남아 있다
+    (`DECISIONS.md` 2026-09-04). 발표자 표기는 소유자가 셋째 항목에만 붙이라고 했다.
+  */
+  {
+    when: "2026.06",
+    kind: "수상",
+    title: "SSAFY 1학기 성적우수상 (1위)",
+  },
+  {
+    when: "2026.06",
+    kind: "수상",
+    title: "SSAFY 1학기 프로젝트 우수상 (2위)",
   },
   {
     when: "2026.06",
@@ -359,7 +386,7 @@ export const timeline: readonly TimelineEntry[] = [
     detail: "SSAFY · 팀장. 4명 중 3명이 SW 역량테스트 A형을 받았다.",
   },
   {
-    when: "2026.01",
+    when: "2026.05",
     kind: "자격",
     title: "SW 역량테스트 A+",
     detail: "SSAFY · 2026",
@@ -394,12 +421,6 @@ export const timeline: readonly TimelineEntry[] = [
     href: "#project-pookjayo",
   },
   {
-    when: "2025.01",
-    kind: "프로젝트",
-    title: "videOn",
-    detail: "5인 팀. Web Components 로 컴포넌트 시스템 구현",
-  },
-  {
     when: "2024.11",
     span: "2024.11 — 2025.04",
     kind: "과정",
@@ -410,11 +431,5 @@ export const timeline: readonly TimelineEntry[] = [
     when: "2024.08",
     kind: "교육",
     title: "인하대학교 화학과 졸업",
-  },
-  {
-    when: "2023.10",
-    kind: "자격",
-    title: "OPIc IH",
-    detail: "2023.10 취득 · 현재 만료",
   },
 ];

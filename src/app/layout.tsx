@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Field } from "@/components/site/Field";
 import { fontVariables } from "@/fonts";
 import { BOOT_SCRIPT } from "@/lib/preferences";
 import { hero } from "@/content/golden";
@@ -59,6 +60,8 @@ export default function RootLayout({
         <a className="skip-link" href="#main">
           본문으로 건너뛰기
         </a>
+        {/* 배경장. 본문 아래 고정 층이고, 두 라우트가 같은 장을 쓴다. */}
+        <Field />
         {children}
       </body>
     </html>

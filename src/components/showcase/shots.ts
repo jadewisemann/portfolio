@@ -1,10 +1,9 @@
 /**
  * 스크린샷 정본 — 세 프로토타입(/f1 /f2 /f3)이 전부 여기서 읽는다.
  *
- * 실제 스크린샷은 아직 없다. 각 항목의 `src` 를 빈 문자열로 둔다 — 자리표시자다
- * (owner 지시: "obviously placeholders", CONTENT.md §8 "프로젝트 이미지 · 영상 없음").
- * 실제 이미지가 오면 이 파일에서 **그 한 줄의 `src` 만** 채우면 된다. 렌더링 쪽
- * (PlaceholderFrame · texture.ts) 은 `src` 유무만으로 자리표시자와 실사진을 가른다.
+ * 스크린샷은 2026-09-04 에 데모를 직접 찍어 채웠다 (`scripts/capture-shots.mjs`,
+ * `public/shots/`). `src` 가 비어 있으면 자리표시자다. 렌더링 쪽(PlaceholderFrame)은
+ * `src` 유무만으로 자리표시자와 실사진을 가른다.
  *
  * 카운트와 비율은 브리프가 지정한 값 그대로다:
  *   - YORR — 모바일(9:19.5) 3 · 데스크톱(16:10) 1. 휴대폰이 컨트롤러인 게임이므로
@@ -21,6 +20,12 @@ export type ShotKind = "desktop" | "mobile";
 export interface Shot {
   /** 비어 있으면 자리표시자다. 실사진이 오면 이 문자열 하나만 채운다. */
   src: string;
+  /**
+   * 영상(webm · mp4) 경로. 있으면 **gif 처럼** 그린다 — 소리 없이 자동 반복 재생, 조작
+   * 없음 (소유자, 2026-09-04: "주사위는 gif 같은 걸로"). MOTION_LANGUAGE.md 2절의 예외
+   * 「프로젝트 매체」다: 콘텐츠이지 UI 가 아니고, 축소 모션에서는 `src`(포스터)만 보인다.
+   */
+  video?: string;
   width: number;
   height: number;
   kind: ShotKind;
@@ -71,11 +76,17 @@ export const PROJECTS: readonly ShowcaseProject[] = [
       "WebSocket · WebRTC 음성",
     ],
     href: "/projects/yorr",
+    /*
+      2026-09-04 실측 — 배포는 https://www.yorr.site (소유자 구술). 랜딩(3D 주사위 히어로)은
+      capture-shots 로, 게임판은 `/tutorial`(혼자 굴려보기)에서 Playwright 로 직접 굴리며
+      찍었다 (`scripts/capture-yorr-game.mjs`). 주사위 굴림은 4.2초 webm 루프 — 소유자가
+      "gif 같은 걸로" 라고 했고, 같은 자리에서 훨씬 작다. 축소 모션에서는 포스터만 보인다.
+    */
     shots: [
-      mobileShot("YORR 모바일 화면 자리표시자, 로비"),
-      mobileShot("YORR 모바일 화면 자리표시자, 게임판"),
-      mobileShot("YORR 모바일 화면 자리표시자, 결과"),
-      desktopShot("YORR 데스크톱 화면 자리표시자"),
+      { ...mobileShot("YORR 모바일 랜딩 — 요트 다이스 아케이드"), src: "/shots/yorr/mobile-landing.png", width: 390, height: 844 },
+      { ...mobileShot("YORR 주사위를 굴리는 순간 (반복 재생)"), src: "/shots/yorr/dice-roll-poster.png", video: "/shots/yorr/dice-roll.webm", width: 390, height: 470 },
+      { ...mobileShot("YORR 게임판 — 굴리는 중, 킵 레일, 기록 시트"), src: "/shots/yorr/mobile-board.png", width: 390, height: 844 },
+      { ...desktopShot("YORR 데스크톱 랜딩 — 아케이드 캐러셀"), src: "/shots/yorr/desktop-landing.png", width: 1440, height: 900 },
     ],
   },
   {
@@ -90,11 +101,14 @@ export const PROJECTS: readonly ShowcaseProject[] = [
       "ESLint · Git 훅 단독 세팅",
       "팀 전체가 쓰는 개발 환경",
     ],
+    /*
+      2026-09-04 실측 (scripts/capture-shots.mjs). 백엔드가 응답하지 않아 목록 · 상세는
+      스켈레톤만 남는다 — 그 장들은 넣지 않았다. 랜딩(배너 · 카테고리)과 캘린더는 실제 UI 다.
+    */
     shots: [
-      desktopShot("FestiFriends 데스크톱 화면 자리표시자, 공연 목록"),
-      desktopShot("FestiFriends 데스크톱 화면 자리표시자, 모임 개설"),
-      mobileShot("FestiFriends 모바일 화면 자리표시자, 찜 목록"),
-      mobileShot("FestiFriends 모바일 화면 자리표시자, 상세"),
+      { ...desktopShot("FestiFriends 랜딩 — 공연 배너와 카테고리"), src: "/shots/festifriends/desktop-landing.png", width: 1440, height: 900 },
+      { ...desktopShot("FestiFriends 캘린더 — 유형 · 지역 필터와 월간 공연 달력"), src: "/shots/festifriends/desktop-calendar.png", width: 1440, height: 900 },
+      { ...mobileShot("FestiFriends 모바일 랜딩"), src: "/shots/festifriends/mobile-landing.png", width: 390, height: 844 },
     ],
   },
   {
@@ -109,11 +123,14 @@ export const PROJECTS: readonly ShowcaseProject[] = [
       "FSM 상태 전이로 중복 요청 차단",
       "N-그램 검색 인덱스",
     ],
+    /*
+      2026-09-04 실측. 검색 결과 · 상세는 백엔드가 응답하지 않아 스켈레톤만 남는다 — 넣지
+      않았다. 랜딩은 스플래시 뒤 실제 UI 가 뜬다. 데스크톱은 모바일 우선 앱이라 가운데
+      한 열로 그려지는 그 모습 그대로다.
+    */
     shots: [
-      mobileShot("Pookjayo 모바일 화면 자리표시자, 검색"),
-      mobileShot("Pookjayo 모바일 화면 자리표시자, 숙소 상세"),
-      mobileShot("Pookjayo 모바일 화면 자리표시자, 결제"),
-      desktopShot("Pookjayo 데스크톱 화면 자리표시자"),
+      { ...mobileShot("Pookjayo 모바일 랜딩 — 숙박 검색 · 날짜 · 인원"), src: "/shots/pookjayo/mobile-landing.png", width: 390, height: 844 },
+      { ...desktopShot("Pookjayo 데스크톱 — 모바일 우선 레이아웃"), src: "/shots/pookjayo/desktop-landing.png", width: 1440, height: 900 },
     ],
   },
 ];

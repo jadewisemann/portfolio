@@ -90,7 +90,9 @@ try {
 
       // 웹폰트가 앉기 전에 찍으면 글자가 밀린다.
       await page.evaluate(() => document.fonts.ready);
-      await page.waitForTimeout(700);
+      // 두 데모 모두 networkidle 뒤에도 데이터를 더 받는다 (Pookjayo 는 스플래시 ~6초,
+      // FestiFriends 는 목록 스켈레톤). 경로마다 `settle` 을 둘 수 있고 기본 6초다.
+      await page.waitForTimeout(route.settle ?? 6000);
 
       const outDir = path.join(ROOT, "public/shots", project.id);
       fs.mkdirSync(outDir, { recursive: true });

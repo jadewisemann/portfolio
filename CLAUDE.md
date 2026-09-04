@@ -1,17 +1,24 @@
 # Portfolio Project
 
-This repository uses an agent-driven portfolio development workflow.
+A one-page portfolio site (`/`) plus per-project pages (`/projects/…`), built
+with Next.js. There is no agent workflow harness — it was removed on
+2026-09-03 (owner instruction). Gates live in the test suite, not in a graph.
 
 ## Source of truth
 
-Always read:
+Always read before substantial changes:
 
-- docs/portfolio/state.json
-- docs/portfolio/ART_DIRECTION.md
-- docs/portfolio/DESIGN_SYSTEM.md
-- docs/portfolio/MOTION_LANGUAGE.md
+- docs/portfolio/ART_DIRECTION.md — visual judgment
+- docs/portfolio/DESIGN_SYSTEM.md — tokens, scales, contrast
+- docs/portfolio/MOTION_LANGUAGE.md — motion ownership and budget
+- docs/portfolio/DECISIONS.md — why things are the way they are
 
-before making substantial portfolio changes.
+If the three specs disagree, fix ART_DIRECTION.md first, then the others.
+
+The current visual direction is a full palette/typography replacement adopted
+from `https://www.aarab.me/` (owner instruction, 2026-09-03). The extraction —
+tokens, type scale, structure, and the two effects this repo's gates forbid —
+is in `docs/portfolio/REF_AARAB.md`.
 
 ## Content source
 
@@ -30,7 +37,7 @@ That repository has its own SSOT discipline — follow it:
   before using it.
 - Cite `ref/` documents, not raw document dumps in that repo.
 
-CONTENT_INVENTORY extracts from there into docs/portfolio/BRIEF.md and
+Facts are extracted from there into docs/portfolio/BRIEF.md and
 docs/portfolio/CONTENT.md, recording the source path for every fact. A fact
 not present in `ref/` does not go into the portfolio.
 
@@ -68,8 +75,8 @@ so take it literally:
 
 **The structure**, and it is not negotiable without the owner:
 
-- **Landing** — keywords, a short project blurb, screenshots. Presented
-  aesthetically, in 3D. **The first viewport carries the name and nothing else**
+- **Landing** — keywords, a short project blurb, screenshots, presented
+  aesthetically. **The first viewport carries the name and nothing else**
   (owner, same day: 첫 페이지에서는 글자가 거의 없어야 해).
 - **Per-project pages** — architecture and code reading live here, reached from
   the landing page. This is where depth goes.
@@ -82,137 +89,73 @@ So: **screenshots and keywords on the surface, depth one click away.**
    a centred column of prose. A README wearing a portfolio's clothes.
 2. **Rendering the mechanisms.** An earlier version of this file said the
    engineering mechanisms were the visual material — the coverage ratchet, the
-   payment FSM, the two-tier cache, drawn as things that operate. It followed from
-   `CONTENT.md` §8 recording zero images, and it was a detour around a constraint
-   that no longer holds: **the owner supplies screenshots.** The owner's verdict
-   on that line of work was 과하게 어려운 일을 하려고 노력 중이었구나. Do not
-   restart it. A mechanism belongs on a project page, in prose and diagrams, where
-   someone who clicked through actually wants it.
-
-3D is presentation, not explanation — it is how the screenshots and keywords are
-shown, not a way to animate an architecture diagram. `MOTION_LANGUAGE.md` §1.4
-and §6 carry the conditions and the scene-versus-ornament test.
+   payment FSM, the two-tier cache, drawn as things that operate. It was a detour
+   around a constraint that no longer holds: **the owner supplies screenshots.**
+   The owner's verdict on that line of work was 과하게 어려운 일을 하려고 노력
+   중이었구나. Do not restart it. A mechanism belongs on a project page, in prose
+   and diagrams, where someone who clicked through actually wants it.
 
 ## Core rules
 
-- Never hand-edit docs/portfolio/state.json — all transitions go through
-  `node scripts/graph.mjs` (status / start / advance / block / doctor).
 - Do not invent portfolio facts.
 - Search existing components before creating complex visual components.
-- Do not mix animation ownership.
-- Update state.json and DECISIONS.md after major graph transitions.
+- Do not mix animation ownership (see below).
+- Record every non-obvious decision in `docs/portfolio/DECISIONS.md`.
 
-### The browser is the truth — and this applies to the coordinator
+### The browser is the truth
 
-Never judge visual work from source code, from a subagent's report, or from a
-locked spec document. **Open the page and look at it.** This rule binds whoever
-is coordinating, not only the builder.
+Never judge visual work from source code or from a spec document. **Open the
+page and look at it.**
 
-The 2026-08-31 run failed on exactly this. The coordinator spent an hour
-relaying the director's text reports — tuning thresholds, scorecards, iteration
-order, gate integrity — all of it correct and all of it beside the point. It was
-excellent project management for a project that was building the wrong thing.
-The first screenshot it finally rendered showed the problem instantly. Reading
-`CONTENT.md` — learning what the material even was — happened *after* an hour of
-orchestration.
-
-Concretely, before endorsing any visual claim:
+The 2026-08-31 run failed on exactly this: an hour of relaying text reports —
+all of it correct and all of it beside the point. The first screenshot rendered
+showed the problem instantly.
 
 ```bash
-# .claude/launch.json 의 portfolio-dev 로 preview 를 띄우고 실제로 본다
-node scripts/capture.mjs review/<scope>        # 재캡처 없이는 판정 금지
-node scripts/capture-states.mjs review/<scope>
+node scripts/capture.mjs review/<scope>
 ```
 
-Stale screenshots are worse than none. That run nearly judged a page that no
-longer existed. **Recapture immediately before every judgement.**
+Stale screenshots are worse than none. **Recapture immediately before every
+judgement.**
 
-### When a diagnosis is a stop signal, stop
+`npm run e2e` and `scripts/capture.mjs` run `next build` into the same `.next`
+that `next dev` is serving from. Running them while the preview server is up
+corrupts the dev server (Turbopack 500s, dead HMR socket, a page that looks
+half-broken). Stop the preview first, or restart it afterwards, before judging
+anything in the browser.
 
-The director wrote "the page is a well-made document, not an authored scene" in
-its *first* report. That was the answer. It was approved, written into
-instructions — and then the same loop kept running for another hour, treating it
-as a category to score rather than a reason to halt.
+### Prefer a gate over a paragraph
 
-If a finding invalidates the concept, do not route it to a fix node. Halt the
-graph and re-pick the direction. `GOLDEN_FIX` polishes execution; it cannot
-rescue a concept. A visual-impact score below ~5 means the concept is wrong, not
-that the spacing is wrong.
+Documents did not prevent that failure — the full mandate was in context the
+whole run. The rules that actually hold are the ones in the test suite:
 
-### Why the graph now requires pixels
+| Gate | What it locks |
+|---|---|
+| `src/motion-tokens.test.ts` | MOTION_LANGUAGE.md 3·4절 ↔ `globals.css` token values |
+| `src/motion-ownership.test.ts` | no gsap/lenis, no scroll-scrub, no keyframes, no blur, no outward shadow, no `will-change` |
+| `src/forbidden-claims.test.ts` | claims the owner's SSOT forbids |
+| `e2e/geometry.spec.ts` | hero name does not overflow in any font combination |
 
-`ART_DIRECTION_BRANCH` used to gate on three `.md` files, so `DIRECTION_JUDGE`
-picked a direction by reading prose. A direction that only works on paper passed,
-and the golden slice scored **2.8 / 9.0** on visual impact — a critic called it
-indistinguishable from a reader-mode tech blog.
-
-The path is now:
-
-```
-ART_DIRECTION_BRANCH → DIRECTION_RENDER → DIRECTION_JUDGE
-```
-
-`DIRECTION_RENDER` requires ≥9 PNGs in `review/directions/` (3 directions × 3
-viewports) and ≥3 of them at 320px, because that run's three "structurally
-different" candidates turned out **byte-identical on mobile**.
-`DIRECTION_JUDGE` cannot advance without those PNGs and must cite
-`review/directions/` in its `DECISIONS.md` lock entry.
-
-`scripts/graph.test.mjs` locks this shut. If someone loosens the gate back to
-prose, those tests fail. Do not loosen them.
-
-Note that documents did **not** prevent this failure the first time — the full
-mandate was in context the whole run. Gates are mechanical; instructions are
-only a reminder. Prefer adding a gate over adding a paragraph.
-
-### Handoff
-
-`docs/portfolio/HANDOFF.md` records where the run stopped and the live traps.
-Read it before resuming. In particular, `state.json`'s `failedCategories` can be
-a stale snapshot — derive the work list from `scorecard.json` scores against
-`graph.json`'s current thresholds instead.
-
-Delegate with blocking calls. Background subagents died silently three times in
-that run, producing 62 minutes with zero graph transitions.
-
-## Workflow
-
-The primary coordinator is:
-
-portfolio-director
-
-The complete workflow is defined by:
-
-/portfolio-build
-
-## Visual sources
-
-Prefer researching:
-
-- React Bits
-- 21st.dev
-- Aceternity UI
-- Magic UI
-- Codrops
-
-before implementing complex interaction from scratch.
+When a rule matters, add a test. Do not loosen these to make a design work —
+change the design, or change the rule *and* its document together.
 
 ## Motion ownership
 
-GSAP:
-scroll choreography
+| Owner | Scope |
+|---|---|
+| **Motion** (`motion` package) | entry transitions, via `src/components/site/Reveal.tsx` only |
+| **CSS** | hover / focus / current-state changes |
+| **Three.js / R3F** | explicit 3D scenes only |
 
-Motion:
-component and shared layout transitions
+GSAP and Lenis are **not** dependencies and must not be re-added —
+`src/motion-ownership.test.ts` fails if they are. There is no scroll-scrubbed
+property on this site; nothing reads scroll offset per frame.
 
-CSS:
-minor interactions
+## Visual sources
 
-Three.js / R3F:
-explicit 3D scenes only
+Prefer researching these before implementing complex interaction from scratch:
 
-Lenis:
-scroll transport only
+- React Bits · 21st.dev · Aceternity UI · Magic UI · Codrops
 
 <!-- BEGIN:nextjs-agent-rules -->
 

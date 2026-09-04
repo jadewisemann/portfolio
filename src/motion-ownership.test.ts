@@ -90,14 +90,31 @@ describe("모션 소유권", () => {
     expect(hits(/will-change/)).toEqual([]);
   });
 
-  test("스스로 시작하는 애니메이션이 없다", () => {
+  test("스스로 시작하는 애니메이션은 배경장과 스킬 흐름 둘뿐이다", () => {
     // 키프레임은 정의상 사용자 행동 없이 시작하므로 MOTION_LANGUAGE.md 2절 위반이다.
-    // 0 으로 두면 그 부류의 결함이 발생할 수 없다.
-    expect(hits(/@keyframes|animation-name|\banimation:/)).toEqual([]);
+    // 예외는 2절이 적은 둘 — 배경장(`Field`)과 스킬의 흐르는 줄 — 이다 (2026-09-03,
+    // 소유자 지시). 둘 다 `translate` 만 움직이고 축소 모션에서 멈춘다. 늘리기 전에
+    // 2절을 먼저 고친다.
+    const allowed: readonly string[] = [
+      "src/components/site/Field.module.css",
+      "src/components/site/SkillsSection.module.css",
+    ];
+    const offenders = hits(/@keyframes|animation-name|\banimation:/).filter(
+      (h) => !allowed.some((a) => h.startsWith(a)),
+    );
+    expect(offenders).toEqual([]);
   });
 
-  test("블러를 쓰지 않는다", () => {
-    expect(hits(/filter:\s*blur|backdrop-filter|backdrop-blur/)).toEqual([]);
+  test("backdrop 블러는 glass 유틸리티 한 자리뿐이고, CSS blur 는 없다", () => {
+    // MOTION_LANGUAGE.md 7절. `filter: blur` 는 0개다 — 무대 이동 중 블러를 한 번 넣었다가
+    // 같은 날 「흩어짐」으로 바꿨다 (2026-09-04). `backdrop-filter` 는 globals.css 의
+    // `glass` 유틸리티 한 자리에만 있다.
+    expect(hits(/(?<!backdrop-)filter:\s*blur/)).toEqual([]);
+    const allowed: readonly string[] = ["src/app/globals.css"];
+    const offenders = hits(/backdrop-filter|backdrop-blur/).filter(
+      (h) => !allowed.some((a) => h.startsWith(a)),
+    );
+    expect(offenders).toEqual([]);
   });
 
   test("바깥으로 나가는 그림자가 없다", () => {

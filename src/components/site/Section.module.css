@@ -1,10 +1,32 @@
 /*
-  절의 세로 리듬. 위아래 여백은 28px 격자의 배수입니다 (globals.css 의 괘선 기판과
-  같은 피치이므로 절의 경계가 괘선 위에 앉습니다).
+  절의 세로 리듬. 위아래 여백은 28px 격자의 배수입니다 — 배경의 괘선 기판은 걷어냈지만
+  (globals.css 의 `body::before` 주석) 리듬 자체는 이 여백과 절 경계의 괘선이 계속
+  맡습니다.
 */
 .section {
   padding: 84px 20px;
   border-top: 1px solid var(--rule);
+  /*
+    스크롤 스냅 (소유자 지시, 2026-09-04 — "일정 임계 이상에서 페이지가 한번에 넘어가야").
+    `html` 의 `scroll-snap-type: y mandatory` 와 짝이다. 절이 뷰포트보다 길면 브라우저가
+    그 안에서는 자유롭게 스크롤하게 두고, 절의 시작에서만 붙는다 — 스펙의 규정이고
+    JS 가 없다. 이송의 지속 시간은 브라우저 것이다 (MOTION_LANGUAGE.md 5.3 과 같은 이유로
+    사이트가 소유하지 않는다).
+
+    `scroll-margin-top: 0` — globals.css 의 `[id] { scroll-margin-top: 108px }` 는 앵커
+    착지용이고, 스냅에도 적용되면 절 위에 108px 빈 띠가 붙는다. 내비는 아래로 내려갈 때
+    숨으므로 절의 머리말을 가리지 않는다.
+  */
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  scroll-margin-top: 0;
+  /*
+    어두운 막 (소유자 지시, 2026-09-04 — "2장부터 약간 검은 유리를 살짝"). 지면색 45%.
+    블러는 없다 — 절 하나가 뷰포트 몇 장 높이라 backdrop 을 걸면 움직이는 배경장 위에서
+    그 면적 전체를 매 프레임 다시 흐려야 한다. 어두운 반투명 막만으로도 글자 뒤의
+    덩어리가 반쯤 가라앉아 대비가 돌아온다. 유리(`glass`)는 카드에만 있다.
+  */
+  background: color-mix(in srgb, var(--ground) 45%, transparent);
 }
 
 @media (min-width: 768px) {
@@ -27,7 +49,12 @@
   }
 }
 
+/*
+  머리말은 세 층이 겹칩니다 — 뒤의 초대형 숫자, 앞의 제목, 그 아래 한 문장.
+  참조 사이트(aarab.me)의 절 머리말이 그 구성이고, `REF_AARAB.md` 4절에 있습니다.
+*/
 .head {
+  position: relative;
   margin-bottom: 56px;
 }
 
@@ -39,49 +66,81 @@
   }
 }
 
+/*
+  절 번호. 참조 사이트의 가장 눈에 띄는 장치입니다 — 읽으라고 있는 글자가 아니라
+  제목 뒤에 깔린 큰 도형입니다.
+
+  세 가지를 지켜야 합니다.
+
+  1. `aria-hidden` 이 아니라 화면 밖으로 보내지 않습니다 — 번호는 실제 정보(절의
+     순서)이고 `SECTIONS` 배열의 자리이므로 보조 기술도 읽을 수 있어야 합니다.
+     대비 하한(§3)의 대상이 아닌 이유는 같은 정보가 순서로도 전달되기 때문입니다.
+  2. 클릭을 먹지 않습니다 (`pointer-events: none`) — 제목 위를 덮으므로 그대로 두면
+     제목의 앵커가 눌리지 않습니다.
+  3. `line-height: 1` 과 `position: absolute` 로 제목의 기준선에 영향을 주지
+     않습니다. 숫자가 커져도 아래 문장이 밀리지 않습니다.
+*/
 .index {
-  margin: 0 0 12px;
-  font-family: var(--font-mono), monospace;
-  font-size: var(--text-note);
-  letter-spacing: 0.14em;
-  color: var(--ink-3);
+  position: absolute;
+  top: -0.26em;
+  left: -0.06em;
+  z-index: 0;
+  margin: 0;
+  pointer-events: none;
+  user-select: none;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 104px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: color-mix(in srgb, var(--ink) 16%, transparent);
+}
+
+@media (min-width: 640px) {
+  .index {
+    font-size: 148px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .index {
+    font-size: 184px;
+  }
 }
 
 /*
-  절 제목은 이제 낱말 하나입니다 (`main` · `skills` · `project` · `이력`).
+  절 제목은 낱말 하나입니다 (`main` · `skills` · `project` · `이력`).
 
-  `--text-title` 을 그대로 쓰지 않는 사유: 그 급수는 프로젝트 이름(YORR ·
-  FestiFriends · Pookjayo)이 쓰고 있습니다. 절 제목이 같은 급수면 「project」와
-  「YORR」이 같은 층으로 읽혀 목록의 머리와 항목이 구분되지 않습니다. 한 계단 위에
-  둡니다 — 넓은 화면에서 머리말 단 폭(20rem)을 넘지 않는 값입니다.
+  디스플레이 서체(Instrument Serif)로 조판합니다 — 사이트에서 이 서체를 쓰는 곳은
+  이름과 절 제목과 큰 부름말 셋뿐이고, 그 셋이 화면의 뼈대입니다. 「이력」은 라틴
+  서체에 글리프가 없으므로 스택 둘째 자리의 한글 서체가 그립니다 (globals.css 의
+  `--font-display` 주석).
+
+  급수는 `--text-title` 을 쓰지 않습니다 — 그 급수는 프로젝트 이름이 쓰고 있고, 절
+  제목이 같은 층이면 목록의 머리와 항목이 구분되지 않습니다. 한 계단 위에 둡니다.
 */
 .title {
+  position: relative;
+  z-index: 1;
   margin: 0;
-  font-size: 44px;
-  font-weight: 600;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  font-family: var(--font-display);
+  font-size: 52px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.035em;
   color: var(--ink);
 }
 
 @media (min-width: 640px) {
   .title {
-    font-size: 56px;
+    font-size: 68px;
   }
 }
 
 @media (min-width: 1024px) {
   .title {
-    font-size: 80px;
+    font-size: 88px;
   }
-}
-
-.note {
-  margin: 16px 0 0;
-  max-width: var(--spacing-measure);
-  font-size: 15px;
-  line-height: 1.7;
-  color: var(--ink-3);
 }
 
 .body {

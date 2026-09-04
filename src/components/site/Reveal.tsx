@@ -20,11 +20,16 @@ import type { ReactNode } from "react";
  * **한 번 촉발**할 뿐이므로, 12.1절이 금지한 스크럽(스크롤 오프셋에 값을 묶는 것)이
  * 아닙니다.
  *
- * 값은 `globals.css` 의 `--duration-spine`(620ms) · `--ease-spine` 과 같은 수입니다.
+ * 이동 거리 56px (2026-09-03, 소유자 지시 — "뒤에서 조심스럽게 올라오게"). 20px 이었고,
+ * 그 거리는 「나타남」이었지 「올라옴」은 아니었습니다. 지속 시간은 그대로입니다 — 늘리면
+ * 토큰(`--duration-spine`)과 문서를 함께 고쳐야 하고, 620ms 에 이 이징이면 충분히
+ * 조심스럽습니다.
+ *
+ * 값은 `globals.css` 의 `--duration-spine`(900ms) · `--ease-spine` 과 같은 수입니다.
  * Motion 은 CSS 사용자 정의 속성을 지속 시간으로 읽지 못하므로 수를 그대로 씁니다.
  */
-const SPINE_SECONDS = 0.62;
-const SPINE_EASE = [0.16, 1, 0.3, 1] as const;
+const SPINE_SECONDS = 0.9;
+const SPINE_EASE = [0.7, 0, 0.15, 1] as const;
 
 export interface RevealProps {
   children: ReactNode;
@@ -38,7 +43,7 @@ export function Reveal({ children, className, delay = 0 }: RevealProps) {
     <motion.div
       className={className}
       data-enter
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 72 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2, margin: "0px 0px -8% 0px" }}
       transition={{ duration: SPINE_SECONDS, delay, ease: SPINE_EASE }}
